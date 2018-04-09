@@ -18,16 +18,21 @@ namespace FindAlfaITBot.Infrastructure
 
         private static IMongoCollection<Student> _collection;
 
-        public static void Configure(string connectionString, string dbName) {
+        public static string GetConnectionName => $"{_connectionString}:{_dbName}";
+
+        public static void Configure(string connectionString, string dbName)
+        {
             _connectionString = connectionString;
             _dbName = dbName;
         }
 
-        public static void ConfigureConnection(string connectionString) {
+        public static void ConfigureConnection(string connectionString)
+        {
             _connectionString = connectionString;
         }
 
-        public static void ConfigureDB(string dbName) {
+        public static void ConfigureDB(string dbName)
+        {
             _dbName = dbName;
         }
 
