@@ -40,7 +40,7 @@ namespace FindAlfaITBot
             _botClient.StopReceiving();
         }
 
-        private void OnMessageReceived(object sender, MessageEventArgs eventArgs)
+        private async void OnMessageReceived(object sender, MessageEventArgs eventArgs)
         {
             var message = eventArgs.Message;
             
