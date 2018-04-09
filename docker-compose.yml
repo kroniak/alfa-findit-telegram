@@ -5,7 +5,7 @@ services:
     container_name: alfa-findit-mongodb-prod
     restart: always
     volumes:
-      - ~/alfa-findit-telegram/db/:/data/db:rw
+      - ~/alfa-findit-telegram-data/:/data/db:rw
 
   bot:
     image: alfabank/findit-telegram:1.0
