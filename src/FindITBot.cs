@@ -21,6 +21,7 @@ namespace FindAlfaITBot
         public FindITBot(string token)
         {
             _botClient = new TelegramBotClient(token);
+            Build().Start();
         }
 
         public FindITBot Build()
@@ -40,7 +41,7 @@ namespace FindAlfaITBot
             _botClient.StopReceiving();
         }
 
-        private async void OnMessageReceived(object sender, MessageEventArgs eventArgs)
+        private void OnMessageReceived(object sender, MessageEventArgs eventArgs)
         {
             var message = eventArgs.Message;
             
