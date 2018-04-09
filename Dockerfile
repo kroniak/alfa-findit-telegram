@@ -13,4 +13,5 @@ RUN dotnet publish -c Release -o out
 FROM microsoft/aspnetcore:2.0
 WORKDIR /app
 COPY --from=build-env /app/out .
+EXPOSE 5000/tcp
 ENTRYPOINT ["dotnet", "FindAlfaITBot.dll"]

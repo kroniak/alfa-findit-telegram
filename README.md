@@ -11,10 +11,13 @@
 
 ## Установка
 
+Перед запуском бота необходимо отредактировать файл `docker-compose.yml` и добавить в него ваши секретные ключи.
+
 bash `
 cd ~
 git clone https://github.com/kroniak/alfa-findit-telegram.git
 cd alfa-findit-telegram
 ./build/build.sh
+nano docker-compose.yml
 docker-compose up -d
 `
