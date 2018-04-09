@@ -14,21 +14,21 @@ namespace FindAlfaITBot.Controllers
         }
 
         [HttpGet]
-        public string Start(string secretKey)
+        public IActionResult Start(string secretKey)
         {
             if (String.CompareOrdinal(_bot.SecretKey, secretKey) != 0)
-                return "Access deny";
+                return new ForbidResult();
             _bot.Start();
-            return "startted";
+            return Json("startted");
         }
 
         [HttpGet]
-        public string StopBot(string secretKey)
+        public IActionResult StopBot(string secretKey)
         {
             if (String.CompareOrdinal(_bot.SecretKey, secretKey) != 0)
-                return "Access deny";
+                return new ForbidResult();
             _bot.Stop();
-            return "Bot stopped";
+            return Json("Bot stopped");
         }
 
         [HttpGet]
