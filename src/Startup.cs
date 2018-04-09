@@ -29,6 +29,7 @@ namespace FindAlfaITBot
         public void ConfigureServices(IServiceCollection services)
         {
             var token = Configuration["TELEGRAM_TOKEN"];
+            var secretKey = Configuration["TELEGRAM_SECRETKEY"];
 
             if (string.IsNullOrEmpty(token))
                 throw new ArgumentNullException("Telegram token must be not null");
@@ -43,7 +44,7 @@ namespace FindAlfaITBot
             Console.WriteLine($"Connection string is {MongoDBHelper.GetConnectionName}");
 
             services.AddMvc();
-            services.AddSingleton<ITelegramBot, FindITBot>(x => new FindITBot(token));
+            services.AddSingleton<ITelegramBot, FindITBot>(x => new FindITBot(token, secretKey));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

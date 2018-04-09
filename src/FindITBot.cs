@@ -1,4 +1,4 @@
-﻿using FindAlfaITBot.Implementation.Commands;
+﻿using FindAlfaITBot.Implementation.BotCommands;
 using FindAlfaITBot.Infrastructure;
 using FindAlfaITBot.Interfaces;
 using FindAlfaITBot.Models;
@@ -13,9 +13,12 @@ namespace FindAlfaITBot
     {
         private readonly TelegramBotClient _botClient;
 
-        public FindITBot(string token)
+        public string SecretKey { get; private set; }
+
+        public FindITBot(string token, string secretKey)
         {
             _botClient = new TelegramBotClient(token);
+            SecretKey = secretKey;
             Build();
         }
 
@@ -29,7 +32,7 @@ namespace FindAlfaITBot
         public ITelegramBot Start()
         {
             if (_botClient.IsReceiving) return this;
-            
+
             _botClient.StartReceiving();
             return this;
         }
@@ -48,7 +51,7 @@ namespace FindAlfaITBot
         private void OnMessageReceived(object sender, MessageEventArgs eventArgs)
         {
             var message = eventArgs.Message;
-            
+
             CreateCommand(message).Execute();
         }
 
