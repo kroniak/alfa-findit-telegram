@@ -106,16 +106,5 @@ namespace FindAlfaITBot.Infrastructure
 
             return await Collection.UpdateOneAsync(filter, update);
         }
-
-        //        public static async void SaveNewStudent(long id, string login)
-        //        {
-        //            var student = new Student
-        //            {
-        //                Id = id.ToString(),
-        //                Login = login
-        //            };
-        //
-        //            AddStudent(student);
-        //        }
     }
 }

@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using FindAlfaITBot.Infrastructure;
+using FindAlfaITBot.Interfaces;
 using FindAlfaITBot.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace FindAlfaITBot
 {
@@ -45,12 +42,19 @@ namespace FindAlfaITBot
 
             Console.WriteLine($"Connection string is {MongoDBHelper.GetConnectionName}");
 
-            services.AddSingleton(new FindITBot(token));
+            services.AddMvc();
+            services.AddSingleton<ITelegramBot, FindITBot>(x => new FindITBot(token));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller}/{action}/{message?}");
+            });
         }
 
         private static void TestDB()

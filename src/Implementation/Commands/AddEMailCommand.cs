@@ -1,4 +1,5 @@
-﻿using FindAlfaITBot.Factories;
+﻿using System.Text.RegularExpressions;
+using FindAlfaITBot.Factories;
 using FindAlfaITBot.Infrastructure;
 using FindAlfaITBot.Interfaces;
 using Telegram.Bot;
@@ -23,9 +24,23 @@ namespace FindAlfaITBot.Implementation.Commands
         {
             var email = _message.Text;
 
+            if (!IsEmailValid(email))
+            {
+                await _botClient.SendTextMessageAsync(_chatId, MessageFactory.WrongEMailMessage);
+                return;
+            }
+
             await MongoDBHelper.SaveEmail(_chatId, email);
             
             await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskUniversityMessage);
+        }
+
+        private bool IsEmailValid(string email)
+        {
+            string pattern = @"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$";
+            
+            Regex regex = new Regex(pattern);
+            return regex.IsMatch(email);
         }
     }
 }

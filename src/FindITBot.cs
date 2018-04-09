@@ -1,27 +1,22 @@
-﻿using System;
-using System.IO;
-using FindAlfaITBot.Implementation.Commands;
+﻿using FindAlfaITBot.Implementation.Commands;
 using FindAlfaITBot.Infrastructure;
 using FindAlfaITBot.Interfaces;
 using FindAlfaITBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Args;
-using Telegram.Bot.Requests;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace FindAlfaITBot
 {
-    public class FindITBot
+    public class FindITBot : ITelegramBot
     {
-        private const bool Debug = false;
         private readonly TelegramBotClient _botClient;
 
         public FindITBot(string token)
         {
             _botClient = new TelegramBotClient(token);
-            Build().Start();
+            Build();
         }
 
         public FindITBot Build()
@@ -31,14 +26,23 @@ namespace FindAlfaITBot
             return this;
         }
 
-        public void Start()
+        public ITelegramBot Start()
         {
+            if (_botClient.IsReceiving) return this;
+            
             _botClient.StartReceiving();
+            return this;
         }
 
-        public void Stop()
+        public ITelegramBot Stop()
         {
             _botClient.StopReceiving();
+            return this;
+        }
+
+        public bool Ping()
+        {
+            return _botClient.IsReceiving;
         }
 
         private void OnMessageReceived(object sender, MessageEventArgs eventArgs)
