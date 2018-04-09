@@ -19,10 +19,10 @@ namespace FindAlfaITBot.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(string secretKey)
+        public IActionResult Json(string secretKey)
         {
             if (String.CompareOrdinal(_bot.SecretKey, secretKey) != 0)
-                return new ForbidResult();
+                return StatusCode(403);
 
             return Json(MongoDBHelper.All().Result);
         }
@@ -31,7 +31,7 @@ namespace FindAlfaITBot.Controllers
         public IActionResult Csv(string secretKey)
         {
             if (String.CompareOrdinal(_bot.SecretKey, secretKey) != 0)
-                return new ForbidResult();
+                return StatusCode(403);
 
             var sb = new StringBuilder();
             sb.AppendLine("EMail;Name;Profession;University;");
@@ -45,7 +45,7 @@ namespace FindAlfaITBot.Controllers
                 }
             }
 
-            return File(System.Text.Encoding.ASCII.GetBytes(sb.ToString()), "text/csv", "data.csv");
+            return File(System.Text.Encoding.UTF32.GetBytes(sb.ToString()), "text/csv", "data.csv");
         }
     }
 }

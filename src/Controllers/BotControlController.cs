@@ -17,7 +17,8 @@ namespace FindAlfaITBot.Controllers
         public IActionResult Start(string secretKey)
         {
             if (String.CompareOrdinal(_bot.SecretKey, secretKey) != 0)
-                return new ForbidResult();
+                return StatusCode(403);
+
             _bot.Start();
             return Json("startted");
         }
@@ -26,7 +27,8 @@ namespace FindAlfaITBot.Controllers
         public IActionResult StopBot(string secretKey)
         {
             if (String.CompareOrdinal(_bot.SecretKey, secretKey) != 0)
-                return new ForbidResult();
+                return StatusCode(403);
+                
             _bot.Stop();
             return Json("Bot stopped");
         }
