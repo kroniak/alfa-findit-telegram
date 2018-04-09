@@ -1,0 +1,17 @@
+version: '2.1'
+services:
+  db:
+    image: mongo:3.6
+    container_name: alfa-findit-mongodb-prod
+    restart: always
+    volumes:
+      - ~/alfa-findit-telegram/db/:/data/db:rw
+
+  bot:
+    image: alfabank/findit-telegram:1.0
+    container_name: alfa-findit-telegram-prod
+    restart: always
+    depends_on:
+      - db
+    links:
+      - db
