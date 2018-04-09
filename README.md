@@ -23,4 +23,8 @@ cd alfa-findit-telegram
 ./build/build.sh
 nano docker-compose.yml
 docker-compose up -d
-````
+```
+
+## Выгрузка данных
+
+Для выгрузки данных в `json\csv` используйте скрипт `scripts/export.sh`. Он выгрузит данные в двух форматах в папку `~/alfa-findit-telegram-data/exports/`
