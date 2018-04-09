@@ -25,6 +25,16 @@ nano docker-compose.yml
 docker-compose up -d
 ```
 
+## Управление ботом
+
+Управление может осуществляться дистанционно по урлу вида: `http://example.org:5000/botcontrol/start?secretKey=KEY`
+Поддерживаются endpoint: `start`, `stop`, `ping`
+
 ## Выгрузка данных
 
 Для выгрузки данных в `json\csv` используйте скрипт `scripts/export.sh`. Он выгрузит данные в двух форматах в папку `~/alfa-findit-telegram-data/exports/`
+
+Также можно сделать выгрузку через endpoint:
+
+http://example.org:5000/export/json?secretKey=KEY
+http://example.org:5000/export/csv?secretKey=KEY
