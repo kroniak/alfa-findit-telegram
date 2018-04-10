@@ -6,6 +6,7 @@ namespace FindAlfaITBot.Models
     {
         [BsonId]
         public string Id { get; set; }
+        public long ChatId { get; set; }
         public string TelegramName { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }

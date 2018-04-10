@@ -49,21 +49,21 @@ namespace FindAlfaITBot.Infrastructure
 
         public static void AddStudent(long chatId)
         {
-            Student student = new Student { Id = chatId.ToString() };
+            Student student = new Student { ChatId = chatId };
             AddStudent(student);
         }
 
         public static async Task<IEnumerable<Student>> All() => await Collection.Find(_ => true).ToListAsync();
 
-        public static async Task<Student> GetStudent(long id)
+        public static async Task<Student> GetStudent(long chatId)
         {
-            var filter = Builders<Student>.Filter.Eq(x => x.Id, id.ToString());
+            var filter = Builders<Student>.Filter.Eq(x => x.ChatId, chatId);
             return await Collection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public static async Task<UpdateResult> SaveContact(long id, string phone, string telegramName)
+        public static async Task<UpdateResult> SaveContact(long chatId, string phone, string telegramName)
         {
-            var filter = Builders<Student>.Filter.Eq(x => x.Id, id.ToString());
+            var filter = Builders<Student>.Filter.Eq(x => x.ChatId, chatId);
             var update = Builders<Student>.Update
                 .Set(x => x.Phone, phone)
                 .Set(x => x.TelegramName, telegramName);
@@ -71,36 +71,36 @@ namespace FindAlfaITBot.Infrastructure
             return await Collection.UpdateOneAsync(filter, update);
         }
 
-        public static async Task<UpdateResult> SaveEmail(long id, string email)
+        public static async Task<UpdateResult> SaveEmail(long chatId, string email)
         {
-            var filter = Builders<Student>.Filter.Eq(x => x.Id, id.ToString());
+            var filter = Builders<Student>.Filter.Eq(x => x.ChatId, chatId);
             var update = Builders<Student>.Update
                 .Set(x => x.EMail, email);
 
             return await Collection.UpdateOneAsync(filter, update);
         }
 
-        public static async Task<UpdateResult> SaveName(long id, string studentName)
+        public static async Task<UpdateResult> SaveName(long chatId, string studentName)
         {
-            var filter = Builders<Student>.Filter.Eq(x => x.Id, id.ToString());
+            var filter = Builders<Student>.Filter.Eq(x => x.ChatId, chatId);
             var update = Builders<Student>.Update
                 .Set(x => x.Name, studentName);
 
             return await Collection.UpdateOneAsync(filter, update);
         }
 
-        public static async Task<UpdateResult> SaveUniversity(long id, string university)
+        public static async Task<UpdateResult> SaveUniversity(long chatId, string university)
         {
-            var filter = Builders<Student>.Filter.Eq(x => x.Id, id.ToString());
+            var filter = Builders<Student>.Filter.Eq(x => x.ChatId, chatId);
             var update = Builders<Student>.Update
                 .Set(x => x.University, university);
 
             return await Collection.UpdateOneAsync(filter, update);
         }
 
-        public static async Task<UpdateResult> SaveProfession(long id, string profession)
+        public static async Task<UpdateResult> SaveProfession(long chatId, string profession)
         {
-            var filter = Builders<Student>.Filter.Eq(x => x.Id, id.ToString());
+            var filter = Builders<Student>.Filter.Eq(x => x.ChatId, chatId);
             var update = Builders<Student>.Update
                 .Set(x => x.Profession, profession);
 

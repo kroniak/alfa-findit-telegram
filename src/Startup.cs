@@ -66,7 +66,6 @@ namespace FindAlfaITBot
             {
                 var student = new Student
                 {
-                    Id = Guid.NewGuid().ToString(),
                     EMail = "test@test.ru",
                     Name = "Test Student",
                     Profession = "Haskell",
