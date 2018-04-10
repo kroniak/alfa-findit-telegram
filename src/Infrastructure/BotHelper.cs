@@ -1,11 +1,11 @@
 ﻿using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace FindAlfaITBot
+namespace FindAlfaITBot.Infrastructure
 {
     public static class BotHelper
     {
-        private const string ContactButtonText = "Дать свой контакт";
+        private const string ContactButtonText = "Нажми сюда, чтобы дать свой контакт";
 
         public static ReplyKeyboardMarkup GetKeyBoardForContact()
         {

@@ -1,26 +1,25 @@
-﻿using System;
-using System.IO;
-using FindAlfaITBot.Implementation.Commands;
+﻿using FindAlfaITBot.Implementation.BotCommands;
 using FindAlfaITBot.Infrastructure;
 using FindAlfaITBot.Interfaces;
 using FindAlfaITBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Args;
-using Telegram.Bot.Requests;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace FindAlfaITBot
 {
-    public class FindITBot
+    public class FindITBot : ITelegramBot
     {
-        private const bool Debug = false;
         private readonly TelegramBotClient _botClient;
 
-        public FindITBot(string token)
+        public string SecretKey { get; private set; }
+
+        public FindITBot(string token, string secretKey)
         {
             _botClient = new TelegramBotClient(token);
+            SecretKey = secretKey;
+            Build();
         }
 
         public FindITBot Build()
@@ -30,20 +29,29 @@ namespace FindAlfaITBot
             return this;
         }
 
-        public void Start()
+        public ITelegramBot Start()
         {
+            if (_botClient.IsReceiving) return this;
+
             _botClient.StartReceiving();
+            return this;
         }
 
-        public void Stop()
+        public ITelegramBot Stop()
         {
             _botClient.StopReceiving();
+            return this;
         }
 
-        private async void OnMessageReceived(object sender, MessageEventArgs eventArgs)
+        public bool Ping()
+        {
+            return _botClient.IsReceiving;
+        }
+
+        private void OnMessageReceived(object sender, MessageEventArgs eventArgs)
         {
             var message = eventArgs.Message;
-            
+
             CreateCommand(message).Execute();
         }
 
@@ -65,7 +73,7 @@ namespace FindAlfaITBot
             if (student.University == null)
                 return new AddUniversityCommand(_botClient, chatId, message);
             if (student.Profession == null)
-                return new AddprofessionCommand(_botClient, chatId, message);
+                return new AddProfessionCommand(_botClient, chatId, message);
 
             return new EndCommand(_botClient, chatId);
         }

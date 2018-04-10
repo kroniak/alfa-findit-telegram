@@ -1,11 +1,11 @@
-version: '2.1'
+version: '2.0'
 services:
   db:
     image: mongo:3.6
     container_name: alfa-findit-mongodb-prod
     restart: always
     volumes:
-      - ~/alfa-findit-telegram/db/:/data/db:rw
+      - ~/alfa-findit-telegram-data/:/data/db:rw
 
   bot:
     image: alfabank/findit-telegram:1.0
@@ -15,3 +15,9 @@ services:
       - db
     links:
       - db
+    ports:
+      - "5000:5000"  
+    environment: 
+      - ASPNETCORE_TELEGRAM_TOKEN=insert you key here
+      - ASPNETCORE_TELEGRAM_SECRETKEY=insert you key here
+      - ASPNETCORE_MONGO=mongodb://db
