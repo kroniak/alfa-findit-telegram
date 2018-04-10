@@ -73,6 +73,7 @@ namespace FindAlfaITBot
                 };
 
                 MongoDBHelper.AddStudent(student);
+                students = MongoDBHelper.All().Result;
 
                 if (students.Count() == 0)
                     throw new Exception("Fail to start DB");
