@@ -1,11 +1,12 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace FindAlfaITBot.Models
 {
     public class Student
     {
         [BsonId]
-        public string Id { get; set; }
+        public ObjectId Id { get; set; }
         public long ChatId { get; set; }
         public string TelegramName { get; set; }
         public string Name { get; set; }
