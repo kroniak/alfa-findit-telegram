@@ -34,7 +34,7 @@ namespace FindAlfaITBot.Controllers
                 return StatusCode(403);
 
             var sb = new StringBuilder();
-            sb.AppendLine("EMail;Name;Profession;University;Phone;Telegram");
+            sb.AppendLine("EMail;Name;Profession;University;Phone;Telegram;");
 
             var students = MongoDBHelper.All().Result;
             if (students.Count() > 0)
