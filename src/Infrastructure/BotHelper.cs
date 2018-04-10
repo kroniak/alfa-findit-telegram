@@ -5,7 +5,7 @@ namespace FindAlfaITBot.Infrastructure
 {
     public static class BotHelper
     {
-        private const string ContactButtonText = "Дать свой контакт";
+        private const string ContactButtonText = "Нажми сюда, чтобы дать свой контакт";
 
         public static ReplyKeyboardMarkup GetKeyBoardForContact()
         {

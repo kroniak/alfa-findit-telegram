@@ -6,13 +6,13 @@ using Telegram.Bot.Types;
 
 namespace FindAlfaITBot.Implementation.BotCommands
 {
-    public class AddprofessionCommand : IMessageCommand
+    public class AddProfessionCommand : IMessageCommand
     {
         private TelegramBotClient _botClient;
         private long _chatId;
         private Message _message;
         
-        public AddprofessionCommand(TelegramBotClient botClient, long chatId, Message message)
+        public AddProfessionCommand(TelegramBotClient botClient, long chatId, Message message)
         {
             _botClient = botClient;
             _chatId = chatId;

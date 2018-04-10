@@ -73,7 +73,7 @@ namespace FindAlfaITBot
             if (student.University == null)
                 return new AddUniversityCommand(_botClient, chatId, message);
             if (student.Profession == null)
-                return new AddprofessionCommand(_botClient, chatId, message);
+                return new AddProfessionCommand(_botClient, chatId, message);
 
             return new EndCommand(_botClient, chatId);
         }
