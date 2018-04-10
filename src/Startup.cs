@@ -44,7 +44,7 @@ namespace FindAlfaITBot
             Console.WriteLine($"Connection string is {MongoDBHelper.GetConnectionName}");
 
             services.AddMvc();
-            services.AddSingleton<ITelegramBot, FindITBot>(x => new FindITBot(token, secretKey));
+            services.AddSingleton<ITelegramBot, FindITBot>(x => (FindITBot)new FindITBot(token, secretKey).Start());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
