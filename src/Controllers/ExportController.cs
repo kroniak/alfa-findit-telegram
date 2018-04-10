@@ -34,18 +34,18 @@ namespace FindAlfaITBot.Controllers
                 return StatusCode(403);
 
             var sb = new StringBuilder();
-            sb.AppendLine("EMail;Name;Profession;University;");
+            sb.AppendLine("EMail;Name;Profession;University;Phone;Telegram");
 
             var students = MongoDBHelper.All().Result;
             if (students.Count() > 0)
             {
                 foreach (var stud in students)
                 {
-                    sb.AppendLine($"{stud.EMail};{stud.Name};{stud.Profession};{stud.University};");
+                    sb.AppendLine($"{stud.EMail};{stud.Name};{stud.Profession};{stud.University};{stud.Phone};{stud.TelegramName};");
                 }
             }
 
-            return File(System.Text.Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "data.csv");
+            return File(System.Text.Encoding.Unicode.GetBytes(sb.ToString()), "text/csv", "data.csv");
         }
     }
 }

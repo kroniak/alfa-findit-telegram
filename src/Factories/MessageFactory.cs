@@ -13,7 +13,7 @@
         public static string AskContactMessage = "Пришлите свой контакт";
         public static string AskEmailMessage = "Теперь пришлите свой email.";
         public static string AskUniversityMessage = "Укажи свой ВУЗ и курс";
-        public static string AskProfessionMessage = "Ты у цели!\nУкажи желаемое направление для развития или укажите свой";
+        public static string AskProfessionMessage = "Ты у цели!\nУкажи желаемое направление для развития или укажите свой вариант";
         public static string EndOfAskingMessage = "Принято! Как только у нас появится подходящая вакансия, мы свяжемся с тобой.";
         public static string EndMessage = "Опрос завершен. Как только у нас появится подходящая вакансия, мы свяжемся с тобой.";
         public static string WrongEMailMessage = "Хмм, это не выглядит как email.\nПопробуйте ещё раз.";
