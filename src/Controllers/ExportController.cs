@@ -45,7 +45,7 @@ namespace FindAlfaITBot.Controllers
                 }
             }
 
-            return File(System.Text.Encoding.Unicode.GetBytes(sb.ToString()), "text/csv", "data.csv");
+            return File(System.Text.Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "data.csv");
         }
     }
 }
