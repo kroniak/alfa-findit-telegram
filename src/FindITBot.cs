@@ -1,4 +1,5 @@
-﻿using FindAlfaITBot.Implementation.BotCommands;
+﻿using System.Net;
+using FindAlfaITBot.Implementation.BotCommands;
 using FindAlfaITBot.Infrastructure;
 using FindAlfaITBot.Interfaces;
 using FindAlfaITBot.Models;
@@ -17,7 +18,7 @@ namespace FindAlfaITBot
 
         public FindITBot(string token, string secretKey)
         {
-            _botClient = new TelegramBotClient(token);
+            _botClient = new TelegramBotClient(token, new WebProxy("173.212.204.122",3128));
             SecretKey = secretKey;
             Build();
         }
@@ -70,6 +71,8 @@ namespace FindAlfaITBot
                 return new AddNameCommand(_botClient, chatId, message);
             if (student.EMail == null)
                 return new AddEMailCommand(_botClient, chatId, message);
+            if (student.IsStudent == null)
+                return  new  AskIsStudentCommand(_botClient, chatId, message);
             if (student.University == null)
                 return new AddUniversityCommand(_botClient, chatId, message);
             if (student.Profession == null)

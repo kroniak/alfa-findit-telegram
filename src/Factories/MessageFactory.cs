@@ -14,6 +14,9 @@
         public static string AskEmailMessage = "Теперь пришлите свой email.";
         public static string AskUniversityMessage = "Укажи свой ВУЗ и курс";
         public static string AskProfessionMessage = "Ты у цели!\nУкажи желаемое направление для развития или укажите свой";
+        public static string AskIsStudentMessage = "Ты еще учишься?";
+        public static string AskCourseMessage = "На каком курсе ты учишься?";
+        public static string AskIsWorkerMessage = "Ты работаешь?";
         public static string EndOfAskingMessage = "Принято! Как только у нас появится подходящая вакансия, мы свяжемся с тобой.";
         public static string EndMessage = "Опрос завершен. Как только у нас появится подходящая вакансия, мы свяжемся с тобой.";
         public static string WrongEMailMessage = "Хмм, это не выглядит как email.\nПопробуйте ещё раз.";

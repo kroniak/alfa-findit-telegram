@@ -79,6 +79,16 @@ namespace FindAlfaITBot.Infrastructure
 
             return await Collection.UpdateOneAsync(filter, update);
         }
+        
+        public static async Task<UpdateResult> SaveStudentOrWorkerInfo(long chatId, bool? isSudent, bool? isWorker)
+        {
+            var filter = Builders<Student>.Filter.Eq(x => x.ChatId, chatId);
+            var update = Builders<Student>.Update
+                .Set(x => x.IsStudent, isSudent)
+                .Set(x => x.IsWorker, isWorker);
+
+            return await Collection.UpdateOneAsync(filter, update);
+        }
 
         public static async Task<UpdateResult> SaveName(long chatId, string studentName)
         {
