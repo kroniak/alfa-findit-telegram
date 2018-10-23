@@ -24,22 +24,30 @@ namespace FindAlfaITBot.Implementation.BotCommands
         {
             var answer = _message.Text;
             bool? isStudent = null;
+            bool? isAnsweredAllQuestions = null;
+            
             if (string.Compare(answer, "да", StringComparison.InvariantCultureIgnoreCase) == 0)
                 isStudent = true;
-            if (string.Compare(answer, "нет", StringComparison.InvariantCultureIgnoreCase) == 0)
-                isStudent = false;
 
-            await MongoDBHelper.SaveStudentOrWorkerInfo(_chatId, isStudent, null);
+            if (string.Compare(answer, "нет", StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
+                isStudent = false;
+                isAnsweredAllQuestions = true;
+            }
+
+            await MongoDBHelper.SaveStudentOrWorkerInfo(_chatId, isStudent, isAnsweredAllQuestions);
+
+            if (!isStudent.HasValue)
+                await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskIsStudentMessage,
+                    replyMarkup: BotHelper.GetKeyboardYesOrNo());
 
             if (isStudent.HasValue && isStudent.Value)
             {
-                await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskCourseMessage,
-                    replyMarkup: BotHelper.GetKeyboardForCourse());
+                await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskUniversityMessage, replyMarkup: BotHelper.GetRemoveKeyboard());
             }
             else
             {
-                await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskIsWorkerMessage,
-                    replyMarkup: BotHelper.GetKeyboardYesOrNo());
+                await _botClient.SendTextMessageAsync(_chatId, MessageFactory.EndOfAskingMessage, replyMarkup: BotHelper.GetRemoveKeyboard());
             }
         }
     }

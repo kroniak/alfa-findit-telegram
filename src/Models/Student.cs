@@ -15,7 +15,7 @@ namespace FindAlfaITBot.Models
         public string University { get; set; }
         public string Profession { get; set; }
         public bool? IsStudent { get; set; }
-        public bool? IsWorker { get; set; }
         public string Course { get; set; }
+        public bool? IsAnswerAll { get; set; }
     }
 }

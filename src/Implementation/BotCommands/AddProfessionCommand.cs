@@ -24,7 +24,7 @@ namespace FindAlfaITBot.Implementation.BotCommands
             var profession = _message.Text;
 
             await MongoDBHelper.SaveProfession(_chatId, profession);
-            await _botClient.SendTextMessageAsync(_chatId, MessageFactory.EndOfAskingMessage, replyMarkup:BotHelper.GetRemoveKeyboard());
+            await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskIsStudentMessage, replyMarkup:BotHelper.GetKeyboardYesOrNo());
         }
     }
 }

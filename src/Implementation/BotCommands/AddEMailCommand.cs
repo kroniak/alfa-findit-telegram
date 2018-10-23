@@ -32,8 +32,8 @@ namespace FindAlfaITBot.Implementation.BotCommands
 
             await MongoDBHelper.SaveEmail(_chatId, email);
 
-            await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskIsStudentMessage,
-                replyMarkup: BotHelper.GetKeyboardYesOrNo());
+            await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskProfessionMessage,
+                replyMarkup: BotHelper.GetKeyboardForProfession());
         }
 
         private bool IsEmailValid(string email)

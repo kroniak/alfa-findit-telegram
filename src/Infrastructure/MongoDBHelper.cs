@@ -80,12 +80,12 @@ namespace FindAlfaITBot.Infrastructure
             return await Collection.UpdateOneAsync(filter, update);
         }
         
-        public static async Task<UpdateResult> SaveStudentOrWorkerInfo(long chatId, bool? isSudent, bool? isWorker)
+        public static async Task<UpdateResult> SaveStudentOrWorkerInfo(long chatId, bool? isSudent, bool? isAnswerAll)
         {
             var filter = Builders<Student>.Filter.Eq(x => x.ChatId, chatId);
             var update = Builders<Student>.Update
                 .Set(x => x.IsStudent, isSudent)
-                .Set(x => x.IsWorker, isWorker);
+                .Set(x => x.IsAnswerAll, isAnswerAll);
 
             return await Collection.UpdateOneAsync(filter, update);
         }
@@ -104,6 +104,16 @@ namespace FindAlfaITBot.Infrastructure
             var filter = Builders<Student>.Filter.Eq(x => x.ChatId, chatId);
             var update = Builders<Student>.Update
                 .Set(x => x.University, university);
+
+            return await Collection.UpdateOneAsync(filter, update);
+        }
+        
+        public static async Task<UpdateResult> SaveCourse(long chatId, string course, bool? isAnsweredAll)
+        {
+            var filter = Builders<Student>.Filter.Eq(x => x.ChatId, chatId);
+            var update = Builders<Student>.Update
+                .Set(x => x.Course, course)
+                .Set(x => x.IsAnswerAll, isAnsweredAll);
 
             return await Collection.UpdateOneAsync(filter, update);
         }
