@@ -22,6 +22,32 @@ namespace FindAlfaITBot.Infrastructure
         {
             return new ReplyKeyboardRemove { RemoveKeyboard = true };
         }
+        
+        public static ReplyKeyboardMarkup GetKeyboardYesOrNo()
+        {
+            var yesButton = new KeyboardButton("Да");
+            var noButton = new KeyboardButton("Нет");
+
+            var keyboard = new[]
+            {
+                new[] {yesButton},
+                new[] {noButton}
+            };
+            return new ReplyKeyboardMarkup {Keyboard = keyboard};
+        }
+        
+        public static ReplyKeyboardMarkup GetKeyboardForCourse()
+        {
+            var junior = new KeyboardButton("1-3");
+            var notJunior = new KeyboardButton("4 и старше");
+
+            var keyboard = new[]
+            {
+                new[] {junior},
+                new[] {notJunior}
+            };
+            return new ReplyKeyboardMarkup {Keyboard = keyboard};
+        }
 
         public static ReplyKeyboardMarkup GetKeyboardForProfession()
         {
