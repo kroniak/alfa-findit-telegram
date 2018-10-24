@@ -24,7 +24,7 @@ namespace FindAlfaITBot.Implementation.BotCommands
             var university = _message.Text;
 
             await MongoDBHelper.SaveUniversity(_chatId, university);
-            await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskProfessionMessage, replyMarkup:BotHelper.GetKeyboardForProfession());
+            await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskCourseMessage, replyMarkup:BotHelper.GetKeyboardForCourse());
         }
     }
 }
