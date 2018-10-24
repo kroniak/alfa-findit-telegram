@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using FindAlfaITBot.Infrastructure;
 using FindAlfaITBot.Interfaces;
 using FindAlfaITBot.Models;
@@ -36,16 +37,35 @@ namespace FindAlfaITBot
 
             var connection = Configuration["MONGO"];
 
+            var proxyAddress = Configuration["PROXY_ADDRESS"];
+            var proxyPort = Configuration["PROXY_PORT"];
+
+            var proxy = GetProxy(proxyAddress, proxyPort);
+
             if (!string.IsNullOrEmpty(connection))
                 MongoDBHelper.ConfigureConnection(connection);
 
             TestDB();
-
+            
             Console.WriteLine($"Connection string is {MongoDBHelper.GetConnectionName}");
 
             services.AddMvc();
-            services.AddSingleton<ITelegramBot>(_ => new FindITBot(token, secretKey).Start());
+            services.AddSingleton<ITelegramBot>(_ => new FindITBot(token, secretKey, proxy).Start());
         }
+
+        private WebProxy GetProxy(string proxyAddress, string proxyPort)
+        {
+            if (string.IsNullOrWhiteSpace(proxyAddress))
+                return null;
+            var isPortCorrect = int.TryParse(proxyPort, out var port);
+
+            if (!(isPortCorrect && 0 < port && port <= 65536))
+                return null;
+            
+            return new WebProxy(proxyAddress, port);
+        }
+        
+        
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

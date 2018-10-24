@@ -16,9 +16,9 @@ namespace FindAlfaITBot
 
         public string SecretKey { get; private set; }
 
-        public FindITBot(string token, string secretKey)
+        public FindITBot(string token, string secretKey, WebProxy proxy = null)
         {
-            _botClient = new TelegramBotClient(token, new WebProxy("173.212.204.122",3128));
+            _botClient = new TelegramBotClient(token, proxy);
             SecretKey = secretKey;
             Build();
         }
