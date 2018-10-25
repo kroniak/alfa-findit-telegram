@@ -34,14 +34,14 @@ namespace FindAlfaITBot.Controllers
                 return StatusCode(403);
 
             var sb = new StringBuilder();
-            sb.AppendLine("EMail;Name;Profession;University;Phone;Telegram;");
+            sb.AppendLine("EMail;Name;Profession;University;Course;Phone;Telegram;");
 
             var students = MongoDBHelper.All().Result;
             if (students.Count() > 0)
             {
                 foreach (var stud in students)
                 {
-                    sb.AppendLine($"{stud.EMail};{stud.Name};{stud.Profession};{stud.University};{stud.Phone};{stud.TelegramName};");
+                    sb.AppendLine($"{stud.EMail};{stud.Name};{stud.Profession};{stud.University};{stud.Course};{stud.Phone};{stud.TelegramName};");
                 }
             }
 
