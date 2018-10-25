@@ -18,7 +18,7 @@
         public static string AskProfessionMessage = "Ты у цели!\nУкажи желаемое направление для развития или укажите свой вариант";
         public static string EndOfAskingMessage = "Принято! Как только у нас появится подходящая вакансия, мы свяжемся с тобой.";
         public static string OpenDoorsInvitationMessage = @"Также мы проводим день открытых дверей в Альфа-Банке! Заинтересовался? Регистрируйся! http://goo.gl/djL48b";
-        public static string EndMessage = "Опрос завершен. Как только у нас появится подходящая вакансия, мы свяжемся с тобой.";
+        public static string EndMessage = "Опрос завершен. Как только у нас появится подходящая вакансия, мы свяжемся с тобой.\nТакже ты можешь узнать о наших вакансиях на сайте https://hr.alfabank.ru/vacancies";
         public static string WrongEMailMessage = "Хмм, это не выглядит как email.\nПопробуйте ещё раз.";
     }
 }
