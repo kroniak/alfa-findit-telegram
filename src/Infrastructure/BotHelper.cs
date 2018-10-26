@@ -22,7 +22,7 @@ namespace FindAlfaITBot.Infrastructure
         {
             return new ReplyKeyboardRemove { RemoveKeyboard = true };
         }
-        
+
         public static ReplyKeyboardMarkup GetKeyboardYesOrNo()
         {
             var yesButton = new KeyboardButton("Да");
@@ -33,9 +33,9 @@ namespace FindAlfaITBot.Infrastructure
                 new[] {yesButton},
                 new[] {noButton}
             };
-            return new ReplyKeyboardMarkup {Keyboard = keyboard};
+            return new ReplyKeyboardMarkup { Keyboard = keyboard };
         }
-        
+
         public static ReplyKeyboardMarkup GetKeyboardForCourse()
         {
             var junior = new KeyboardButton("1-3");
@@ -46,7 +46,7 @@ namespace FindAlfaITBot.Infrastructure
                 new[] {junior},
                 new[] {notJunior}
             };
-            return new ReplyKeyboardMarkup {Keyboard = keyboard};
+            return new ReplyKeyboardMarkup { Keyboard = keyboard };
         }
 
         public static ReplyKeyboardMarkup GetKeyboardForProfession()
@@ -56,7 +56,7 @@ namespace FindAlfaITBot.Infrastructure
             var javaScriptButton = new KeyboardButton("Разработка JavaScript");
             var analyticsButton = new KeyboardButton("Системная аналитика");
             var supportButton = new KeyboardButton("Системное сопровождение");
-            var testingButton = new KeyboardButton("Тестирование");
+            var testingButton = new KeyboardButton("Автотестирование");
 
 
             var keyboard = new[]
