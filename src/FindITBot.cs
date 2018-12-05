@@ -44,13 +44,13 @@ namespace FindAlfaITBot
             return this;
         }
 
-        public bool Ping()
-        {
-            return _botClient.IsReceiving;
-        }
+        public bool Ping() => _botClient.IsReceiving;
 
         private void OnMessageReceived(object sender, MessageEventArgs eventArgs)
         {
+            // Fix stickers and any other problems
+            if (eventArgs.Message.Type != MessageType.Text) return;
+
             var message = eventArgs.Message;
 
             CreateCommand(message).Execute();
@@ -59,27 +59,27 @@ namespace FindAlfaITBot
         private IMessageCommand CreateCommand(Message message)
         {
             var chatId = message.Chat.Id;
-            Student student = MongoDBHelper.GetStudent(chatId).Result;
+            var person = MongoDBHelper.GetPerson(chatId).Result;
 
-            if (student == null)
+            if (person == null)
                 return new CreateStudentCommand(_botClient, chatId);
-            if (message.Type == MessageType.ContactMessage)
+            if (message.Type == MessageType.Contact)
                 return new AddContactCommand(_botClient, chatId, message);
-            if (student.Phone == null)
+            if (person.Phone == null)
                 return new AskContactCommand(_botClient, chatId);
-            if (student.Name == null)
+            if (person.Name == null)
                 return new AddNameCommand(_botClient, chatId, message);
-            if (student.EMail == null)
+            if (person.EMail == null)
                 return new AddEMailCommand(_botClient, chatId, message);
-            if (student.Profession == null)
+            if (person.Profession == null)
                 return new AddProfessionCommand(_botClient, chatId, message);
-            if (student.IsStudent == null)
-                return  new  AskIsStudentCommand(_botClient, chatId, message);
-            if (student.IsAnswerAll.HasValue && student.IsAnswerAll.Value)
+            if (person.IsStudent == null)
+                return new AskIsStudentCommand(_botClient, chatId, message);
+            if (person.IsAnswerAll.HasValue && person.IsAnswerAll.Value)
                 return new EndCommand(_botClient, chatId);
-            if (student.University == null)
+            if (person.University == null)
                 return new AddUniversityCommand(_botClient, chatId, message);
-            if (student.Course == null)
+            if (person.Course == null)
                 return new AddCourceCommand(_botClient, chatId, message);
 
             return new EndCommand(_botClient, chatId);

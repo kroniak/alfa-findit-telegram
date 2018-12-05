@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace FindAlfaITBot.Models
 {
-    public class Student
+    public class Person
     {
         [BsonId]
         public ObjectId Id { get; set; }
