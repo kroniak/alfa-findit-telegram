@@ -39,3 +39,10 @@ docker-compose up -d
 `http://example.org:5000/export/json?secretKey=KEY`
 
 `http://example.org:5000/export/csv?secretKey=KEY`
+
+## Changes
+
+### 1.1
+
+- Обновлена версия dotnet core до 2.1
+- Обновлена сборка проекта до docker-compose 3 и images dotnet core 2.1
