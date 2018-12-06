@@ -18,10 +18,7 @@ namespace FindAlfaITBot.Infrastructure
             return new ReplyKeyboardMarkup { Keyboard = keyboardButton };
         }
 
-        public static ReplyKeyboardRemove GetRemoveKeyboard()
-        {
-            return new ReplyKeyboardRemove { RemoveKeyboard = true };
-        }
+        public static ReplyKeyboardRemove GetRemoveKeyboard() => new ReplyKeyboardRemove { Selective = true };
 
         public static ReplyKeyboardMarkup GetKeyboardYesOrNo()
         {

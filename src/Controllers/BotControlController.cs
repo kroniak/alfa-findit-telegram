@@ -20,15 +20,15 @@ namespace FindAlfaITBot.Controllers
                 return StatusCode(403);
 
             _bot.Start();
-            return Json("startted");
+            return Json("Bot startted");
         }
 
         [HttpGet]
-        public IActionResult StopBot(string secretKey)
+        public IActionResult Stop(string secretKey)
         {
             if (String.CompareOrdinal(_bot.SecretKey, secretKey) != 0)
                 return StatusCode(403);
-                
+
             _bot.Stop();
             return Json("Bot stopped");
         }

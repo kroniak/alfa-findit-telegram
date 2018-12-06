@@ -36,12 +36,12 @@ namespace FindAlfaITBot.Controllers
             var sb = new StringBuilder();
             sb.AppendLine("EMail;Name;Profession;University;Course;Phone;Telegram;");
 
-            var students = MongoDBHelper.All().Result;
-            if (students.Count() > 0)
+            var people = MongoDBHelper.All().Result;
+            if (people.Count() > 0)
             {
-                foreach (var stud in students)
+                foreach (var p in people)
                 {
-                    sb.AppendLine($"{stud.EMail};{stud.Name};{stud.Profession};{stud.University};{stud.Course};{stud.Phone};{stud.TelegramName};");
+                    sb.AppendLine($"{p.EMail};{p.Name};{p.Profession};{p.University};{p.Course};{p.Phone};{p.TelegramName};");
                 }
             }
 
