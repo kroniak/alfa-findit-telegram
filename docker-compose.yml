@@ -8,7 +8,7 @@ services:
       - ~/alfa-findit-telegram-data/:/data/db:rw
 
   bot:
-    image: alfabank/findit-telegram:1.1
+    image: alfabank/findit-telegram:1.2
     container_name: alfa-findit-telegram-prod
     restart: always
     depends_on:

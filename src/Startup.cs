@@ -59,7 +59,7 @@ namespace FindAlfaITBot
 
             Console.WriteLine($"Connection string is {MongoDBHelper.GetConnectionName}");
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSingleton<ITelegramBot>(_ => new FindITBot(token, secretKey, proxy).Start());
         }
 
