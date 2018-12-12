@@ -42,6 +42,11 @@ docker-compose up -d
 
 ## Changes
 
+### 1.2
+
+- Обновлена версия dotnet core до 2.2
+- Обновлена сборка проекта до images dotnet core 2.2
+
 ### 1.1
 
 - Обновлена версия dotnet core до 2.1
