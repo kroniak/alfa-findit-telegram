@@ -20,5 +20,6 @@
         public static string OpenDoorsInvitationMessage = @"Также мы проводим день открытых дверей в Альфа-Банке! Заинтересовался? Регистрируйся! http://goo.gl/djL48b";
         public static string EndMessage = "Опрос завершен. Как только у нас появится подходящая вакансия, мы свяжемся с тобой.\nТакже ты можешь узнать о наших вакансиях на сайте https://hr.alfabank.ru/vacancies";
         public static string WrongEMailMessage = "Хмм, это не выглядит как email.\nПопробуй ещё раз.";
+        public static string WrongMessage = "Хмм, это не то, что я хочу услышать.\nПопробуй ещё раз.";
     }
 }
