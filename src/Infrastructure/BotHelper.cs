@@ -46,6 +46,29 @@ namespace FindAlfaITBot.Infrastructure
             return new ReplyKeyboardMarkup { Keyboard = keyboard };
         }
 
+        public static ReplyKeyboardMarkup GetKeyboardForQuestions()
+        {
+            var aButton = new KeyboardButton("A");
+            var bButton = new KeyboardButton("B");
+            var cButton = new KeyboardButton("C");
+            var dButton = new KeyboardButton("D");
+
+            var keyboard = new[]
+            {
+                new[]
+                {
+                    aButton,
+                    bButton
+                },
+                new[]
+                {
+                    cButton,
+                    dButton
+                }
+            };
+            return new ReplyKeyboardMarkup { Keyboard = keyboard };
+        }
+
         public static ReplyKeyboardMarkup GetKeyboardForProfession()
         {
             var dotnetButton = new KeyboardButton("Разработка .NET");
