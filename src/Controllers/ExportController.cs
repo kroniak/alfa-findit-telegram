@@ -68,12 +68,10 @@ namespace FindAlfaITBot.Controllers
             sb.AppendLine("Name;Phone;Telegram;Points");
 
             var results = MongoDBHelper.AllResults().Result;
-            if (results.Count() > 0)
+
+            foreach (var res in results)
             {
-                foreach (var res in results)
-                {
-                    sb.AppendLine($"{res.Person.Name};{res.Person.Phone};{res.Person.TelegramName};{res.Points};");
-                }
+                sb.AppendLine($"{res.Person.Name};{res.Person.Phone};{res.Person.TelegramName};{res.Points};");
             }
 
             return File(System.Text.Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "results.csv");

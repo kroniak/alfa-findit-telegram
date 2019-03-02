@@ -99,7 +99,7 @@ namespace FindAlfaITBot
                 if (person.Course == null)
                     return new AddCourceCommand(_botClient, chatId, message);
 
-                if (result.Questions == null || result.Questions.Count <= GetCountQuestion())
+                if (result.Questions?.Count <= GetCountQuestion())
                 {
                     return new AskQuestionCommand(_botClient, chatId, message);
                 }

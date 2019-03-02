@@ -11,6 +11,7 @@ namespace FindAlfaITBot.Models
         public long ChatId { get; set; }
         public string Answer { get; set; }
         public bool IsPicture { get; set; }
+        public string Message { get; set; }
         public double Point { get; set; }
     }
 }
