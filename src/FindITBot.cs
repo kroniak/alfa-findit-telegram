@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Linq;
 using FindAlfaITBot.Implementation.BotCommands;
 using FindAlfaITBot.Infrastructure;
 using FindAlfaITBot.Interfaces;
@@ -47,17 +48,31 @@ namespace FindAlfaITBot
         public bool Ping() => _botClient.IsReceiving;
 
         private void OnMessageReceived(object sender, MessageEventArgs eventArgs)
-            => CreateCommand(eventArgs.Message).Execute();
+        {
+            var message = eventArgs.Message;
+            // Fix other message
+            switch (message.Type)
+            {
+                case MessageType.Contact:
+                case MessageType.Text:
+                    {
+                        CreateCommand(message).Execute();
+                        break;
+                    }
+                default:
+                    {
+                        new WrongCommand(_botClient, message.Chat.Id);
+                        break;
+                    }
+            }
+        }
+
 
         private IMessageCommand CreateCommand(Message message)
         {
             var chatId = message.Chat.Id;
-
-            // Fix stickers and any other problems
-            if (message.Type != MessageType.Text
-                && message.Type != MessageType.Contact) return new WrongCommand(_botClient, chatId);
-
             var person = MongoDBHelper.GetPerson(chatId).Result;
+            Result result = MongoDBHelper.GetResult(chatId).Result;
 
             if (person == null)
                 return new CreateStudentCommand(_botClient, chatId);
@@ -83,10 +98,21 @@ namespace FindAlfaITBot
                     return new AddUniversityCommand(_botClient, chatId, message);
                 if (person.Course == null)
                     return new AddCourceCommand(_botClient, chatId, message);
+
+                if (result.Questions?.Count <= GetCountQuestion())
+                {
+                    return new AskQuestionCommand(_botClient, chatId, message);
+                }
             }
             else return new WrongCommand(_botClient, chatId);
 
             return new EndCommand(_botClient, chatId);
+        }
+
+        private int GetCountQuestion()
+        {
+            var questions = MongoDBHelper.AllQuestion().Result;
+            return questions.Count();
         }
     }
 }
