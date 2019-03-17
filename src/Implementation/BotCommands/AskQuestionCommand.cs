@@ -18,7 +18,7 @@ namespace FindAlfaITBot.Implementation.BotCommands
 
         public AskQuestionCommand(TelegramBotClient botClient, long chatId, Message message)
         {
-            _botClient = botClient ?? throw new Exception();
+            _botClient = botClient ?? throw new Exception("BotClient is null");
             _chatId = chatId;
             _message = message;
         }
@@ -38,17 +38,14 @@ namespace FindAlfaITBot.Implementation.BotCommands
                     await MongoDBHelper.UpdateEnd(_chatId);
                     return;
                 }
-                else
-                {
-                    return;
-                }
+                return;
             }
 
             var question = MongoDBHelper.GetQuestion(countResolvedQuestion.ToString()).Result;
 
             var answer = _message.Text;
 
-            if (!IsAnswerValid(answer, question))
+            if (IsAnswerValid(answer, question) == 0)
             {
                 question.Point = 0;
             }
@@ -82,9 +79,9 @@ namespace FindAlfaITBot.Implementation.BotCommands
             }
         }
 
-        private bool IsAnswerValid(string answer, Question question)
+        private int IsAnswerValid(string answer, Question question)
         {
-            return Convert.ToBoolean(string.Compare(answer, question.Answer));
+            return string.Compare(answer, question.Answer);
         }
     }
 }

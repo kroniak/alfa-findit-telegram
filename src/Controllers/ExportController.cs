@@ -24,7 +24,7 @@ namespace FindAlfaITBot.Controllers
             if (String.CompareOrdinal(_bot.SecretKey, secretKey) != 0)
                 return StatusCode(403);
 
-            return Json(MongoDBHelper.All().Result);
+            return Ok(MongoDBHelper.All().Result);
         }
 
         [HttpGet]
