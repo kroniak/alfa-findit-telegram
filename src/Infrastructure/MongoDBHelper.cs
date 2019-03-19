@@ -20,6 +20,8 @@ namespace FindAlfaITBot.Infrastructure
         private static IMongoCollection<Question> _question;
         private static IMongoCollection<Result> _result;
 
+        private static IMongoCollection<RegistryQueue> _registry;
+
         public static string GetConnectionName => $"{_connectionString}:{_dbName}";
 
         public static void Configure(string connectionString, string dbName)
@@ -52,6 +54,9 @@ namespace FindAlfaITBot.Infrastructure
 
         public static IMongoCollection<Result> Result
             => _result ?? (_result = Database.GetCollection<Result>("Results"));
+
+        public static IMongoCollection<RegistryQueue> Registry
+            => _registry ?? (_registry = Database.GetCollection<RegistryQueue>("RegistryQueue"));
 
         public static async void AddPerson(Person student)
             => await Collection.InsertOneAsync(student);
@@ -219,5 +224,45 @@ namespace FindAlfaITBot.Infrastructure
 
             return await Result.UpdateOneAsync(filterResult, update);
         }
+
+        public static async void AddRegistryQueue(long chatId)
+        {
+            RegistryQueue registry = new RegistryQueue()
+            {
+                ChatId = chatId,
+                Position = 0,
+                IsFullRegistry = false
+            };
+
+            await Registry.InsertOneAsync(registry);
+        }
+
+        public static async Task<RegistryQueue> GetRegistry(long chatId)
+        {
+            var filter = Builders<RegistryQueue>.Filter.Eq(p => p.ChatId, chatId);
+            return await Registry.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public static async Task<UpdateResult> UpdateRegistryPosition(long chatId, int position)
+        {
+            var filterResult = Builders<RegistryQueue>.Filter.Eq(_ => _.ChatId, chatId);
+
+            var update = Builders<RegistryQueue>.Update
+                .Set(x => x.Position, position);
+
+            return await Registry.UpdateOneAsync(filterResult, update);
+        }
+
+        public static async Task<UpdateResult> UpdateIsFullRegistry(long chatId)
+        {
+            var filterResult = Builders<RegistryQueue>.Filter.Eq(_ => _.ChatId, chatId);
+
+            var update = Builders<RegistryQueue>.Update
+                .Set(x => x.IsFullRegistry, true);
+
+            return await Registry.UpdateOneAsync(filterResult, update);
+        }
+
+
     }
 }
