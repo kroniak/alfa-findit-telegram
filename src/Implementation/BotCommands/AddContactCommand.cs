@@ -27,7 +27,7 @@ namespace FindAlfaITBot.Implementation.BotCommands
 
             var keyboardRemove = BotHelper.GetRemoveKeyboard();
 
-            await MongoDBHelper.SaveContact(_chatId, phone, telegramName);
+            await MongoDBHelperQuestion.SaveContact(_chatId, phone, telegramName);
             await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskNameMessage, replyMarkup: keyboardRemove);
         }
     }
