@@ -23,7 +23,7 @@ namespace FindAlfaITBot.Implementation.BotCommands
         {
             var studentName = _message.Text;
 
-            await MongoDBHelper.SaveName(_chatId, studentName);
+            await MongoDBHelperQuestion.SaveName(_chatId, studentName);
             await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskEmailMessage);
         }
     }

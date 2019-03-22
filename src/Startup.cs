@@ -53,11 +53,11 @@ namespace FindAlfaITBot
             var proxy = GetProxy(proxyAddress, proxyPort);
 
 
-            MongoDBHelper.ConfigureConnection(connection);
+            MongoDBHelperQuestion.ConfigureConnection(connection);
 
             InitDB();
 
-            Console.WriteLine($"Connection string is {MongoDBHelper.GetConnectionName}");
+            Console.WriteLine($"Connection string is {MongoDBHelperQuestion.GetConnectionName}");
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSingleton<ITelegramBot>(_ => new FindITBot(token, secretKey, proxy).Start());
@@ -93,7 +93,7 @@ namespace FindAlfaITBot
 
         private static void InitDB()
         {
-            var people = MongoDBHelper.All().Result;
+            var people = MongoDBHelperQuestion.All().Result;
 
             if (people.Count() == 0)
             {
@@ -105,8 +105,8 @@ namespace FindAlfaITBot
                     University = "sgu"
                 };
 
-                MongoDBHelper.AddPerson(person);
-                people = MongoDBHelper.All().Result;
+                MongoDBHelperQuestion.AddPerson(person);
+                people = MongoDBHelperQuestion.All().Result;
 
                 if (people.Count() == 0)
                     throw new Exception("Fail to start DB");

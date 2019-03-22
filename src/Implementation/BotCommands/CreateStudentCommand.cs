@@ -2,7 +2,6 @@
 using FindAlfaITBot.Infrastructure;
 using FindAlfaITBot.Interfaces;
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace FindAlfaITBot.Implementation.BotCommands
 {
@@ -19,7 +18,7 @@ namespace FindAlfaITBot.Implementation.BotCommands
 
         public async void Execute()
         {
-            MongoDBHelper.AddPerson(_chatId);
+            MongoDBHelperQuestion.AddPerson(_chatId);
             var keyboardMarkup = BotHelper.GetKeyBoardForContact();
             await _botClient.SendTextMessageAsync(_chatId, MessageFactory.WelcomeMessage, replyMarkup:keyboardMarkup);
         }
