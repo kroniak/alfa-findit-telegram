@@ -35,7 +35,7 @@ namespace FindAlfaITBot.Implementation.BotCommands
                 isAnsweredAllQuestions = true;
             }
 
-            await MongoDBHelperQuestion.SavePersonOrWorkerInfo(_chatId, isStudent, isAnsweredAllQuestions);
+            await MongoDBHelperUser.SavePersonOrWorkerInfo(_chatId, isStudent, isAnsweredAllQuestions);
 
             if (!isStudent.HasValue)
                 await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskIsStudentMessage,

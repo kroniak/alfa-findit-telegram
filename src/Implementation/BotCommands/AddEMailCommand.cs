@@ -30,7 +30,7 @@ namespace FindAlfaITBot.Implementation.BotCommands
                 return;
             }
 
-            await MongoDBHelperQuestion.SaveEmail(_chatId, email);
+            await MongoDBHelperUser.SaveEmail(_chatId, email);
 
             await _botClient.SendTextMessageAsync(_chatId, MessageFactory.AskProfessionMessage,
                 replyMarkup: BotHelper.GetKeyboardForProfession());
