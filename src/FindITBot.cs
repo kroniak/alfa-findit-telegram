@@ -71,8 +71,8 @@ namespace FindAlfaITBot
         private IMessageCommand CreateCommand(Message message)
         {
             var chatId = message.Chat.Id;
-            var person = MongoDBHelper.GetPerson(chatId).Result;
-            Result result = MongoDBHelper.GetResult(chatId).Result;
+            var person = MongoDBHelperQuestion.GetPerson(chatId).Result;
+            Result result = MongoDBHelperQuestion.GetResult(chatId).Result;
 
             if (person == null)
                 return new CreateStudentCommand(_botClient, chatId);
@@ -111,7 +111,7 @@ namespace FindAlfaITBot
 
         private int GetCountQuestion()
         {
-            var questions = MongoDBHelper.AllQuestion().Result;
+            var questions = MongoDBHelperQuestion.AllQuestion().Result;
             return questions.Count();
         }
     }

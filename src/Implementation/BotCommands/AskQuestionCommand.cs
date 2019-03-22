@@ -25,23 +25,23 @@ namespace FindAlfaITBot.Implementation.BotCommands
 
         public async void Execute()
         {
-            var countResolvedQuestion = MongoDBHelper.GetResult(_chatId).Result.Questions.Count;
-            var countAllQuestion = MongoDBHelper.AllQuestion().Result.Count();
+            var countResolvedQuestion = MongoDBHelperQuestion.GetResult(_chatId).Result.Questions.Count;
+            var countAllQuestion = MongoDBHelperQuestion.AllQuestion().Result.Count();
 
             if (countResolvedQuestion == countAllQuestion)
             {
-                var isEnd = MongoDBHelper.GetResult(_chatId).Result.isEnd;
+                var isEnd = MongoDBHelperQuestion.GetResult(_chatId).Result.isEnd;
                 if (!isEnd)
                 {
                     await _botClient.SendTextMessageAsync(_chatId, MessageFactory.EndMessage,
                         replyMarkup: BotHelper.GetRemoveKeyboard());
-                    await MongoDBHelper.UpdateEnd(_chatId);
+                    await MongoDBHelperQuestion.UpdateEnd(_chatId);
                     return;
                 }
                 return;
             }
 
-            var question = MongoDBHelper.GetQuestion(countResolvedQuestion.ToString()).Result;
+            var question = MongoDBHelperQuestion.GetQuestion(countResolvedQuestion.ToString()).Result;
 
             var answer = _message.Text;
 
@@ -50,22 +50,22 @@ namespace FindAlfaITBot.Implementation.BotCommands
                 question.Point = 0;
             }
 
-            await MongoDBHelper.SaveResultForUser(_chatId, question);
-            var newCountResolvedQuestion = MongoDBHelper.GetResult(_chatId).Result.Questions.Count;
+            await MongoDBHelperQuestion.SaveResultForUser(_chatId, question);
+            var newCountResolvedQuestion = MongoDBHelperQuestion.GetResult(_chatId).Result.Questions.Count;
 
             if (newCountResolvedQuestion == countAllQuestion)
             {
-                await MongoDBHelper.UpdatePoints(_chatId);
-                var points = MongoDBHelper.GetResult(_chatId).Result.Points;
+                await MongoDBHelperQuestion.UpdatePoints(_chatId);
+                var points = MongoDBHelperQuestion.GetResult(_chatId).Result.Points;
                 await _botClient.SendTextMessageAsync(_chatId, MessageFactory.EndMessage
                     + "\nВаш результат: " + points,
                     replyMarkup: BotHelper.GetRemoveKeyboard());
 
-                await MongoDBHelper.UpdateEnd(_chatId);
+                await MongoDBHelperQuestion.UpdateEnd(_chatId);
                 return;
             }
 
-            var nextQuestion = MongoDBHelper.GetQuestion(newCountResolvedQuestion.ToString()).Result;
+            var nextQuestion = MongoDBHelperQuestion.GetQuestion(newCountResolvedQuestion.ToString()).Result;
 
             if (nextQuestion.IsPicture)
             {
