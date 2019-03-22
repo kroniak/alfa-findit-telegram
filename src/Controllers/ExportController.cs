@@ -24,7 +24,7 @@ namespace FindAlfaITBot.Controllers
             if (String.CompareOrdinal(_bot.SecretKey, secretKey) != 0)
                 return StatusCode(403);
 
-            return Json(MongoDBHelper.All().Result);
+            return Ok(MongoDBHelperQuestion.All().Result);
         }
 
         [HttpGet]
@@ -36,7 +36,7 @@ namespace FindAlfaITBot.Controllers
             var sb = new StringBuilder();
             sb.AppendLine("EMail;Name;Profession;University;Course;Phone;Telegram;");
 
-            var people = MongoDBHelper.All().Result;
+            var people = MongoDBHelperQuestion.All().Result;
             if (people.Count() > 0)
             {
                 foreach (var p in people)
@@ -46,6 +46,35 @@ namespace FindAlfaITBot.Controllers
             }
 
             return File(System.Text.Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "data.csv");
+        }
+
+        [HttpGet]
+        public IActionResult JsonResults(string secretKey)
+        {
+            if (String.CompareOrdinal(_bot.SecretKey, secretKey) != 0)
+                return StatusCode(403);
+
+            return Json(MongoDBHelperQuestion.AllResults().Result);
+        }
+
+        [HttpGet]
+        public IActionResult CsvResult(string secretKey)
+        {
+            if (String.CompareOrdinal(_bot.SecretKey, secretKey) != 0)
+                return StatusCode(403);
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine("Name;Phone;Telegram;Points");
+
+            var results = MongoDBHelperQuestion.AllResults().Result;
+
+            foreach (var res in results)
+            {
+                sb.AppendLine($"{res.Person.Name};{res.Person.Phone};{res.Person.TelegramName};{res.Points};");
+            }
+
+            return File(System.Text.Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "results.csv");
         }
     }
 }
