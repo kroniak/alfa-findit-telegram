@@ -18,7 +18,7 @@ namespace FindAlfaITBot.Implementation.BotCommands
 
         public async void Execute()
         {
-            MongoDBHelperQuestion.AddPerson(_chatId);
+            MongoDBHelperUser.AddPerson(_chatId);
             var keyboardMarkup = BotHelper.GetKeyBoardForContact();
             await _botClient.SendTextMessageAsync(_chatId, MessageFactory.WelcomeMessage, replyMarkup:keyboardMarkup);
         }

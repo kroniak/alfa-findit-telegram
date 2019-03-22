@@ -39,7 +39,7 @@ namespace FindAlfaITBot.Implementation.BotCommands
                 isAnsweredAllQuestions = true;
             }
 
-            await MongoDBHelperQuestion.SaveCourse(_chatId, isYoung.HasValue ? course : null, isAnsweredAllQuestions);
+            await MongoDBHelperUser.SaveCourse(_chatId, isYoung.HasValue ? course : null, isAnsweredAllQuestions);
             if (isYoung.HasValue)
             {
                 await _botClient.SendTextMessageAsync(_chatId, MessageFactory.EndOfAskingMessage, replyMarkup: BotHelper.GetRemoveKeyboard());
