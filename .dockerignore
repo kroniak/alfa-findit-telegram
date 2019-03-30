@@ -1,0 +1,8 @@
+scripts
+bin
+obj
+logs
+Dockerfile
+docker-compose.*
+LICENSE
+*.md
