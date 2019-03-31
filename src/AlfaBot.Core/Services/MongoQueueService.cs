@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AlfaBot.Core.Data;
+using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
 using AlfaBot.Core.Services.Interfaces;
 using MongoDB.Bson;
@@ -15,12 +16,16 @@ namespace AlfaBot.Core.Services
     /// <inheritdoc />
     public class MongoQueueService : IQueueService
     {
+        private readonly ILogRepository _logRepository;
         private readonly IMongoCollection<QueueMessage> _queue;
         private readonly IMongoQueryable<QueueMessage> _queryable;
 
-        public MongoQueueService(IMongoDatabase database)
+        public MongoQueueService(
+            IMongoDatabase database,
+            ILogRepository logRepository)
         {
             if (database == null) throw new ArgumentNullException(nameof(database));
+            _logRepository = logRepository ?? throw new ArgumentNullException(nameof(logRepository));
 
             _queue = database.GetCollection<QueueMessage>(DbConstants.QueueCollectionName);
             _queryable = _queue.AsQueryable();
@@ -34,6 +39,11 @@ namespace AlfaBot.Core.Services
             if (CheckMessageExist(message.ChatId) == null)
             {
                 _queue.InsertOne(message);
+                _logRepository.SaveQueuedTime(message.IncomeMessageId, DateTime.Now);
+            }
+            else
+            {
+                _logRepository.SaveEndedTime(message.IncomeMessageId, DateTime.Now);
             }
         }
 
@@ -59,12 +69,13 @@ namespace AlfaBot.Core.Services
         private DateTime PriorityTime(bool isPriority)
         {
             var id = _queryable
-                .Where(q => q.IsHighPriority==isPriority)
+                .Where(q => q.IsHighPriority == isPriority)
                 .OrderBy(q => q.Id)
                 .Select(q => q.Id).FirstOrDefault();
-            
+
             return id.CreationTime;
         }
+
         private IEnumerable<QueueMessage> GetTopMessages(bool isPriority, int limit)
         {
             if (limit <= 0) throw new ArgumentOutOfRangeException(nameof(limit));

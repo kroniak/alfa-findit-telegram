@@ -16,5 +16,9 @@ namespace AlfaBot.Core.Data.Interfaces
         IEnumerable<LogRecord> GetRecords(int messageId);
 
         void SaveQueueMessage(int messageId, QueueMessage queueMessage, DateTime end);
+
+        void SaveQueuedTime(int messageId, DateTime queued);
+
+        void SaveEndedTime(int messageId, DateTime ended);
     }
 }

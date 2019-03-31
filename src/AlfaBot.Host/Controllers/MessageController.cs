@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using AlfaBot.Core.Services.Interfaces;
 using AlfaBot.Host.Model;
@@ -46,7 +47,7 @@ namespace AlfaBot.Host.Controllers
         [ProducesDefaultResponseType]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddText([FromBody] TextMessageDto message)
+        public IActionResult Text([FromBody][Required] TextMessageDto message)
         {
             if (!ModelState.IsValid)
             {

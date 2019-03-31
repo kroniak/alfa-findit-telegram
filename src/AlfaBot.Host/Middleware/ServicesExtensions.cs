@@ -4,7 +4,6 @@ using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Services;
 using AlfaBot.Core.Services.Commands;
 using AlfaBot.Core.Services.Interfaces;
-using FindAlfaITBot.Services.Commands;
 using Microsoft.Extensions.DependencyInjection;
 #pragma warning disable 1591
 

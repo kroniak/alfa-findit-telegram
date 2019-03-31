@@ -44,7 +44,6 @@ namespace AlfaBot.Host.HealthCheckers
         /// </summary>
         /// <param name="services">IServiceCollection</param>
         /// <param name="configuration">Current configuration root</param>
-        /// <param name="bot"></param>
         /// <returns>IHealthChecksBuilder instance</returns>
         public static void AddCustomHealthChecks(
             this IServiceCollection services,

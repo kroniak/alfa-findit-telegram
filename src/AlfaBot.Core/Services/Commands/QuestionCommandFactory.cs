@@ -2,29 +2,28 @@
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Factories;
 using AlfaBot.Core.Models;
-using AlfaBot.Core.Services;
 using AlfaBot.Core.Services.Interfaces;
 using Telegram.Bot.Types;
 using User = AlfaBot.Core.Models.User;
 
-namespace FindAlfaITBot.Services.Commands
+namespace AlfaBot.Core.Services.Commands
 {
     public class QuestionCommandFactory : IQuestionCommandFactory
     {
         private readonly IQueueService _queueService;
         private readonly IQuizResultRepository _resultRepository;
-        private readonly IQuestionRepository _questionRepository;
+//        private readonly IQuestionRepository _questionRepository;
         private readonly IUserRepository _userRepository;
 
         public QuestionCommandFactory(
             IQueueService queueService,
             IQuizResultRepository resultRepository,
-            IQuestionRepository questionRepository,
+//            IQuestionRepository questionRepository,
             IUserRepository userRepository)
         {
             _queueService = queueService ?? throw new ArgumentNullException(nameof(queueService));
             _resultRepository = resultRepository ?? throw new ArgumentNullException(nameof(resultRepository));
-            _questionRepository = questionRepository ?? throw new ArgumentNullException(nameof(questionRepository));
+//            _questionRepository = questionRepository ?? throw new ArgumentNullException(nameof(questionRepository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 

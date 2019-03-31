@@ -4,7 +4,9 @@ using MongoDB.Driver;
 
 namespace AlfaBot.Core.Data.Interfaces
 {
-    /// <inheritdoc />
+    /// <summary>
+    /// User Mongodb repository
+    /// </summary>
     public interface IUserRepository
     {
         IEnumerable<User> All();

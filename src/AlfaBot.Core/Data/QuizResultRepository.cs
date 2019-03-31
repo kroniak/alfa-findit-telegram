@@ -38,7 +38,7 @@ namespace AlfaBot.Core.Data
             {
                 User = user,
                 Points = 0,
-                isEnd = false
+                IsEnd = false
             };
 
             _results.InsertOne(result);
@@ -88,7 +88,7 @@ namespace AlfaBot.Core.Data
         public UpdateResult UpdateEnd(long chatId)
         {
             var update = Builders<QuizResult>.Update
-                .Set(x => x.isEnd, true);
+                .Set(x => x.IsEnd, true);
 
             return _results.UpdateOne(GlobalChatIdFilter(chatId), update);
         }

@@ -14,7 +14,7 @@ namespace AlfaBot.Core.Services
     public class AlfaBankBot : IAlfaBankBot
     {
         private readonly IUserRepository _users;
-        private readonly IQuizResultRepository _resultRepository;
+//        private readonly IQuizResultRepository _resultRepository;
         private readonly ILogRepository _logRepository;
         private readonly IGeneralCommandsFactory _generalCommandsFactory;
         private readonly IQuestionCommandFactory _questionCommandFactory;
@@ -24,14 +24,14 @@ namespace AlfaBot.Core.Services
         public AlfaBankBot(
             ITelegramBotClient botClient,
             IUserRepository users,
-            IQuizResultRepository resultRepository,
+//            IQuizResultRepository resultRepository,
             ILogRepository logRepository,
             IGeneralCommandsFactory generalCommandsFactory,
             IQuestionCommandFactory questionCommandFactory,
             ILogger<AlfaBankBot> logger)
         {
             _users = users ?? throw new ArgumentNullException(nameof(users));
-            _resultRepository = resultRepository ?? throw new ArgumentNullException(nameof(resultRepository));
+//            _resultRepository = resultRepository ?? throw new ArgumentNullException(nameof(resultRepository));
             _logRepository = logRepository ?? throw new ArgumentNullException(nameof(logRepository));
             _generalCommandsFactory =
                 generalCommandsFactory ?? throw new ArgumentNullException(nameof(generalCommandsFactory));

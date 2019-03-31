@@ -50,7 +50,25 @@ namespace AlfaBot.Core.Data
             var filter = GlobalMessageIdFilter(messageId);
             var update = Builders<LogRecord>.Update
                 .Set(p => p.QueueMessage, queueMessage)
-                .Set(p => p.End, end);
+                .Set(p => p.Ended, end);
+
+            _log.UpdateOne(filter, update);
+        }
+
+        public void SaveQueuedTime(int messageId, DateTime queued)
+        {
+            var filter = GlobalMessageIdFilter(messageId);
+            var update = Builders<LogRecord>.Update
+                .Set(p => p.Queued, queued);
+
+            _log.UpdateOne(filter, update);
+        }
+        
+        public void SaveEndedTime(int messageId, DateTime ended)
+        {
+            var filter = GlobalMessageIdFilter(messageId);
+            var update = Builders<LogRecord>.Update
+                .Set(p => p.Ended, ended);
 
             _log.UpdateOne(filter, update);
         }
