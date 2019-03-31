@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Threading.Tasks;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Args;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -13,16 +14,27 @@ namespace AlfaBot.Core.Services
     public class AlfaBankBot : IAlfaBankBot
     {
         private readonly IUserRepository _users;
-        private readonly ICommandFactory _commandFactory;
+        private readonly IQuizResultRepository _resultRepository;
+        private readonly IGeneralCommandsFactory _generalCommandsFactory;
+        private readonly IQuestionCommandFactory _questionCommandFactory;
+        private readonly ILogger<AlfaBankBot> _logger;
         private readonly ITelegramBotClient _botClient;
 
         public AlfaBankBot(
             ITelegramBotClient botClient,
             IUserRepository users,
-            ICommandFactory commandFactory)
+            IQuizResultRepository resultRepository,
+            IGeneralCommandsFactory generalCommandsFactory,
+            IQuestionCommandFactory questionCommandFactory,
+            ILogger<AlfaBankBot> logger)
         {
             _users = users ?? throw new ArgumentNullException(nameof(users));
-            _commandFactory = commandFactory ?? throw new ArgumentNullException(nameof(commandFactory));
+            _resultRepository = resultRepository ?? throw new ArgumentNullException(nameof(resultRepository));
+            _generalCommandsFactory =
+                generalCommandsFactory ?? throw new ArgumentNullException(nameof(generalCommandsFactory));
+            _questionCommandFactory =
+                questionCommandFactory ?? throw new ArgumentNullException(nameof(questionCommandFactory));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _botClient = botClient ?? throw new ArgumentNullException(nameof(botClient));
 
             Build();
@@ -32,19 +44,36 @@ namespace AlfaBot.Core.Services
 
         public void Start()
         {
-            if (!_botClient.IsReceiving)
+            if (_botClient.IsReceiving) return;
+
+            try
             {
                 _botClient.StartReceiving();
+                _logger.LogInformation("BotClient StartReceiving");
+            }
+            catch (ApiRequestException e)
+            {
+                _logger.LogCritical("This api key is invalid.", e);
+                throw;
             }
         }
 
-        public void Stop() => _botClient.StopReceiving();
+        public void Stop()
+        {
+            _botClient.StopReceiving();
+            _logger.LogInformation("BotClient StopReceiving");
+        }
 
         public bool Ping() => _botClient.IsReceiving;
 
-        private async void OnMessageReceived(object sender, MessageEventArgs eventArgs)
+        public bool MessageHandler(Message message)
         {
-            var message = eventArgs.Message;
+            var chatId = message.Chat.Id;
+            var type = Enum.GetName(typeof(MessageType), message.Type);
+
+            _logger.LogInformation($"[{chatId}] [{type}] [{message.Text ?? ""}] Received message");
+
+            Action action;
 
             // Fix other highPriorityMessage
             switch (message.Type)
@@ -52,59 +81,75 @@ namespace AlfaBot.Core.Services
                 case MessageType.Contact:
                 case MessageType.Text:
                 {
-                    var action = await CreateCommandAsync(message);
-                    action.Invoke();
+                    action = CreateCommand(message);
                     break;
                 }
                 default:
                 {
-                    var action = _commandFactory.WrongCommand(message.Chat.Id);
-                    action.Invoke();
+                    action = _generalCommandsFactory.WrongCommand(chatId);
                     break;
                 }
             }
+
+            try
+            {
+                action.Invoke();
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"[{chatId}] [{type}] [{message.Text ?? ""}] MessageHandlerAsync Error.", e);
+                return false;
+            }
         }
 
-        private async Task<Action> CreateCommandAsync(Message message)
+        private void OnMessageReceived(object sender, MessageEventArgs eventArgs)
+        {
+            var message = eventArgs.Message;
+
+            MessageHandler(message);
+        }
+
+        private Action CreateCommand(Message message)
         {
             var chatId = message.Chat.Id;
-            var user = await _users.GetAsync(chatId);
-
-//            Result result = Question.GetResult(chatId).Result;
+            var user = _users.Get(chatId);
 
             if (user == null)
-                return _commandFactory.CreateStudentCommand(chatId);
+                return _generalCommandsFactory.CreateStudentCommand(chatId);
 
             if (message.Type == MessageType.Contact && user.Phone is null)
-                return _commandFactory.AddContactCommand(chatId, message);
+                return _generalCommandsFactory.AddContactCommand(chatId, message);
 
             if (message.Type != MessageType.Contact)
             {
                 if (user.Phone == null)
-                    return _commandFactory.ContactCommand(chatId);
+                    return _generalCommandsFactory.ContactCommand(chatId);
                 if (user.Name == null)
-                    return _commandFactory.AddNameCommand(chatId, message);
+                    return _generalCommandsFactory.AddNameCommand(chatId, message);
                 if (user.EMail == null)
-                    return _commandFactory.AddEMailCommand(chatId, message);
+                    return _generalCommandsFactory.AddEMailCommand(chatId, message);
                 if (user.Profession == null)
-                    return _commandFactory.AddProfessionCommand(chatId, message);
+                    return _generalCommandsFactory.AddProfessionCommand(chatId, message);
                 if (user.IsStudent == null)
-                    return _commandFactory.IsStudentCommand(chatId, message);
+                    return _generalCommandsFactory.IsStudentCommand(chatId, message);
                 if (user.IsAnsweredAll.HasValue && user.IsAnsweredAll.Value)
-                    return _commandFactory.EndCommand(chatId);
+                    return _generalCommandsFactory.EndCommand(chatId);
                 if (user.University == null)
-                    return _commandFactory.AddUniversityCommand(chatId, message);
+                    return _generalCommandsFactory.AddUniversityCommand(chatId, message);
                 if (user.Course == null)
-                    return _commandFactory.AddCourseCommand(chatId, message);
+                    return _generalCommandsFactory.AddCourseCommand(chatId, message);
 
-//                if (result.Questions?.Count <= GetCountQuestion())
-//                {
-//                    return new AskQuestionCommand(_botClient, chatId, highPriorityMessage);
-//                }
+                var quizResult = _resultRepository.GetResult(chatId);
+                if (quizResult.isEnd)
+                {
+                    return _questionCommandFactory.EndQuestionCommand(chatId);
+                }
+
+                return _questionCommandFactory.QuestionCommand(quizResult);
             }
-            else return _commandFactory.WrongCommand(chatId);
 
-            return _commandFactory.EndCommand(chatId);
+            return _generalCommandsFactory.WrongCommand(chatId);
         }
 
 //        private int GetCountQuestion()

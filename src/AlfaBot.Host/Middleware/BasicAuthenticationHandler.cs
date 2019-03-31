@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -12,10 +13,12 @@ using Microsoft.Extensions.Options;
 namespace AlfaBot.Host.Middleware
 {
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private readonly string _secretKey;
 
+        /// <inheritdoc />
         public BasicAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
@@ -33,6 +36,7 @@ namespace AlfaBot.Host.Middleware
             _secretKey = configuration["SECRETKEY"];
         }
 
+        /// <inheritdoc />
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var secret = Request.Query["secretkey"];
@@ -51,7 +55,7 @@ namespace AlfaBot.Host.Middleware
             {
                 new Claim(ClaimTypes.Name, "Default Admin User")
             };
-            
+
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);

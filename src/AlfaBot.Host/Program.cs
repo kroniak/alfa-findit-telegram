@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Serilog;
 using Serilog.Events;
 
+#pragma warning disable 1591
+
 // ReSharper disable ClassNeverInstantiated.Global
 
 namespace AlfaBot.Host
@@ -23,8 +25,9 @@ namespace AlfaBot.Host
                         .WriteTo.Console(
                             LogEventLevel.Warning,
                             "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}")
-                        .WriteTo.RollingFile("./logs/alfabank-service-api-{Hour}.log",
-                            LogEventLevel.Debug)
+                        .WriteTo.RollingFile("./logs/alfabank-bot-{Hour}.log",
+                            LogEventLevel.Debug,
+                            "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Properties}{NewLine}{Exception}")
                         .CreateLogger();
                 })
                 .UseStartup<Startup>()

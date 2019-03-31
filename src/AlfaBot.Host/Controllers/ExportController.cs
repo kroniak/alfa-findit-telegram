@@ -11,9 +11,13 @@
 //{
 //    [Authorize]
 //    [ApiController]
-//    [Route("api/[controller]/[action]")]
+//    [ApiVersion("1.0")]
+//[Route("api/v{version:apiVersion}/[controller]/[action]")]
+//[Produces("application/json")]
 //    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 //    [BindProperties]
+//[ExcludeFromCodeCoverage]
+
 //    public class ExportController : ControllerBase
 //    {
 //        private readonly IAlfaBankBot _bot;

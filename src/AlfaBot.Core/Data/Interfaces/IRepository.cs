@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AlfaBot.Core.Data.Interfaces
 {
@@ -11,6 +10,6 @@ namespace AlfaBot.Core.Data.Interfaces
     {
         IEnumerable<T> All();
 
-        Task AddAsync(T item);
+        void Add(T item);
     }
 }

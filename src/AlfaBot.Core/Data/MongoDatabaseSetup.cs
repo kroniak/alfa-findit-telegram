@@ -12,8 +12,19 @@ namespace AlfaBot.Core.Data
         public static IMongoDatabase Init(this IMongoDatabase database)
         {
             var users = database.GetCollection<User>(DbConstants.UserCollectionName);
+            var queue = database.GetCollection<QueueMessage>(DbConstants.QueueCollectionName);
+            var quiz = database.GetCollection<QuizResult>(DbConstants.QuizResultCollectionName);
 
-            if (users.CountDocuments(_ => true) > 0)
+            var options = new CreateIndexOptions {Unique = true};
+
+#pragma warning disable 618
+            users.Indexes.CreateOne("{ChatId:1}", options);
+            queue.Indexes.CreateOne("{ChatId:1}", options);
+            queue.Indexes.CreateOne("{IsHighPriority:1}");
+            quiz.Indexes.CreateOne("{User.ChatId:1}");
+#pragma warning restore 618
+
+            if (users.Find(_ => true).FirstOrDefault() != null)
             {
                 return database;
             }

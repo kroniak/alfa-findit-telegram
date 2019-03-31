@@ -6,14 +6,14 @@ using AlfaBot.Core.Models;
 using AlfaBot.Core.Services.Interfaces;
 using Telegram.Bot.Types;
 
-namespace AlfaBot.Core.Services
+namespace AlfaBot.Core.Services.Commands
 {
-    public class CommandFactory : ICommandFactory
+    public class GeneralCommandsFactory : IGeneralCommandsFactory
     {
         private readonly IUserRepository _userRepository;
         private readonly IQueueService _queueService;
 
-        public CommandFactory(IUserRepository userRepository, IQueueService queueService)
+        public GeneralCommandsFactory(IUserRepository userRepository, IQueueService queueService)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _queueService = queueService ?? throw new ArgumentNullException(nameof(queueService));
@@ -21,32 +21,30 @@ namespace AlfaBot.Core.Services
 
         public Action CreateStudentCommand(long chatId)
         {
-            return async () =>
+            return () =>
             {
-                await _userRepository.AddAsync(chatId);
+                _userRepository.Add(chatId);
 
-                await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId)
                 {
-                    Text = MessageDictionary.WelcomeMessage,
+                    Text = GeneralMessageDictionary.WelcomeMessage,
                     ReplyMarkup = BotHelper.GetKeyBoardForContact()
                 });
-//                await _botClient.SendTextMessageAsync(_chatId, MessageDictionary.WelcomeMessage,
-//                    replyMarkup: keyboardMarkup);
             };
         }
 
         public Action AddContactCommand(long chatId, Message message)
         {
-            return async () =>
+            return () =>
             {
                 var contact = message.Contact;
                 var phone = contact.PhoneNumber;
                 var telegramName = $"{contact.FirstName} {contact.LastName}";
 
-                await _userRepository.SaveContactAsync(chatId, phone, telegramName);
-                await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                _userRepository.SaveContact(chatId, phone, telegramName);
+                _queueService.Add(new QueueMessage(chatId)
                 {
-                    Text = MessageDictionary.NameMessage,
+                    Text = GeneralMessageDictionary.NameMessage,
                     ReplyMarkup = BotHelper.GetRemoveKeyboard()
                 });
             };
@@ -54,11 +52,11 @@ namespace AlfaBot.Core.Services
 
         public Action ContactCommand(long chatId)
         {
-            return async () =>
+            return () =>
             {
-                await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId)
                 {
-                    Text = MessageDictionary.ContactMessage,
+                    Text = GeneralMessageDictionary.ContactMessage,
                     ReplyMarkup = BotHelper.GetKeyBoardForContact()
                 });
             };
@@ -66,14 +64,14 @@ namespace AlfaBot.Core.Services
 
         public Action AddNameCommand(long chatId, Message message)
         {
-            return async () =>
+            return () =>
             {
                 var studentName = message.Text;
 
-                await _userRepository.SaveNameAsync(chatId, studentName);
-                await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                _userRepository.SaveName(chatId, studentName);
+                _queueService.Add(new QueueMessage(chatId)
                 {
-                    Text = MessageDictionary.EmailMessage
+                    Text = GeneralMessageDictionary.EmailMessage
                 });
             };
         }
@@ -88,24 +86,24 @@ namespace AlfaBot.Core.Services
                 return regex.IsMatch(email);
             }
 
-            return async () =>
+            return () =>
             {
                 var email = message.Text;
 
                 if (!IsEmailValid(email))
                 {
-                    await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                    _queueService.Add(new QueueMessage(chatId)
                     {
-                        Text = MessageDictionary.WrongEMailMessage
+                        Text = GeneralMessageDictionary.WrongEMailMessage
                     });
                     return;
                 }
 
-                await _userRepository.SaveEmailAsync(chatId, email);
+                _userRepository.SaveEmail(chatId, email);
 
-                await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId)
                 {
-                    Text = MessageDictionary.ProfessionMessage,
+                    Text = GeneralMessageDictionary.ProfessionMessage,
                     ReplyMarkup = BotHelper.GetKeyboardForProfession()
                 });
             };
@@ -113,15 +111,15 @@ namespace AlfaBot.Core.Services
 
         public Action AddProfessionCommand(long chatId, Message message)
         {
-            return async () =>
+            return () =>
             {
                 var profession = message.Text;
 
-                await _userRepository.SaveProfessionAsync(chatId, profession);
+                _userRepository.SaveProfession(chatId, profession);
 
-                await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId)
                 {
-                    Text = MessageDictionary.IsStudentMessage,
+                    Text = GeneralMessageDictionary.IsStudentMessage,
                     ReplyMarkup = BotHelper.GetKeyboardYesOrNo()
                 });
             };
@@ -129,7 +127,7 @@ namespace AlfaBot.Core.Services
 
         public Action IsStudentCommand(long chatId, Message message)
         {
-            return async () =>
+            return () =>
             {
                 var answer = message.Text;
                 bool? isStudent = null;
@@ -144,30 +142,30 @@ namespace AlfaBot.Core.Services
                     isAnsweredAllQuestions = true;
                 }
 
-                await _userRepository.SavePersonOrWorkerInfoAsync(chatId, isStudent, isAnsweredAllQuestions);
+                _userRepository.SavePersonOrWorkerInfo(chatId, isStudent, isAnsweredAllQuestions);
 
                 if (!isStudent.HasValue)
                 {
-                    await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                    _queueService.Add(new QueueMessage(chatId)
                     {
-                        Text = MessageDictionary.IsStudentMessage,
+                        Text = GeneralMessageDictionary.IsStudentMessage,
                         ReplyMarkup = BotHelper.GetKeyboardYesOrNo()
                     });
                 }
 
                 if (isStudent.HasValue && isStudent.Value)
                 {
-                    await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                    _queueService.Add(new QueueMessage(chatId)
                     {
-                        Text = MessageDictionary.UniversityMessage,
+                        Text = GeneralMessageDictionary.UniversityMessage,
                         ReplyMarkup = BotHelper.GetRemoveKeyboard()
                     });
                 }
                 else
                 {
-                    await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                    _queueService.Add(new QueueMessage(chatId)
                     {
-                        Text = MessageDictionary.EndOfAskingMessage,
+                        Text = GeneralMessageDictionary.EndOfAskingMessage,
                         ReplyMarkup = BotHelper.GetRemoveKeyboard()
                     });
                 }
@@ -176,25 +174,25 @@ namespace AlfaBot.Core.Services
 
         public Action EndCommand(long chatId)
         {
-            return async () =>
+            return () =>
             {
-                await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId)
                 {
-                    Text = MessageDictionary.EndMessage
+                    Text = GeneralMessageDictionary.EndMessage
                 });
             };
         }
 
         public Action AddUniversityCommand(long chatId, Message message)
         {
-            return async () =>
+            return () =>
             {
                 var university = message.Text;
 
-                await _userRepository.SaveUniversityAsync(chatId, university);
-                await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                _userRepository.SaveUniversity(chatId, university);
+                _queueService.Add(new QueueMessage(chatId)
                 {
-                    Text = MessageDictionary.CourseMessage,
+                    Text = GeneralMessageDictionary.CourseMessage,
                     ReplyMarkup = BotHelper.GetKeyboardForCourse()
                 });
             };
@@ -202,7 +200,7 @@ namespace AlfaBot.Core.Services
 
         public Action AddCourseCommand(long chatId, Message message)
         {
-            return async () =>
+            return () =>
             {
                 var course = message.Text;
 
@@ -221,29 +219,29 @@ namespace AlfaBot.Core.Services
                     isAnsweredAllQuestions = true;
                 }
 
-                await _userRepository.SaveCourseAsync(chatId, isYoung.HasValue ? course : null, isAnsweredAllQuestions);
+                _userRepository.SaveCourse(chatId, isYoung.HasValue ? course : null, isAnsweredAllQuestions);
 
                 if (isYoung.HasValue)
                 {
-                    await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                    _queueService.Add(new QueueMessage(chatId)
                     {
-                        Text = MessageDictionary.EndOfAskingMessage,
+                        Text = GeneralMessageDictionary.EndOfAskingMessage,
                         ReplyMarkup = BotHelper.GetRemoveKeyboard()
                     });
 
                     if (!isYoung.Value)
                     {
-                        await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                        _queueService.Add(new QueueMessage(chatId)
                         {
-                            Text = MessageDictionary.OpenDoorsInvitationMessage
+                            Text = GeneralMessageDictionary.OpenDoorsInvitationMessage
                         });
                     }
                 }
                 else
                 {
-                    await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                    _queueService.Add(new QueueMessage(chatId)
                     {
-                        Text = MessageDictionary.CourseMessage,
+                        Text = GeneralMessageDictionary.CourseMessage,
                         ReplyMarkup = BotHelper.GetKeyboardForCourse()
                     });
                 }
@@ -252,11 +250,11 @@ namespace AlfaBot.Core.Services
 
         public Action WrongCommand(long chatId)
         {
-            return async () =>
+            return () =>
             {
-                await _queueService.AddHighPriorityAsync(new TelegramHighPriorityMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId)
                 {
-                    Text = MessageDictionary.WrongMessage
+                    Text = GeneralMessageDictionary.WrongMessage
                 });
             };
         }

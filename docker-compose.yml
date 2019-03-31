@@ -14,7 +14,7 @@ services:
     depends_on:
       - db
     ports:
-      - "5000:5000"
+      - "80:5000"
     environment:
       - ASPNETCORE_TELEGRAM_TOKEN=insert you key here
       - ASPNETCORE_SECRETKEY=insert you key here

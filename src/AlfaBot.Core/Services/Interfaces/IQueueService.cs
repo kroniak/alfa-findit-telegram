@@ -1,17 +1,22 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AlfaBot.Core.Models;
+using MongoDB.Bson;
 
 namespace AlfaBot.Core.Services.Interfaces
 {
     public interface IQueueService
     {
-        Task AddLowPriorityAsync(TelegramLowPriorityMessage message);
+        void Add(QueueMessage message);
 
-        Task AddHighPriorityAsync(TelegramHighPriorityMessage message);
+        void Dequeue(ObjectId id);
 
-        Task<List<TelegramHighPriorityMessage>> GetTopHighPriorityAsync(int limit);
+        IEnumerable<QueueMessage> GetTopHighPriority(int limit);
 
-        Task<List<TelegramLowPriorityMessage>> GetTopLowPriorityAsync(int limit);
+        IEnumerable<QueueMessage> GetTopLowPriority(int limit);
+
+        Task<long> HighPriorityCountAsync();
+
+        Task<long> LowPriorityCountAsync();
     }
 }

@@ -3,7 +3,7 @@ using Telegram.Bot.Types;
 
 namespace AlfaBot.Core.Services.Interfaces
 {
-    public interface ICommandFactory
+    public interface IGeneralCommandsFactory
     {
         Action CreateStudentCommand(long chatId);
 

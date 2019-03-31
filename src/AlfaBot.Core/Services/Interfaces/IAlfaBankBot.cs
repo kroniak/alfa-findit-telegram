@@ -1,4 +1,6 @@
-﻿namespace AlfaBot.Core.Services.Interfaces
+﻿using Telegram.Bot.Types;
+
+namespace AlfaBot.Core.Services.Interfaces
 {
     public interface IAlfaBankBot
     {
@@ -7,5 +9,7 @@
         void Stop();
 
         bool Ping();
+
+        bool MessageHandler(Message message);
     }
 }

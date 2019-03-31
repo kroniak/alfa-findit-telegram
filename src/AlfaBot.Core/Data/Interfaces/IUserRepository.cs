@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using AlfaBot.Core.Models;
 using MongoDB.Driver;
 
@@ -7,24 +6,22 @@ namespace AlfaBot.Core.Data.Interfaces
     /// <inheritdoc />
     public interface IUserRepository : IRepository<User>
     {
-        Task AddAsync(long chatId);
+        void Add(long chatId);
 
-        Task<User> GetAsync(long chatId);
+        User Get(long chatId);
 
-        Task<User> GetWithQuestionAsync(long chatId);
+        UpdateResult SaveContact(long chatId, string phone, string telegramName);
 
-        Task<UpdateResult> SaveContactAsync(long chatId, string phone, string telegramName);
+        UpdateResult SaveEmail(long chatId, string email);
 
-        Task<UpdateResult> SaveEmailAsync(long chatId, string email);
+        UpdateResult SavePersonOrWorkerInfo(long chatId, bool? isStudent, bool? isAnswerAll);
 
-        Task<UpdateResult> SavePersonOrWorkerInfoAsync(long chatId, bool? isStudent, bool? isAnswerAll);
+        UpdateResult SaveName(long chatId, string name);
 
-        Task<UpdateResult> SaveNameAsync(long chatId, string name);
+        UpdateResult SaveUniversity(long chatId, string university);
 
-        Task<UpdateResult> SaveUniversityAsync(long chatId, string university);
+        UpdateResult SaveCourse(long chatId, string course, bool? isAnsweredAll);
 
-        Task<UpdateResult> SaveCourseAsync(long chatId, string course, bool? isAnsweredAll);
-
-        Task<UpdateResult> SaveProfessionAsync(long chatId, string profession);
+        UpdateResult SaveProfession(long chatId, string profession);
     }
 }

@@ -3,17 +3,18 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace AlfaBot.Core.Models
 {
-    public class Question
+    public class QuestionAnswer
     {
         [BsonId] 
         public ObjectId Id { get; set; }
-        
-        public bool IsPicture { get; set; }
-        
+
+        [BsonId] 
+        public ObjectId QuestionId { get; set; }
+
         public string Answer { get; set; }
-        
-        public string Message { get; set; }
-        
+
         public double Point { get; set; }
+
+        public bool IsAnswered { get; set; }
     }
 }

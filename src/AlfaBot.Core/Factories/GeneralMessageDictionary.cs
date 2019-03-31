@@ -1,6 +1,6 @@
 ﻿namespace AlfaBot.Core.Factories
 {
-    public static class MessageDictionary
+    public static class GeneralMessageDictionary
     {
         public const string WelcomeMessage = "Привет! Добро пожаловать на стенд Альфа-Банка." +
                                              "\nВ нашем ИТ-подразделении работает более 1 200 человек: мы занимаемся поддержкой наших клиентов, разработкой и внедрением всех digital-продуктов." +
