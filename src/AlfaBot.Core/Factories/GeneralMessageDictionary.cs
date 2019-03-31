@@ -22,8 +22,8 @@
         public const string EndOfAskingMessage =
             "Принято! Как только у нас появится подходящая вакансия, мы свяжемся с тобой.";
 
-        public const string OpenDoorsInvitationMessage =
-            @"Также мы проводим день открытых дверей в Альфа-Банке! Заинтересовался? Регистрируйся! http://goo.gl/djL48b";
+//        public const string OpenDoorsInvitationMessage =
+//            @"Также мы проводим день открытых дверей в Альфа-Банке! Заинтересовался? Регистрируйся! http://goo.gl/djL48b";
 
         public const string EndMessage =
             "Опрос завершен. Как только у нас появится подходящая вакансия, мы свяжемся с тобой.\nТакже ты можешь узнать о наших вакансиях на сайте https://hr.alfabank.ru/vacancies";

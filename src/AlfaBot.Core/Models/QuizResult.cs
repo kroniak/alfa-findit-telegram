@@ -8,13 +8,13 @@ namespace AlfaBot.Core.Models
     {
         [BsonId] 
         public ObjectId Id { get; set; }
-        
+
         public User User { get; set; }
-        
+
         public List<QuestionAnswer> QuestionAnswers { get; set; } = new List<QuestionAnswer>();
-        
+
         public double Points { get; set; }
-        
+
         public bool isEnd { get; set; }
     }
 }

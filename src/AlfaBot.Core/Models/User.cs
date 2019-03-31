@@ -16,6 +16,8 @@ namespace AlfaBot.Core.Models
         public string Profession { get; set; }
         public bool? IsStudent { get; set; }
         public string Course { get; set; }
-        public bool? IsAnsweredAll { get; set; }
+        public bool IsAnsweredAll { get; set; }
+        
+        public bool? IsQuizMember { get; set; }
     }
 }

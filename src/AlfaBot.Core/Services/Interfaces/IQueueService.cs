@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AlfaBot.Core.Models;
@@ -18,5 +19,9 @@ namespace AlfaBot.Core.Services.Interfaces
         Task<long> HighPriorityCountAsync();
 
         Task<long> LowPriorityCountAsync();
+        
+        DateTime HighPriorityTime();
+
+        DateTime LowPriorityTime();
     }
 }

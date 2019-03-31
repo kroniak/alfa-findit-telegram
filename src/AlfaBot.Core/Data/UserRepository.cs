@@ -97,6 +97,16 @@ namespace AlfaBot.Core.Data
             return _users.UpdateOne(filter, update);
         }
 
+        public UpdateResult SetQuizMember(long chatId, bool isMember)
+        {
+            var filter = GlobalChatIdFilter(chatId);
+
+            var update = Builders<User>.Update
+                .Set(p => p.IsQuizMember, isMember);
+
+            return _users.UpdateOne(filter, update);
+        }
+
         private static FilterDefinition<User> GlobalChatIdFilter(long chatId)
             => Builders<User>.Filter.Eq(u => u.ChatId, chatId);
     }

@@ -19,7 +19,7 @@ namespace AlfaBot.Core.Services.Commands
             _queueService = queueService ?? throw new ArgumentNullException(nameof(queueService));
         }
 
-        public Action CreateStudentCommand(long chatId)
+        public Action CreateStartCommand(long chatId)
         {
             return () =>
             {
@@ -66,12 +66,13 @@ namespace AlfaBot.Core.Services.Commands
         {
             return () =>
             {
-                var studentName = message.Text;
+                var name = message.Text;
 
-                _userRepository.SaveName(chatId, studentName);
+                _userRepository.SaveName(chatId, name);
                 _queueService.Add(new QueueMessage(chatId)
                 {
-                    Text = GeneralMessageDictionary.EmailMessage
+                    Text = QuizMessageDictionary.StartMessage,
+                    ReplyMarkup = BotHelper.GetKeyboardYesOrNo()
                 });
             };
         }
@@ -229,13 +230,13 @@ namespace AlfaBot.Core.Services.Commands
                         ReplyMarkup = BotHelper.GetRemoveKeyboard()
                     });
 
-                    if (!isYoung.Value)
-                    {
-                        _queueService.Add(new QueueMessage(chatId)
-                        {
-                            Text = GeneralMessageDictionary.OpenDoorsInvitationMessage
-                        });
-                    }
+//                    if (!isYoung.Value)
+//                    {
+//                        _queueService.Add(new QueueMessage(chatId)
+//                        {
+//                            Text = GeneralMessageDictionary.OpenDoorsInvitationMessage
+//                        });
+//                    }
                 }
                 else
                 {

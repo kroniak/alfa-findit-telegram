@@ -5,7 +5,7 @@ namespace AlfaBot.Core.Services.Interfaces
 {
     public interface IGeneralCommandsFactory
     {
-        Action CreateStudentCommand(long chatId);
+        Action CreateStartCommand(long chatId);
 
         Action AddContactCommand(long chatId, Message message);
 

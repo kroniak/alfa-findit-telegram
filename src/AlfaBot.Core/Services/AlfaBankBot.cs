@@ -116,7 +116,7 @@ namespace AlfaBot.Core.Services
             var user = _users.Get(chatId);
 
             if (user == null)
-                return _generalCommandsFactory.CreateStudentCommand(chatId);
+                return _generalCommandsFactory.CreateStartCommand(chatId);
 
             if (message.Type == MessageType.Contact && user.Phone is null)
                 return _generalCommandsFactory.AddContactCommand(chatId, message);
@@ -124,29 +124,52 @@ namespace AlfaBot.Core.Services
             if (message.Type != MessageType.Contact)
             {
                 if (user.Phone == null)
-                    return _generalCommandsFactory.ContactCommand(chatId);
-                if (user.Name == null)
-                    return _generalCommandsFactory.AddNameCommand(chatId, message);
-                if (user.EMail == null)
-                    return _generalCommandsFactory.AddEMailCommand(chatId, message);
-                if (user.Profession == null)
-                    return _generalCommandsFactory.AddProfessionCommand(chatId, message);
-                if (user.IsStudent == null)
-                    return _generalCommandsFactory.IsStudentCommand(chatId, message);
-                if (user.IsAnsweredAll.HasValue && user.IsAnsweredAll.Value)
-                    return _generalCommandsFactory.EndCommand(chatId);
-                if (user.University == null)
-                    return _generalCommandsFactory.AddUniversityCommand(chatId, message);
-                if (user.Course == null)
-                    return _generalCommandsFactory.AddCourseCommand(chatId, message);
-
-                var quizResult = _resultRepository.GetResult(chatId);
-                if (quizResult.isEnd)
                 {
-                    return _questionCommandFactory.EndQuestionCommand(chatId);
+                    return _generalCommandsFactory.ContactCommand(chatId);
+                }
+                if (user.Name == null)
+                {
+                    return _generalCommandsFactory.AddNameCommand(chatId, message);
+                }
+                if (user.IsQuizMember == null)
+                {
+                    return _questionCommandFactory.AddQuizCommand(user, message);                   
+                }
+                
+                // TODO add second handler to quiz 
+                
+                if (user.EMail == null)
+                {
+                    return _generalCommandsFactory.AddEMailCommand(chatId, message);
+                }
+                if (user.Profession == null)
+                {
+                    return _generalCommandsFactory.AddProfessionCommand(chatId, message);
+                }
+                if (user.IsStudent == null)
+                {
+                    return _generalCommandsFactory.IsStudentCommand(chatId, message);
+                }
+                if (user.IsAnsweredAll)
+                {
+                    return _generalCommandsFactory.EndCommand(chatId);
+                }
+                if (user.University == null)
+                {
+                    return _generalCommandsFactory.AddUniversityCommand(chatId, message);
+                }
+                if (user.Course == null)
+                {
+                    return _generalCommandsFactory.AddCourseCommand(chatId, message);
                 }
 
-                return _questionCommandFactory.QuestionCommand(quizResult);
+//                var quizResult = _resultRepository.GetResult(chatId);
+//                if (quizResult.isEnd)
+//                {
+//                    return _questionCommandFactory.EndQuestionCommand(chatId);
+//                }
+//
+//                return _questionCommandFactory.QuestionCommand(quizResult);
             }
 
             return _generalCommandsFactory.WrongCommand(chatId);

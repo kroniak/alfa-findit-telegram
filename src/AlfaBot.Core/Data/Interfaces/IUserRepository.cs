@@ -23,5 +23,7 @@ namespace AlfaBot.Core.Data.Interfaces
         UpdateResult SaveCourse(long chatId, string course, bool? isAnsweredAll);
 
         UpdateResult SaveProfession(long chatId, string profession);
+
+        UpdateResult SetQuizMember(long chatId, bool isMember);
     }
 }

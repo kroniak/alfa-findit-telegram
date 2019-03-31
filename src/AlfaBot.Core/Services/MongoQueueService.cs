@@ -7,6 +7,7 @@ using AlfaBot.Core.Services.Interfaces;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace AlfaBot.Core.Services
@@ -15,12 +16,14 @@ namespace AlfaBot.Core.Services
     public class MongoQueueService : IQueueService
     {
         private readonly IMongoCollection<QueueMessage> _queue;
+        private readonly IMongoQueryable<QueueMessage> _queryable;
 
         public MongoQueueService(IMongoDatabase database)
         {
             if (database == null) throw new ArgumentNullException(nameof(database));
 
             _queue = database.GetCollection<QueueMessage>(DbConstants.QueueCollectionName);
+            _queryable = _queue.AsQueryable();
 
             BsonClassMap.RegisterClassMap<ReplyKeyboardMarkup>();
             BsonClassMap.RegisterClassMap<ReplyKeyboardRemove>();
@@ -49,6 +52,19 @@ namespace AlfaBot.Core.Services
 
         public Task<long> LowPriorityCountAsync() => _queue.CountDocumentsAsync(PriorityFilter(false));
 
+        public DateTime HighPriorityTime() => PriorityTime(true);
+
+        public DateTime LowPriorityTime() => PriorityTime(false);
+
+        private DateTime PriorityTime(bool isPriority)
+        {
+            var id = _queryable
+                .Where(q => q.IsHighPriority==isPriority)
+                .OrderBy(q => q.Id)
+                .Select(q => q.Id).FirstOrDefault();
+            
+            return id.CreationTime;
+        }
         private IEnumerable<QueueMessage> GetTopMessages(bool isPriority, int limit)
         {
             if (limit <= 0) throw new ArgumentOutOfRangeException(nameof(limit));
