@@ -7,16 +7,19 @@ namespace AlfaBot.Core.Models
 {
     public class QueueMessage
     {
-        public QueueMessage(long chatId, bool isHighPriority = true)
+        public QueueMessage(long chatId, int incomeMessageId, bool isHighPriority = true)
         {
             if (chatId <= 0) throw new ArgumentOutOfRangeException(nameof(chatId));
 
             ChatId = chatId;
             IsHighPriority = isHighPriority;
+            IncomeMessageId = incomeMessageId;
         }
 
         [BsonId] 
         public ObjectId Id { get; set; }
+
+        public int IncomeMessageId { get; set; }
 
         public bool IsHighPriority { get; set; }
 

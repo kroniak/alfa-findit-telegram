@@ -20,9 +20,9 @@ namespace AlfaBot.Host.Middleware
                 .AddSingleton<IQuestionRepository, QuestionRepository>()
                 .AddSingleton<IQuizResultRepository, QuizResultRepository>()
                 .AddSingleton<IQueueService, MongoQueueService>()
+                .AddSingleton<ILogRepository, LogRepository>()
                 .AddSingleton<IGeneralCommandsFactory, GeneralCommandsFactory>()
                 .AddSingleton<IQuestionCommandFactory, QuestionCommandFactory>();
-
 
             return services;
         }

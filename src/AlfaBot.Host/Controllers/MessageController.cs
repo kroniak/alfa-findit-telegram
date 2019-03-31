@@ -17,7 +17,7 @@ namespace AlfaBot.Host.Controllers
     [Produces("application/json")]
     [BindProperties]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]    
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ExcludeFromCodeCoverage]
     public class MessageController : ControllerBase
     {
@@ -56,6 +56,7 @@ namespace AlfaBot.Host.Controllers
 
             var messageEvent = new Message
             {
+                MessageId = Guid.NewGuid().GetHashCode(),
                 Text = message.Text,
                 Chat = new Chat
                 {
@@ -66,7 +67,9 @@ namespace AlfaBot.Host.Controllers
 
             var result = _bot.MessageHandler(messageEvent);
 
-            return result ? (IActionResult) Ok() : BadRequest();
+            return result
+                ? Ok(new {messageId = messageEvent.MessageId})
+                : StatusCode(500, new {messageId = messageEvent.MessageId});
         }
     }
 }

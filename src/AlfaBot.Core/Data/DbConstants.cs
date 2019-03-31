@@ -6,5 +6,6 @@ namespace AlfaBot.Core.Data
         public const string QuestionCollectionName = "Questions";
         public const string QueueCollectionName = "Queue";
         public const string QuizResultCollectionName = "QuizResult";
+        public const string LogCollectionName = "Log";
     }
 }

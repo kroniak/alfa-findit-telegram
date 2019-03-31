@@ -5,7 +5,6 @@ using AlfaBot.Core.Models;
 using AlfaBot.Core.Services;
 using AlfaBot.Core.Services.Interfaces;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.InputFiles;
 using User = AlfaBot.Core.Models.User;
 
 namespace FindAlfaITBot.Services.Commands
@@ -29,11 +28,11 @@ namespace FindAlfaITBot.Services.Commands
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
-        public Action EndQuestionCommand(long chatId)
+        public Action EndQuestionCommand(long chatId, int messageId)
         {
             return () =>
             {
-                _queueService.Add(new QueueMessage(chatId, false)
+                _queueService.Add(new QueueMessage(chatId, messageId, false)
                 {
                     Text = QuizMessageDictionary.EndMessage,
                     ReplyMarkup = BotHelper.GetRemoveKeyboard()
@@ -129,7 +128,7 @@ namespace FindAlfaITBot.Services.Commands
                 return () =>
                 {
                     _userRepository.SetQuizMember(user.ChatId, false);
-                    _queueService.Add(new QueueMessage(user.ChatId)
+                    _queueService.Add(new QueueMessage(user.ChatId, message.MessageId)
                     {
                         Text = GeneralMessageDictionary.EmailMessage,
                         ReplyMarkup = BotHelper.GetRemoveKeyboard()
@@ -139,7 +138,7 @@ namespace FindAlfaITBot.Services.Commands
 
             return () =>
             {
-                _queueService.Add(new QueueMessage(user.ChatId)
+                _queueService.Add(new QueueMessage(user.ChatId, message.MessageId)
                 {
                     Text = QuizMessageDictionary.StartMessage,
                     ReplyMarkup = BotHelper.GetKeyboardYesOrNo()

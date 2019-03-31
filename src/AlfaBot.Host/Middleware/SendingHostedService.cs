@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Services.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -22,6 +23,7 @@ namespace AlfaBot.Host.Middleware
         private const int Limit = 30;
         private readonly ILogger<SendingHostedService> _logger;
         private readonly IQueueService _queueService;
+        private readonly ILogRepository _logRepository;
         private readonly ITelegramBotClient _client;
         private Timer _timer;
 
@@ -29,11 +31,13 @@ namespace AlfaBot.Host.Middleware
         public SendingHostedService(
             ILogger<SendingHostedService> logger,
             IQueueService queueService,
+            ILogRepository logRepository,
             ITelegramBotClient client
         )
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _queueService = queueService ?? throw new ArgumentNullException(nameof(queueService));
+            _logRepository = logRepository ?? throw new ArgumentNullException(nameof(logRepository));
             _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
@@ -75,6 +79,8 @@ namespace AlfaBot.Host.Middleware
                                 message.Text,
                                 replyMarkup: message.ReplyMarkup)
                             .GetAwaiter().GetResult();
+
+                        _logRepository.SaveQueueMessage(message.IncomeMessageId, message, DateTime.Now);
 
                         _queueService.Dequeue(message.Id);
 

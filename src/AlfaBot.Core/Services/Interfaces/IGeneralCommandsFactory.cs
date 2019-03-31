@@ -5,11 +5,11 @@ namespace AlfaBot.Core.Services.Interfaces
 {
     public interface IGeneralCommandsFactory
     {
-        Action CreateStartCommand(long chatId);
+        Action CreateStartCommand(long chatId, int messageId);
 
         Action AddContactCommand(long chatId, Message message);
 
-        Action ContactCommand(long chatId);
+        Action ContactCommand(long chatId, int messageId);
 
         Action AddNameCommand(long chatId, Message message);
 
@@ -19,12 +19,12 @@ namespace AlfaBot.Core.Services.Interfaces
 
         Action IsStudentCommand(long chatId, Message message);
 
-        Action EndCommand(long chatId);
+        Action EndCommand(long chatId, int messageId);
 
         Action AddUniversityCommand(long chatId, Message message);
 
         Action AddCourseCommand(long chatId, Message message);
 
-        Action WrongCommand(long chatId);
+        Action WrongCommand(long chatId, int messageId);
     }
 }

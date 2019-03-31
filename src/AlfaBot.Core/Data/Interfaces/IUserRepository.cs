@@ -1,11 +1,16 @@
+using System.Collections.Generic;
 using AlfaBot.Core.Models;
 using MongoDB.Driver;
 
 namespace AlfaBot.Core.Data.Interfaces
 {
     /// <inheritdoc />
-    public interface IUserRepository : IRepository<User>
+    public interface IUserRepository
     {
+        IEnumerable<User> All();
+
+        void Add(User item);
+        
         void Add(long chatId);
 
         User Get(long chatId);

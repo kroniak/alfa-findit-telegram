@@ -19,13 +19,13 @@ namespace AlfaBot.Core.Services.Commands
             _queueService = queueService ?? throw new ArgumentNullException(nameof(queueService));
         }
 
-        public Action CreateStartCommand(long chatId)
+        public Action CreateStartCommand(long chatId, int messageId)
         {
             return () =>
             {
                 _userRepository.Add(chatId);
 
-                _queueService.Add(new QueueMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId, messageId)
                 {
                     Text = GeneralMessageDictionary.WelcomeMessage,
                     ReplyMarkup = BotHelper.GetKeyBoardForContact()
@@ -42,7 +42,7 @@ namespace AlfaBot.Core.Services.Commands
                 var telegramName = $"{contact.FirstName} {contact.LastName}";
 
                 _userRepository.SaveContact(chatId, phone, telegramName);
-                _queueService.Add(new QueueMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId, message.MessageId)
                 {
                     Text = GeneralMessageDictionary.NameMessage,
                     ReplyMarkup = BotHelper.GetRemoveKeyboard()
@@ -50,11 +50,11 @@ namespace AlfaBot.Core.Services.Commands
             };
         }
 
-        public Action ContactCommand(long chatId)
+        public Action ContactCommand(long chatId, int messageId)
         {
             return () =>
             {
-                _queueService.Add(new QueueMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId, messageId)
                 {
                     Text = GeneralMessageDictionary.ContactMessage,
                     ReplyMarkup = BotHelper.GetKeyBoardForContact()
@@ -69,7 +69,7 @@ namespace AlfaBot.Core.Services.Commands
                 var name = message.Text;
 
                 _userRepository.SaveName(chatId, name);
-                _queueService.Add(new QueueMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId, message.MessageId)
                 {
                     Text = QuizMessageDictionary.StartMessage,
                     ReplyMarkup = BotHelper.GetKeyboardYesOrNo()
@@ -93,7 +93,7 @@ namespace AlfaBot.Core.Services.Commands
 
                 if (!IsEmailValid(email))
                 {
-                    _queueService.Add(new QueueMessage(chatId)
+                    _queueService.Add(new QueueMessage(chatId, message.MessageId)
                     {
                         Text = GeneralMessageDictionary.WrongEMailMessage
                     });
@@ -102,7 +102,7 @@ namespace AlfaBot.Core.Services.Commands
 
                 _userRepository.SaveEmail(chatId, email);
 
-                _queueService.Add(new QueueMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId, message.MessageId)
                 {
                     Text = GeneralMessageDictionary.ProfessionMessage,
                     ReplyMarkup = BotHelper.GetKeyboardForProfession()
@@ -118,7 +118,7 @@ namespace AlfaBot.Core.Services.Commands
 
                 _userRepository.SaveProfession(chatId, profession);
 
-                _queueService.Add(new QueueMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId, message.MessageId)
                 {
                     Text = GeneralMessageDictionary.IsStudentMessage,
                     ReplyMarkup = BotHelper.GetKeyboardYesOrNo()
@@ -147,7 +147,7 @@ namespace AlfaBot.Core.Services.Commands
 
                 if (!isStudent.HasValue)
                 {
-                    _queueService.Add(new QueueMessage(chatId)
+                    _queueService.Add(new QueueMessage(chatId, message.MessageId)
                     {
                         Text = GeneralMessageDictionary.IsStudentMessage,
                         ReplyMarkup = BotHelper.GetKeyboardYesOrNo()
@@ -156,7 +156,7 @@ namespace AlfaBot.Core.Services.Commands
 
                 if (isStudent.HasValue && isStudent.Value)
                 {
-                    _queueService.Add(new QueueMessage(chatId)
+                    _queueService.Add(new QueueMessage(chatId, message.MessageId)
                     {
                         Text = GeneralMessageDictionary.UniversityMessage,
                         ReplyMarkup = BotHelper.GetRemoveKeyboard()
@@ -164,7 +164,7 @@ namespace AlfaBot.Core.Services.Commands
                 }
                 else
                 {
-                    _queueService.Add(new QueueMessage(chatId)
+                    _queueService.Add(new QueueMessage(chatId, message.MessageId)
                     {
                         Text = GeneralMessageDictionary.EndOfAskingMessage,
                         ReplyMarkup = BotHelper.GetRemoveKeyboard()
@@ -173,11 +173,11 @@ namespace AlfaBot.Core.Services.Commands
             };
         }
 
-        public Action EndCommand(long chatId)
+        public Action EndCommand(long chatId, int messageId)
         {
             return () =>
             {
-                _queueService.Add(new QueueMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId, messageId)
                 {
                     Text = GeneralMessageDictionary.EndMessage
                 });
@@ -191,7 +191,7 @@ namespace AlfaBot.Core.Services.Commands
                 var university = message.Text;
 
                 _userRepository.SaveUniversity(chatId, university);
-                _queueService.Add(new QueueMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId, message.MessageId)
                 {
                     Text = GeneralMessageDictionary.CourseMessage,
                     ReplyMarkup = BotHelper.GetKeyboardForCourse()
@@ -224,7 +224,7 @@ namespace AlfaBot.Core.Services.Commands
 
                 if (isYoung.HasValue)
                 {
-                    _queueService.Add(new QueueMessage(chatId)
+                    _queueService.Add(new QueueMessage(chatId, message.MessageId)
                     {
                         Text = GeneralMessageDictionary.EndOfAskingMessage,
                         ReplyMarkup = BotHelper.GetRemoveKeyboard()
@@ -240,7 +240,7 @@ namespace AlfaBot.Core.Services.Commands
                 }
                 else
                 {
-                    _queueService.Add(new QueueMessage(chatId)
+                    _queueService.Add(new QueueMessage(chatId, message.MessageId)
                     {
                         Text = GeneralMessageDictionary.CourseMessage,
                         ReplyMarkup = BotHelper.GetKeyboardForCourse()
@@ -249,11 +249,11 @@ namespace AlfaBot.Core.Services.Commands
             };
         }
 
-        public Action WrongCommand(long chatId)
+        public Action WrongCommand(long chatId, int messageId)
         {
             return () =>
             {
-                _queueService.Add(new QueueMessage(chatId)
+                _queueService.Add(new QueueMessage(chatId, messageId)
                 {
                     Text = GeneralMessageDictionary.WrongMessage
                 });

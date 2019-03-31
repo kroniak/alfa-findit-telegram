@@ -15,6 +15,7 @@ namespace AlfaBot.Core.Services
     {
         private readonly IUserRepository _users;
         private readonly IQuizResultRepository _resultRepository;
+        private readonly ILogRepository _logRepository;
         private readonly IGeneralCommandsFactory _generalCommandsFactory;
         private readonly IQuestionCommandFactory _questionCommandFactory;
         private readonly ILogger<AlfaBankBot> _logger;
@@ -24,12 +25,14 @@ namespace AlfaBot.Core.Services
             ITelegramBotClient botClient,
             IUserRepository users,
             IQuizResultRepository resultRepository,
+            ILogRepository logRepository,
             IGeneralCommandsFactory generalCommandsFactory,
             IQuestionCommandFactory questionCommandFactory,
             ILogger<AlfaBankBot> logger)
         {
             _users = users ?? throw new ArgumentNullException(nameof(users));
             _resultRepository = resultRepository ?? throw new ArgumentNullException(nameof(resultRepository));
+            _logRepository = logRepository ?? throw new ArgumentNullException(nameof(logRepository));
             _generalCommandsFactory =
                 generalCommandsFactory ?? throw new ArgumentNullException(nameof(generalCommandsFactory));
             _questionCommandFactory =
@@ -68,6 +71,9 @@ namespace AlfaBot.Core.Services
 
         public bool MessageHandler(Message message)
         {
+            // log income message
+            _logRepository.Add(message);
+
             var chatId = message.Chat.Id;
             var type = Enum.GetName(typeof(MessageType), message.Type);
 
@@ -86,7 +92,7 @@ namespace AlfaBot.Core.Services
                 }
                 default:
                 {
-                    action = _generalCommandsFactory.WrongCommand(chatId);
+                    action = _generalCommandsFactory.WrongCommand(chatId, message.MessageId);
                     break;
                 }
             }
@@ -116,7 +122,7 @@ namespace AlfaBot.Core.Services
             var user = _users.Get(chatId);
 
             if (user == null)
-                return _generalCommandsFactory.CreateStartCommand(chatId);
+                return _generalCommandsFactory.CreateStartCommand(chatId, message.MessageId);
 
             if (message.Type == MessageType.Contact && user.Phone is null)
                 return _generalCommandsFactory.AddContactCommand(chatId, message);
@@ -125,39 +131,46 @@ namespace AlfaBot.Core.Services
             {
                 if (user.Phone == null)
                 {
-                    return _generalCommandsFactory.ContactCommand(chatId);
+                    return _generalCommandsFactory.ContactCommand(chatId, message.MessageId);
                 }
+
                 if (user.Name == null)
                 {
                     return _generalCommandsFactory.AddNameCommand(chatId, message);
                 }
+
                 if (user.IsQuizMember == null)
                 {
-                    return _questionCommandFactory.AddQuizCommand(user, message);                   
+                    return _questionCommandFactory.AddQuizCommand(user, message);
                 }
-                
+
                 // TODO add second handler to quiz 
-                
+
                 if (user.EMail == null)
                 {
                     return _generalCommandsFactory.AddEMailCommand(chatId, message);
                 }
+
                 if (user.Profession == null)
                 {
                     return _generalCommandsFactory.AddProfessionCommand(chatId, message);
                 }
+
                 if (user.IsStudent == null)
                 {
                     return _generalCommandsFactory.IsStudentCommand(chatId, message);
                 }
+
                 if (user.IsAnsweredAll)
                 {
-                    return _generalCommandsFactory.EndCommand(chatId);
+                    return _generalCommandsFactory.EndCommand(chatId, message.MessageId);
                 }
+
                 if (user.University == null)
                 {
                     return _generalCommandsFactory.AddUniversityCommand(chatId, message);
                 }
+
                 if (user.Course == null)
                 {
                     return _generalCommandsFactory.AddCourseCommand(chatId, message);
@@ -172,7 +185,7 @@ namespace AlfaBot.Core.Services
 //                return _questionCommandFactory.QuestionCommand(quizResult);
             }
 
-            return _generalCommandsFactory.WrongCommand(chatId);
+            return _generalCommandsFactory.WrongCommand(chatId, message.MessageId);
         }
 
 //        private int GetCountQuestion()

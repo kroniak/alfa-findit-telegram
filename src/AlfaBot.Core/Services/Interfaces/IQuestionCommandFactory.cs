@@ -1,5 +1,4 @@
 using System;
-using AlfaBot.Core.Models;
 using Telegram.Bot.Types;
 using User = AlfaBot.Core.Models.User;
 
@@ -7,7 +6,7 @@ namespace AlfaBot.Core.Services.Interfaces
 {
     public interface IQuestionCommandFactory
     {
-        Action EndQuestionCommand(long chatId);
+        Action EndQuestionCommand(long chatId, int messageId);
         
 //        Action QuestionCommand(QuizResult result);
         

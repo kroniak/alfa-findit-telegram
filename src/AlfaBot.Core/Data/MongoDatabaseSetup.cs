@@ -16,8 +16,9 @@ namespace AlfaBot.Core.Data
             var users = database.GetCollection<User>(DbConstants.UserCollectionName);
             var queue = database.GetCollection<QueueMessage>(DbConstants.QueueCollectionName);
             var results = database.GetCollection<QuizResult>(DbConstants.QuizResultCollectionName);
+            var logs = database.GetCollection<LogRecord>(DbConstants.LogCollectionName);
 
-            CreateIndexes(users, queue, results);
+            CreateIndexes(users, queue, results, logs);
 
             if (users.Find(_ => true).FirstOrDefault() != null)
             {
@@ -41,10 +42,10 @@ namespace AlfaBot.Core.Data
             return database;
         }
 
-        private static void CreateIndexes(
-            IMongoCollection<User> users,
+        private static void CreateIndexes(IMongoCollection<User> users,
             IMongoCollection<QueueMessage> queue,
-            IMongoCollection<QuizResult> results)
+            IMongoCollection<QuizResult> results,
+            IMongoCollection<LogRecord> logs)
         {
             var options = new CreateIndexOptions
             {
@@ -56,11 +57,11 @@ namespace AlfaBot.Core.Data
                 Builders<User>.IndexKeys.Ascending(x => x.ChatId),
                 options);
 
-            var queueIndexModel1 = new CreateIndexModel<QueueMessage>(
+            var queueIndexModelFirst = new CreateIndexModel<QueueMessage>(
                 Builders<QueueMessage>.IndexKeys
                     .Ascending(x => x.ChatId), options);
 
-            var queueIndexModel2 = new CreateIndexModel<QueueMessage>(
+            var queueIndexModelSecond = new CreateIndexModel<QueueMessage>(
                 Builders<QueueMessage>.IndexKeys
                     .Ascending(x => x.IsHighPriority));
 
@@ -68,9 +69,18 @@ namespace AlfaBot.Core.Data
                 Builders<QuizResult>.IndexKeys.Ascending(x => x.User.ChatId),
                 options);
 
+            var logIndexModelFirst = new CreateIndexModel<LogRecord>(
+                Builders<LogRecord>.IndexKeys
+                    .Ascending(x => x.MessageId), options);
+
+            var logIndexModelSecond = new CreateIndexModel<LogRecord>(
+                Builders<LogRecord>.IndexKeys
+                    .Ascending(x => x.ChatId));
+
             users.Indexes.CreateOne(userIndexModel);
-            queue.Indexes.CreateMany(new[] {queueIndexModel1, queueIndexModel2});
+            queue.Indexes.CreateMany(new[] {queueIndexModelFirst, queueIndexModelSecond});
             results.Indexes.CreateOne(resultsIndexModel);
+            logs.Indexes.CreateMany(new[] {logIndexModelFirst, logIndexModelSecond});
         }
     }
 }
