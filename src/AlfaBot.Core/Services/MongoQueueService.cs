@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using AlfaBot.Core.Data;
 using AlfaBot.Core.Data.Interfaces;
@@ -13,6 +14,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace AlfaBot.Core.Services
 {
+    [ExcludeFromCodeCoverage]
     /// <inheritdoc />
     public class MongoQueueService : IQueueService
     {

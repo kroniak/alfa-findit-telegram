@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ namespace AlfaBot.Core.Services
     public class AlfaBankBot : IAlfaBankBot
     {
         private readonly IUserRepository _users;
+
 //        private readonly IQuizResultRepository _resultRepository;
         private readonly ILogRepository _logRepository;
         private readonly IGeneralCommandsFactory _generalCommandsFactory;
@@ -21,6 +23,7 @@ namespace AlfaBot.Core.Services
         private readonly ILogger<AlfaBankBot> _logger;
         private readonly ITelegramBotClient _botClient;
 
+        [ExcludeFromCodeCoverage]
         public AlfaBankBot(
             ITelegramBotClient botClient,
             IUserRepository users,
@@ -42,8 +45,6 @@ namespace AlfaBot.Core.Services
 
             Build();
         }
-
-        private void Build() => _botClient.OnMessage += OnMessageReceived;
 
         public void Start()
         {
@@ -71,10 +72,16 @@ namespace AlfaBot.Core.Services
 
         public bool MessageHandler(Message message)
         {
+            if (message == null) return false;
+
             // log income message
             _logRepository.Add(message);
 
+            if (message.Chat == null) return false;
+
             var chatId = message.Chat.Id;
+            if (chatId <= 0) return false;
+
             var type = Enum.GetName(typeof(MessageType), message.Type);
 
             _logger.LogInformation($"[{chatId}] [{type}] [{message.Text ?? ""}] Received message");
@@ -108,6 +115,8 @@ namespace AlfaBot.Core.Services
                 return false;
             }
         }
+
+        private void Build() => _botClient.OnMessage += OnMessageReceived;
 
         private void OnMessageReceived(object sender, MessageEventArgs eventArgs)
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
@@ -8,6 +9,7 @@ using MongoDB.Driver.Linq;
 
 namespace AlfaBot.Core.Data
 {
+    [ExcludeFromCodeCoverage]
     public class QuizResultRepository : IQuizResultRepository
     {
         private readonly IMongoCollection<QuizResult> _results;

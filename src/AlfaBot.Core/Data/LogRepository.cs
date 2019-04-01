@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
 using Microsoft.Extensions.Logging;
@@ -8,6 +9,7 @@ using Telegram.Bot.Types;
 
 namespace AlfaBot.Core.Data
 {
+    [ExcludeFromCodeCoverage]
     /// <inheritdoc />
     public class LogRepository : ILogRepository
     {
