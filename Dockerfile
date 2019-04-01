@@ -11,4 +11,4 @@ FROM microsoft/dotnet:2.2-aspnetcore-runtime
 WORKDIR /app
 COPY --from=build-env /app/out .
 EXPOSE 5000/tcp
-ENTRYPOINT ["dotnet", "AlfaBot.dll"]
+ENTRYPOINT ["dotnet", "AlfaBot.Host.dll"]

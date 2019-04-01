@@ -294,3 +294,6 @@ __pycache__/
 out
 coverage.json
 logs
+lcov.info
+docker-compose.dev.yml
+appsettings.Development.json

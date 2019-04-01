@@ -33,7 +33,7 @@ namespace AlfaBot.Host
             // configure general params
             var token = _configuration["TELEGRAM_TOKEN"];
             var secretKey = _configuration["SECRETKEY"];
-            var connection = _configuration.GetConnectionString("MONGO");
+            var connection = _configuration["MONGO"];
             var database = _configuration["DBNAME"] ?? "FindIT";
 
             if (string.IsNullOrWhiteSpace(token))

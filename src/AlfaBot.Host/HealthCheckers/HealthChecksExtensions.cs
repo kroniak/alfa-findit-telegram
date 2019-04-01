@@ -58,7 +58,7 @@ namespace AlfaBot.Host.HealthCheckers
             services
                 .AddHealthChecks()
                 .AddMongoDb(
-                    configuration.GetConnectionString("MONGO"),
+                    configuration["MONGO"],
                     configuration["DBNAME"] ?? "FindIT",
                     HealthStatus.Unhealthy,
                     new[] {"database"}

@@ -6,3 +6,5 @@ Dockerfile
 docker-compose.*
 LICENSE
 *.md
+out
+appsettings.Development.json

@@ -5,7 +5,8 @@ services:
     container_name: alfa-bot-mongodb-dev
     restart: always
     volumes:
-      - ~/alfa-bot-data/:/data/db:rw
+      - ~/alfa/bot-data/db:/data/db:rw
+      - ~/alfa/bot-data/logs:/app/logs:rw
 
   bot:
     image: alfa/bot-telegram:2
@@ -13,11 +14,13 @@ services:
     restart: always
     depends_on:
       - db
+    links:
+      - db
     ports:
       - "5000:5000"
     environment:
-      - ASPNETCORE_TELEGRAM_TOKEN=insert there
-      - ASPNETCORE_SECRETKEY=insert there
-      - ASPNETCORE_MONGO=mongodb://db
-      - ASPNETCORE_PROXY_ADDRESS=46.162.193.21
-      - ASPNETCORE_PROXY_PORT=34771
+      - TELEGRAM_TOKEN=insert there
+      - SECRETKEY=secretkey
+      - MONGO=mongodb://db
+      - PROXY_ADDRESS=46.162.193.21
+      - PROXY_PORT=34771
