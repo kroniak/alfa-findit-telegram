@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AlfaBot.Host\AlfaBot.Host.csproj" />
+    <ProjectReference Include="..\..\src\AlfaBot.Host\AlfaBot.Core.csproj" />
   </ItemGroup>
 
 </Project>
