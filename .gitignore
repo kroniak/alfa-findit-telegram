@@ -289,8 +289,8 @@ __pycache__/
 
 #*.json
 
-# *.dev.*
-# *.Development.*
+*.dev.*
+*.Development.*
 out
 coverage.json
 logs
