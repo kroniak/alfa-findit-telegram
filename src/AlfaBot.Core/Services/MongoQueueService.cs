@@ -14,8 +14,8 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace AlfaBot.Core.Services
 {
-    [ExcludeFromCodeCoverage]
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public class MongoQueueService : IQueueService
     {
         private readonly ILogRepository _logRepository;
