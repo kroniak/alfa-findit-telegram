@@ -9,12 +9,13 @@ using Telegram.Bot.Types;
 
 namespace AlfaBot.Core.Data
 {
-    [ExcludeFromCodeCoverage]
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public class LogRepository : ILogRepository
     {
         private readonly ILogger<LogRepository> _logger;
         private readonly IMongoCollection<LogRecord> _log;
+        private readonly SortDefinition<LogRecord> _sortDesc = Builders<LogRecord>.Sort.Descending(l => l.Id);
 
         public LogRepository(
             IMongoDatabase database,
@@ -38,11 +39,25 @@ namespace AlfaBot.Core.Data
             }
         }
 
-        public IEnumerable<LogRecord> All() =>
-            _log.Find(_ => true).ToEnumerable();
+        public IEnumerable<LogRecord> All(int? top)
+        {
+            if (!top.HasValue)
+            {
+                return _log.Find(_ => true).ToEnumerable();
+            }
 
-        public IEnumerable<LogRecord> GetRecords(long chatId) =>
-            _log.Find(GlobalChatIdFilter(chatId)).ToEnumerable();
+            return _log.Find(_ => true).Sort(_sortDesc).Limit(top.Value).ToEnumerable();
+        }
+
+        public IEnumerable<LogRecord> GetRecords(long chatId, int? top)
+        {
+            if (!top.HasValue)
+            {
+                return _log.Find(GlobalChatIdFilter(chatId)).ToEnumerable();
+            }
+
+            return _log.Find(GlobalChatIdFilter(chatId)).Sort(_sortDesc).Limit(top.Value).ToEnumerable();
+        }
 
         public IEnumerable<LogRecord> GetRecords(int messageId) =>
             _log.Find(GlobalMessageIdFilter(messageId)).ToEnumerable();
@@ -65,7 +80,7 @@ namespace AlfaBot.Core.Data
 
             _log.UpdateOne(filter, update);
         }
-        
+
         public void SaveEndedTime(int messageId, DateTime ended)
         {
             var filter = GlobalMessageIdFilter(messageId);

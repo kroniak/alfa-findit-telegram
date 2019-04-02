@@ -9,9 +9,9 @@ namespace AlfaBot.Core.Data.Interfaces
     {
         void Add(Message message);
 
-        IEnumerable<LogRecord> All();
+        IEnumerable<LogRecord> All(int? top);
 
-        IEnumerable<LogRecord> GetRecords(long chatId);
+        IEnumerable<LogRecord> GetRecords(long chatId, int? top);
 
         IEnumerable<LogRecord> GetRecords(int messageId);
 
