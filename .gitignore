@@ -287,6 +287,13 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-*.json
+#*.json
 
 *.dev.*
+*.Development.*
+out
+coverage.json
+logs
+lcov.info
+docker-compose.dev.yml
+appsettings.Development.json
