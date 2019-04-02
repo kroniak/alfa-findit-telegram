@@ -7,8 +7,8 @@ using MongoDB.Driver;
 
 namespace AlfaBot.Core.Data
 {
-    [ExcludeFromCodeCoverage]
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public class UserRepository : IUserRepository
     {
         private readonly IMongoCollection<User> _users;

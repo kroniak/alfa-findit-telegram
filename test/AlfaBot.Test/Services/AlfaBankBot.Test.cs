@@ -17,13 +17,11 @@ namespace AlfaBot.Test.Services
     {
         private readonly IAlfaBankBot _bot;
         private readonly Mock<ITelegramBotClient> _client;
-        private readonly Mock<ILogger<AlfaBankBot>> _logger;
         private readonly Mock<ILogRepository> _logs;
         private readonly Mock<IUserRepository> _users;
         private Faker<Message> _messageFake;
         private Faker<User> _userFake;
         private readonly Mock<IGeneralCommandsFactory> _commands;
-        private readonly Mock<IQuestionCommandFactory> _questions;
 
         public AlfaBankBotTest()
         {
@@ -31,14 +29,14 @@ namespace AlfaBot.Test.Services
             _users = new Mock<IUserRepository>();
             _logs = new Mock<ILogRepository>();
             _commands = new Mock<IGeneralCommandsFactory>();
-            _questions = new Mock<IQuestionCommandFactory>();
-            _logger = new Mock<ILogger<AlfaBankBot>>();
+            var questions = new Mock<IQuestionCommandFactory>();
+            var logger = new Mock<ILogger<AlfaBankBot>>();
 
             var telegramBotClient = _client.Object;
             var userRepository = _users.Object;
             var logRepository = _logs.Object;
             var generalCommandsFactory = _commands.Object;
-            var questionCommandFactory = _questions.Object;
+            var questionCommandFactory = questions.Object;
 
             _bot = new AlfaBankBot(
                 telegramBotClient,
@@ -46,7 +44,7 @@ namespace AlfaBot.Test.Services
                 logRepository,
                 generalCommandsFactory,
                 questionCommandFactory,
-                _logger.Object);
+                logger.Object);
 
             GenerateFakesInit();
         }

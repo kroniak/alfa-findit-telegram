@@ -62,6 +62,7 @@ namespace AlfaBot.Host.Controllers
         /// Get log records from global log
         /// </summary>
         /// <param name="chatId">ChatId long value</param>
+        /// <param name="top">Set top limit with DESC sorting</param>
         /// <returns>Returns LogRecords list</returns>
         /// <response code="200">Returns successfully log record</response>
         /// <response code="400">Return bad requests</response>
@@ -69,7 +70,9 @@ namespace AlfaBot.Host.Controllers
         [ProducesDefaultResponseType]
         [ProducesResponseType(typeof(IEnumerable<LogRecord>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<IEnumerable<LogRecord>> Chat([Required] [Range(1, long.MaxValue)] long chatId)
+        public ActionResult<IEnumerable<LogRecord>> Chat(
+            [Required] [Range(1, long.MaxValue)] long chatId, 
+            [Range(1, int.MaxValue)] int? top)
         {
             if (!ModelState.IsValid)
             {
@@ -77,7 +80,7 @@ namespace AlfaBot.Host.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = _logRepository.GetRecords(chatId);
+            var result = _logRepository.GetRecords(chatId, top);
 
             return Ok(result);
         }
@@ -85,14 +88,15 @@ namespace AlfaBot.Host.Controllers
         /// <summary>
         /// Get All log records from global log
         /// </summary>
+        /// <param name="top">Set top limit with DESC sorting</param>
         /// <returns>Returns LogRecords list</returns>
         /// <response code="200">Returns successfully log record</response>
         [HttpGet]
         [ProducesDefaultResponseType]
         [ProducesResponseType(typeof(IEnumerable<LogRecord>), StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<LogRecord>> All()
+        public ActionResult<IEnumerable<LogRecord>> All([Range(1, int.MaxValue)] int? top)
         {
-            var result = _logRepository.All();
+            var result = _logRepository.All(top);
 
             return Ok(result);
         }

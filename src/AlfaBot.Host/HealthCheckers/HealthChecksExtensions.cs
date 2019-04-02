@@ -48,12 +48,10 @@ namespace AlfaBot.Host.HealthCheckers
         public static void AddCustomHealthChecks(
             this IServiceCollection services,
             IConfiguration configuration
-//            IAlfaBankBot bot
             )
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-//            if (bot == null) throw new ArgumentNullException(nameof(bot));
 
             services
                 .AddHealthChecks()
@@ -63,34 +61,10 @@ namespace AlfaBot.Host.HealthCheckers
                     HealthStatus.Unhealthy,
                     new[] {"database"}
                 )
-//                .AddCheck(
-//                    "bot-status",
-//                    _ =>
-//                    {
-//                        var status = bot.Ping();
-//                        return status ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
-//                    },
-//                    new[] {"bot"}
-//                )
                 .AddCheck<QueueCountHealthCheck>(
                     "queue-count-by-hour",
                     HealthStatus.Degraded,
-                    new[] {"queue"})
-                .AddUrlGroup(
-                    option =>
-                    {
-                        option.AddUri(
-                            new Uri("https://api.telegram.org/bot" + configuration["TELEGRAM_TOKEN"]),
-                            setup =>
-                            {
-                                setup.UseGet();
-                                setup.ExpectHttpCode(200);
-                            }
-                        );
-                    },
-                    "network-access",
-                    HealthStatus.Degraded,
-                    new[] {"network"});
+                    new[] {"queue"});
         }
     }
 }
