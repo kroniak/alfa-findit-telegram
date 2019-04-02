@@ -8,6 +8,7 @@ using AlfaBot.Core.Services.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -44,7 +45,7 @@ namespace AlfaBot.Host.Middleware
         /// <inheritdoc />
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogWarning("Sending Background Service is starting.");
+            _logger.LogInformation("Sending Background Service is starting.");
 
             _timer = new Timer(SendMessages, new { }, TimeSpan.Zero, TimeSpan.FromSeconds(2));
 
@@ -86,6 +87,13 @@ namespace AlfaBot.Host.Middleware
 
                         _logger.LogInformation($"[{message.ChatId}] [{message.Text ?? ""}] Sending successfully");
                     }
+                    catch (ChatNotFoundException)
+                    {
+                        _logRepository.SaveQueueMessage(message.IncomeMessageId, message, DateTime.Now);
+                        _queueService.Dequeue(message.Id);
+
+                        _logger.LogError($"[{message.ChatId}] [{message.Text ?? ""}] Chat not found");
+                    }
                     catch (Exception e)
                     {
                         _logger.LogError($"[{message.ChatId}] [{message.Text ?? ""}] Sending failed", e);
@@ -99,7 +107,7 @@ namespace AlfaBot.Host.Middleware
         /// <inheritdoc />
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogWarning("Sending Background Service is stopping.");
+            _logger.LogInformation("Sending Background Service is stopping.");
 
             _timer?.Change(Timeout.Infinite, 0);
 
