@@ -1,30 +1,30 @@
 ﻿//using System;
+//using System.Diagnostics.CodeAnalysis;
 //using System.Text;
-//using FindAlfaITBot.Models;
-//using FindAlfaITBot.Services.Interfaces;
+//using AlfaBot.Core.Data.Interfaces;
+//using AlfaBot.Core.Models;
+//using AlfaBot.Core.Services.Interfaces;
 //using Microsoft.AspNetCore.Authorization;
 //using Microsoft.AspNetCore.Http;
 //using Microsoft.AspNetCore.Mvc;
-//using Question = FindAlfaITBot.Infrastructure.Question;
 //
-//namespace FindAlfaITBot.Controllers
+//namespace AlfaBot.Host.Controllers
 //{
 //    [Authorize]
 //    [ApiController]
-//    [ApiVersion("1.0")]
-//[Route("api/v{version:apiVersion}/[controller]/[action]")]
-//[Produces("application/json")]
+//    [Route("api/[controller]/[action]")]
+//    [Produces("application/json")]
 //    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 //    [BindProperties]
-//[ExcludeFromCodeCoverage]
-
+//    [ExcludeFromCodeCoverage]
 //    public class ExportController : ControllerBase
 //    {
-//        private readonly IAlfaBankBot _bot;
+//        private readonly IUserRepository _userRepository;
 //
-//        public ExportController(IAlfaBankBot bot)
+//        public ExportController(IUserRepository userRepository
+//        )
 //        {
-//            _bot = bot ?? throw new ArgumentNullException(nameof(bot));
+//            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
 //        }
 //
 //        [HttpGet]
@@ -83,4 +83,4 @@
 //        }
 //    }
 //}
-
+//

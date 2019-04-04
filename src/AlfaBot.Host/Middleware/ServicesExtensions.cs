@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using AlfaBot.Core.Data;
 using AlfaBot.Core.Data.Interfaces;
+using AlfaBot.Core.Factories.Commands;
 using AlfaBot.Core.Services;
-using AlfaBot.Core.Services.Commands;
 using AlfaBot.Core.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 #pragma warning disable 1591

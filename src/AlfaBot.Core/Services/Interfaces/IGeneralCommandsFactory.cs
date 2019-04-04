@@ -1,30 +1,27 @@
 using System;
+using AlfaBot.Core.Models;
 using Telegram.Bot.Types;
 
 namespace AlfaBot.Core.Services.Interfaces
 {
     public interface IGeneralCommandsFactory
     {
-        Action CreateStartCommand(long chatId, int messageId);
+        Action StartCommand(QueueMessage nextMessage);
 
-        Action AddContactCommand(long chatId, Message message);
+        Action AddContactCommand(Message message, QueueMessage nextMessage);
 
-        Action ContactCommand(long chatId, int messageId);
+        Action AddNameCommand(Message message, QueueMessage nextMessage);
 
-        Action AddNameCommand(long chatId, Message message);
+        Action AddEMailCommand(Message message, QueueMessage nextMessage);
 
-        Action AddEMailCommand(long chatId, Message message);
+        Action AddProfessionCommand(Message message, QueueMessage nextMessage);
 
-        Action AddProfessionCommand(long chatId, Message message);
+        Action AddIsStudentCommand(Message message, QueueMessage nextTrueMessage, QueueMessage nextFalseMessage);
 
-        Action IsStudentCommand(long chatId, Message message);
+        Action AddUniversityCommand(Message message, QueueMessage nextMessage);
 
-        Action EndCommand(long chatId, int messageId);
+        Action AddCourseCommand(Message message, QueueMessage nextTrueMessage, QueueMessage nextFalseMessage);
 
-        Action AddUniversityCommand(long chatId, Message message);
-
-        Action AddCourseCommand(long chatId, Message message);
-
-        Action WrongCommand(long chatId, int messageId);
+        Action Command(QueueMessage queueMessage);
     }
 }

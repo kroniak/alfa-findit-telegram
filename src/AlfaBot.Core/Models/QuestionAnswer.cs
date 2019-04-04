@@ -6,9 +6,6 @@ namespace AlfaBot.Core.Models
     public class QuestionAnswer
     {
         [BsonId] 
-        public ObjectId Id { get; set; }
-
-        [BsonId] 
         public ObjectId QuestionId { get; set; }
 
         public string Answer { get; set; }

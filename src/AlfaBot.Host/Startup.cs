@@ -53,6 +53,7 @@ namespace AlfaBot.Host
             services.AddSingleton(_ => new MongoClient(connection).GetDatabase(database).Init());
 
             // add repositories
+            services.AddMemoryCache();
             services.AddRepositoryAndServices();
 
             services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(token, GetProxy(proxyAddress, proxyPort)));

@@ -17,29 +17,45 @@ namespace AlfaBot.Core.Data
             var queue = database.GetCollection<QueueMessage>(DbConstants.QueueCollectionName);
             var results = database.GetCollection<QuizResult>(DbConstants.QuizResultCollectionName);
             var logs = database.GetCollection<LogRecord>(DbConstants.LogCollectionName);
+            var questions = database.GetCollection<Question>(DbConstants.QuestionCollectionName);
 
-            CreateIndexes(users, queue, results, logs);
-
-            if (users.Find(_ => true).FirstOrDefault() != null)
+            try
             {
-                return database;
+                CreateIndexes(users, queue, results, logs);
+                if (questions.Find(_ => true).FirstOrDefault() == null)
+                {
+                    InsertQuestion(questions);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new SystemException("Fail to init DB", e);
             }
 
-            // create new user
-            var user = new User
+            return database;
+        }
+
+        private static void InsertQuestion(IMongoCollection<Question> questions)
+        {
+            var qs = new[]
             {
-                EMail = "test@test.ru",
-                Name = "Test Student",
-                Profession = "Haskell",
-                University = "sgu"
+                new Question
+                {
+                    Point = 10,
+                    Answer = "1993",
+                    IsPicture = false,
+                    Message = "В каком году был основан Альфа-Банк?"
+                },
+                new Question
+                {
+                    Point = 10,
+                    Answer = "A",
+                    IsPicture = true,
+                    Message = "http://alfa-it-bot-qa.s3-website.eu-central-1.amazonaws.com/1.png"
+                }
             };
 
-            users.InsertOne(user);
-
-            if (users.CountDocuments(_ => true) == 0)
-                throw new SystemException("Fail to init DB");
-
-            return database;
+            questions.InsertMany(qs);
         }
 
         private static void CreateIndexes(IMongoCollection<User> users,

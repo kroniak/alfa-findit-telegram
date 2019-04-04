@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
+using Telegram.Bot.Types.InputFiles;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -60,26 +61,37 @@ namespace AlfaBot.Host.Middleware
 
                 var messages = _queueService.GetTopHighPriority(Limit).ToList();
 
+                if (messages.Count < Limit)
+                {
+                    messages.AddRange(_queueService.GetTopLowPriority(Limit - messages.Count));
+                }
+                
                 if (!messages.Any())
                 {
                     _logger.LogDebug("Send Background Service is successfully with 0 count");
                     return;
                 }
 
-                if (messages.Count < Limit)
-                {
-                    messages.AddRange(_queueService.GetTopLowPriority(Limit - messages.Count));
-                }
-
                 Parallel.ForEach(messages, message =>
                 {
                     try
                     {
-                        _client.SendTextMessageAsync(
-                                message.ChatId,
-                                message.Text,
-                                replyMarkup: message.ReplyMarkup)
-                            .GetAwaiter().GetResult();
+                        if (!string.IsNullOrWhiteSpace(message.Url))
+                        {
+                            _client.SendPhotoAsync(
+                                    message.ChatId,
+                                    new InputOnlineFile(message.Url),
+                                    replyMarkup: message.ReplyMarkup)
+                                .GetAwaiter().GetResult();
+                        }
+                        else if (!string.IsNullOrWhiteSpace(message.Text))
+                        {
+                            _client.SendTextMessageAsync(
+                                    message.ChatId,
+                                    message.Text,
+                                    replyMarkup: message.ReplyMarkup)
+                                .GetAwaiter().GetResult();
+                        }
 
                         _logRepository.SaveQueueMessage(message.IncomeMessageId, message, DateTime.Now);
 
@@ -92,7 +104,7 @@ namespace AlfaBot.Host.Middleware
                         _logRepository.SaveQueueMessage(message.IncomeMessageId, message, DateTime.Now);
                         _queueService.Dequeue(message.Id);
 
-                        _logger.LogError($"[{message.ChatId}] [{message.Text ?? ""}] Chat not found");
+                        _logger.LogInformation($"[{message.ChatId}] [{message.Text ?? ""}] Chat not found");
                     }
                     catch (Exception e)
                     {

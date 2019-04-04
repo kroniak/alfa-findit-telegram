@@ -1,12 +1,10 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
-namespace AlfaBot.Core.Models
+namespace AlfaBot.Host.Model
 {
-    public class User
+    /// <summary>
+    /// DTO object for User controller
+    /// </summary>
+    public class UserOutDto
     {
-        [BsonId] 
-        public ObjectId Id { get; set; }
         public long ChatId { get; set; }
         public string TelegramName { get; set; }
         public string Name { get; set; }
@@ -16,7 +14,5 @@ namespace AlfaBot.Core.Models
         public string Profession { get; set; }
         public bool? IsStudent { get; set; }
         public string Course { get; set; }
-        public bool IsAnsweredAll { get; set; }
-        public bool? IsQuizMember { get; set; }
     }
 }

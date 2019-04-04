@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using AlfaBot.Core.Data.Interfaces;
+using AlfaBot.Core.Factories;
 using AlfaBot.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -16,7 +17,7 @@ namespace AlfaBot.Core.Services
     {
         private readonly IUserRepository _users;
 
-//        private readonly IQuizResultRepository _resultRepository;
+        private readonly IQuizResultRepository _resultRepository;
         private readonly ILogRepository _logRepository;
         private readonly IGeneralCommandsFactory _generalCommandsFactory;
         private readonly IQuestionCommandFactory _questionCommandFactory;
@@ -27,14 +28,14 @@ namespace AlfaBot.Core.Services
         public AlfaBankBot(
             ITelegramBotClient botClient,
             IUserRepository users,
-//            IQuizResultRepository resultRepository,
+            IQuizResultRepository resultRepository,
             ILogRepository logRepository,
             IGeneralCommandsFactory generalCommandsFactory,
             IQuestionCommandFactory questionCommandFactory,
             ILogger<AlfaBankBot> logger)
         {
             _users = users ?? throw new ArgumentNullException(nameof(users));
-//            _resultRepository = resultRepository ?? throw new ArgumentNullException(nameof(resultRepository));
+            _resultRepository = resultRepository ?? throw new ArgumentNullException(nameof(resultRepository));
             _logRepository = logRepository ?? throw new ArgumentNullException(nameof(logRepository));
             _generalCommandsFactory =
                 generalCommandsFactory ?? throw new ArgumentNullException(nameof(generalCommandsFactory));
@@ -99,7 +100,8 @@ namespace AlfaBot.Core.Services
                 }
                 default:
                 {
-                    action = _generalCommandsFactory.WrongCommand(chatId, message.MessageId);
+                    var queueMessageFactory = new QueueMessageFactory(message);
+                    action = _generalCommandsFactory.Command(queueMessageFactory.WrongMessage);
                     break;
                 }
             }
@@ -130,77 +132,89 @@ namespace AlfaBot.Core.Services
             var chatId = message.Chat.Id;
             var user = _users.Get(chatId);
 
+            var factory = new QueueMessageFactory(message);
+
             if (user == null)
-                return _generalCommandsFactory.CreateStartCommand(chatId, message.MessageId);
+                return _generalCommandsFactory.StartCommand(factory.WelcomeMessage);
 
-            if (message.Type == MessageType.Contact && user.Phone is null)
-                return _generalCommandsFactory.AddContactCommand(chatId, message);
-
-            if (message.Type != MessageType.Contact)
+            // handle contact message
+            switch (message.Type)
             {
-                if (user.Phone == null)
-                {
-                    return _generalCommandsFactory.ContactCommand(chatId, message.MessageId);
-                }
+                case MessageType.Contact when user.Phone is null:
+                    return _generalCommandsFactory.AddContactCommand(message,
+                        factory.AskNameMessage(message.Contact.FirstName));
 
-                if (user.Name == null)
-                {
-                    return _generalCommandsFactory.AddNameCommand(chatId, message);
-                }
-
-                if (user.IsQuizMember == null)
-                {
-                    return _questionCommandFactory.AddQuizCommand(user, message);
-                }
-
-                // TODO add second handler to quiz 
-
-                if (user.EMail == null)
-                {
-                    return _generalCommandsFactory.AddEMailCommand(chatId, message);
-                }
-
-                if (user.Profession == null)
-                {
-                    return _generalCommandsFactory.AddProfessionCommand(chatId, message);
-                }
-
-                if (user.IsStudent == null)
-                {
-                    return _generalCommandsFactory.IsStudentCommand(chatId, message);
-                }
-
-                if (user.IsAnsweredAll)
-                {
-                    return _generalCommandsFactory.EndCommand(chatId, message.MessageId);
-                }
-
-                if (user.University == null)
-                {
-                    return _generalCommandsFactory.AddUniversityCommand(chatId, message);
-                }
-
-                if (user.Course == null)
-                {
-                    return _generalCommandsFactory.AddCourseCommand(chatId, message);
-                }
-
-//                var quizResult = _resultRepository.GetResult(chatId);
-//                if (quizResult.isEnd)
-//                {
-//                    return _questionCommandFactory.EndQuestionCommand(chatId);
-//                }
-//
-//                return _questionCommandFactory.QuestionCommand(quizResult);
+                case MessageType.Contact:
+                    return _generalCommandsFactory.Command(factory.WrongMessage);
             }
 
-            return _generalCommandsFactory.WrongCommand(chatId, message.MessageId);
-        }
+            // handle text messages
+            if (user.Phone == null)
+            {
+                return _generalCommandsFactory.Command(factory.AskContactMessage);
+            }
 
-//        private int GetCountQuestion()
-//        {
-//            var questions = Question.AllQuestion().Result;
-//            return questions.Count();
-//        }
+            if (user.Name == null)
+            {
+                return _generalCommandsFactory.AddNameCommand(message, factory.AskStartQuizMessage);
+            }
+
+            if (user.IsQuizMember == null)
+            {
+                return _questionCommandFactory.AddQuizCommand(user, message, factory.AskEmail);
+            }
+
+            if (user.IsQuizMember is true)
+            {
+                // add handler to quiz
+                var result = _resultRepository.GetResult(chatId);
+                return _questionCommandFactory.QuestionCommand(result, message, factory.AskEmail);
+            }
+
+            if (user.EMail == null)
+            {
+                return _generalCommandsFactory.AddEMailCommand(message, factory.AskProfessionMessage);
+            }
+
+            if (user.Profession == null)
+            {
+                return _generalCommandsFactory.AddProfessionCommand(message, factory.AskIsStudentMessage);
+            }
+
+            if (user.IsStudent == null)
+            {
+                return _generalCommandsFactory.AddIsStudentCommand(
+                    message,
+                    factory.AskUniversityMessage,
+                    factory.EndMessage);
+            }
+
+            if (user.IsAnsweredAll)
+            {
+                return _generalCommandsFactory.Command(factory.EndMessage);
+            }
+
+            if (user.University == null)
+            {
+                return _generalCommandsFactory.AddUniversityCommand(message, factory.AskCourse);
+            }
+
+            // ReSharper disable once ConvertIfStatementToReturnStatement
+            if (user.Course == null)
+            {
+                return _generalCommandsFactory.AddCourseCommand(
+                    message,
+                    factory.EndMessage,
+                    factory.AskCourse);
+            }
+
+            // ReSharper disable once ConvertIfStatementToReturnStatement
+            if (user.IsAnsweredAll)
+            {
+                return _generalCommandsFactory.Command(factory.EndMessage);
+            }
+
+            return _generalCommandsFactory.Command(factory.WrongMessage);
+        }
     }
 }

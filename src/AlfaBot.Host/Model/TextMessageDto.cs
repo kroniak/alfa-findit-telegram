@@ -2,9 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AlfaBot.Host.Model
 {
-    /// <summary>
-    /// Text message from client
-    /// </summary>
+    /// <inheritdoc />
     public class TextMessageDto : MessageDto
     {
         /// <summary>

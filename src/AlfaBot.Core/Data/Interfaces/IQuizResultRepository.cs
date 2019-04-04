@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using AlfaBot.Core.Models;
-using MongoDB.Driver;
 
 namespace AlfaBot.Core.Data.Interfaces
 {
@@ -8,16 +7,14 @@ namespace AlfaBot.Core.Data.Interfaces
     {
         IEnumerable<QuizResult> All();
         
-        void AddUserQuiz(User user);
+        QuizResult AddUserQuiz(User user);
 
         QuizResult GetResult(long chatId);
 
-        UpdateResult SaveQuestionForUser(long chatId, QuestionAnswer answer);
+        void UpdateQuestionsForUser(QuizResult result);
 
-        UpdateResult CalcPoints(long chatId);
-
-        UpdateResult UpdateEnd(long chatId);
-
-        int GetAnsweredCount(long chatId);
+        void SaveQuestionForUser(QuizResult result, QuestionAnswer answer);
+        
+        void UpdateTimeForUser(QuizResult result);
     }
 }
