@@ -8,9 +8,9 @@ namespace AlfaBot.Core.Data.Interfaces
     {
         int Count { get; }
 
-        void Add(Question question);
-
         Question Get(ObjectId id);
+
+        void Update();
 
         IEnumerable<Question> All();
     }

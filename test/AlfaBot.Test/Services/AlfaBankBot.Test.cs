@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using AlfaBot.Core.Data.Interfaces;
+using AlfaBot.Core.Models;
 using AlfaBot.Core.Services;
 using AlfaBot.Core.Services.Interfaces;
 using Bogus;
@@ -31,16 +32,19 @@ namespace AlfaBot.Test.Services
             _commands = new Mock<IGeneralCommandsFactory>();
             var questions = new Mock<IQuestionCommandFactory>();
             var logger = new Mock<ILogger<AlfaBankBot>>();
+            var results = new Mock<IQuizResultRepository>();
 
             var telegramBotClient = _client.Object;
             var userRepository = _users.Object;
             var logRepository = _logs.Object;
             var generalCommandsFactory = _commands.Object;
             var questionCommandFactory = questions.Object;
+            var quizResultRepository = results.Object;
 
             _bot = new AlfaBankBot(
                 telegramBotClient,
                 userRepository,
+                quizResultRepository,
                 logRepository,
                 generalCommandsFactory,
                 questionCommandFactory,
@@ -55,8 +59,7 @@ namespace AlfaBot.Test.Services
                 .RuleFor(m => m.Chat, f => new Chat {Id = f.Random.Long(1)})
                 .RuleFor(m => m.Text, f => f.Lorem.Text());
 
-            _userFake = new Faker<User>()
-                .RuleFor(u => u.Name, f => f.Name.FirstName());
+            _userFake = new Faker<User>();
         }
 
         [Fact]
@@ -157,7 +160,7 @@ namespace AlfaBot.Test.Services
                 .Generate();
 
             _commands
-                .Setup(c => c.WrongCommand(message.Chat.Id, message.MessageId))
+                .Setup(c => c.Command(It.IsAny<QueueMessage>()))
                 .Returns(() => () => { });
 
             var result = _bot.MessageHandler(message);
@@ -166,7 +169,7 @@ namespace AlfaBot.Test.Services
             _logs.Verify(l => l.Add(message), Times.Once);
 
             _commands
-                .Verify(c => c.WrongCommand(message.Chat.Id, message.MessageId), Times.Once);
+                .Verify(c => c.Command(It.IsAny<QueueMessage>()), Times.Once);
         }
 
         [Fact]
@@ -178,7 +181,7 @@ namespace AlfaBot.Test.Services
                 .Generate();
 
             _commands
-                .Setup(c => c.WrongCommand(message.Chat.Id, message.MessageId))
+                .Setup(c => c.Command(It.IsAny<QueueMessage>()))
                 .Returns(() => () => throw new Exception());
 
             var result = _bot.MessageHandler(message);
@@ -187,16 +190,17 @@ namespace AlfaBot.Test.Services
             _logs.Verify(l => l.Add(message), Times.Once);
 
             _commands
-                .Verify(c => c.WrongCommand(message.Chat.Id, message.MessageId), Times.Once);
+                .Verify(c => c.Command(It.IsAny<QueueMessage>()), Times.Once);
         }
 
         [Fact]
-        public void MessageHandler_Text_NullUser_ReturnTrue_CreateStartCommand()
+        public void MessageHandler_Contact_UserNullPhone_ReturnTrue_StartCommand()
         {
             var message = _messageFake.Generate();
+
             _users.Setup(u => u.Get(message.Chat.Id)).Returns((User) null);
             _commands
-                .Setup(c => c.CreateStartCommand(message.Chat.Id, message.MessageId))
+                .Setup(c => c.StartCommand(It.IsAny<QueueMessage>()))
                 .Returns(() => () => { });
 
             var result = _bot.MessageHandler(message);
@@ -205,23 +209,70 @@ namespace AlfaBot.Test.Services
             _logs.Verify(l => l.Add(message), Times.Once);
             _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
             _commands
-                .Verify(c => c.CreateStartCommand(message.Chat.Id, message.MessageId), Times.Once());
+                .Verify(c => c.StartCommand(It.IsAny<QueueMessage>()), Times.Once());
         }
 
-//        [Fact]
-//        public void MessageHandler_Text_User_Return()
-//        {
-//            var message = _messageFake.Generate();
-//            var user = _userFake.Generate();
-//
-//            _users.Setup(u => u.Get(message.Chat.Id)).Returns(user);
-//
-//
-//            var result = _bot.MessageHandler(message);
-//            Assert.True(result);
-//
-//            _logs.Verify(l => l.Add(message), Times.Once);
-//            _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
-//        }
+        [Fact]
+        public void MessageHandler_Text_NullUser_ReturnTrue_StartCommand()
+        {
+            var message = _messageFake.Generate();
+
+            _users.Setup(u => u.Get(message.Chat.Id)).Returns((User) null);
+            _commands
+                .Setup(c => c.StartCommand(It.IsAny<QueueMessage>()))
+                .Returns(() => () => { });
+
+            var result = _bot.MessageHandler(message);
+            Assert.True(result);
+
+            _logs.Verify(l => l.Add(message), Times.Once);
+            _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
+            _commands
+                .Verify(c => c.StartCommand(It.IsAny<QueueMessage>()), Times.Once());
+        }
+
+        [Fact]
+        public void MessageHandler_Text_EmptyUser_ReturnTrue_ContactCommand()
+        {
+            var message = _messageFake.Generate();
+            var user = _userFake
+                //.RuleFor(u => u.Name, f => f.Name.FirstName())
+                .Generate();
+
+            _users.Setup(u => u.Get(message.Chat.Id)).Returns(user);
+            _commands
+                .Setup(c => c.Command(It.IsAny<QueueMessage>()))
+                .Returns(() => () => { });
+
+            var result = _bot.MessageHandler(message);
+            Assert.True(result);
+
+            _logs.Verify(l => l.Add(message), Times.Once);
+            _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
+            _commands
+                .Verify(c => c.Command(It.IsAny<QueueMessage>()), Times.Once);
+        }
+
+        [Fact]
+        public void MessageHandler_Contact_EmptyUser_ReturnTrue_ContactCommand()
+        {
+            var message = _messageFake.Generate();
+            var user = _userFake
+                //.RuleFor(u => u.Name, f => f.Name.FirstName())
+                .Generate();
+
+            _users.Setup(u => u.Get(message.Chat.Id)).Returns(user);
+            _commands
+                .Setup(c => c.Command(It.IsAny<QueueMessage>()))
+                .Returns(() => () => { });
+
+            var result = _bot.MessageHandler(message);
+            Assert.True(result);
+
+            _logs.Verify(l => l.Add(message), Times.Once);
+            _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
+            _commands
+                .Verify(c => c.Command(It.IsAny<QueueMessage>()), Times.Once);
+        }
     }
 }

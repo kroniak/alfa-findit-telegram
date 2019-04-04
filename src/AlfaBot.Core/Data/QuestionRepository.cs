@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
+using Microsoft.Extensions.Caching.Memory;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -12,33 +13,49 @@ namespace AlfaBot.Core.Data
     [ExcludeFromCodeCoverage]
     public class QuestionRepository : IQuestionRepository
     {
+        private readonly IMemoryCache _cache;
         private readonly IMongoCollection<Question> _questions;
 
         public int Count { get; private set; }
 
-        public QuestionRepository(IMongoDatabase database)
+        public QuestionRepository(
+            IMongoDatabase database,
+            IMemoryCache cache)
         {
             if (database == null) throw new ArgumentNullException(nameof(database));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _questions = database.GetCollection<Question>(DbConstants.QuestionCollectionName);
 
-            var result = All();
-            Count = result.Count();
+            Update();
         }
 
-        public IEnumerable<Question> All() => _questions.Find(_ => true).ToEnumerable();
-
-        public void Add(Question question)
+        public void Update()
         {
-            _questions.InsertOne(question);
-            Count = All().Count();
+            var questions = All();
+
+            var enumerable = questions as Question[] ?? questions.ToArray();
+            
+            foreach (var question in enumerable)
+            {
+                _cache.Set(question.Id, question);
+            }
+            
+            Count = enumerable.Length;
         }
 
         public Question Get(ObjectId id)
         {
-            var filter = Builders<Question>.Filter
-                .Eq(q => q.Id, id);
+            var question = _cache.GetOrCreate(id, entry =>
+            {
+                var filter = Builders<Question>.Filter
+                    .Eq(q => q.Id, id);
 
-            return _questions.Find(filter).SingleOrDefault();
+                return _questions.Find(filter).SingleOrDefault();
+            });
+
+            return question;
         }
+
+        public IEnumerable<Question> All() => _questions.Find(_ => true).ToEnumerable();
     }
 }

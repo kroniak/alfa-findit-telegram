@@ -47,7 +47,7 @@ namespace AlfaBot.Host.Controllers
         [ProducesDefaultResponseType]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Text([FromBody][Required] TextMessageDto message)
+        public IActionResult Text([FromBody] [Required] TextMessageDto message)
         {
             if (!ModelState.IsValid)
             {
@@ -59,6 +59,53 @@ namespace AlfaBot.Host.Controllers
             {
                 MessageId = Guid.NewGuid().GetHashCode(),
                 Text = message.Text,
+                Chat = new Chat
+                {
+                    Id = message.ChatId
+                },
+                Date = DateTime.Now
+            };
+
+            var result = _bot.MessageHandler(messageEvent);
+
+            return result
+                ? Ok(new {messageId = messageEvent.MessageId})
+                : StatusCode(500, new {messageId = messageEvent.MessageId});
+        }
+
+        /// <summary>
+        /// Add message to handler without real client
+        /// </summary>
+        /// <param name="message">Message which received from client
+        /// {
+        ///    "phoneNumber": "1234567",
+        ///    "FirstName": "Nikolay",
+        ///    "LastName": "Molchanov"
+        /// }</param>
+        /// <returns>True or false of the handled status</returns>
+        /// <response code="200">Returns successfully status</response>
+        /// <response code="400">Return bad handling status</response>
+        [HttpPost]
+        [ProducesDefaultResponseType]
+        [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Contact([FromBody] [Required] ContactMessageDto message)
+        {
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("This model is invalid.", ModelState);
+                return BadRequest(ModelState);
+            }
+
+            var messageEvent = new Message
+            {
+                MessageId = Guid.NewGuid().GetHashCode(),
+                Contact = new Contact
+                {
+                    LastName = message.LastName,
+                    FirstName = message.FirstName,
+                    PhoneNumber = message.PhoneNumber
+                },
                 Chat = new Chat
                 {
                     Id = message.ChatId

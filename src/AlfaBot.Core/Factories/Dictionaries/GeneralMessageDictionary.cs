@@ -1,4 +1,4 @@
-﻿namespace AlfaBot.Core.Factories
+﻿namespace AlfaBot.Core.Factories.Dictionaries
 {
     public static class GeneralMessageDictionary
     {
@@ -19,8 +19,8 @@
         public const string ProfessionMessage =
             "Ты у цели!\nУкажи желаемое направление для развития или укажи свой вариант";
 
-        public const string EndOfAskingMessage =
-            "Принято! Как только у нас появится подходящая вакансия, мы свяжемся с тобой.";
+//        public const string EndOfAskingMessage =
+//            "Принято! Как только у нас появится подходящая вакансия, мы свяжемся с тобой.";
 
 //        public const string OpenDoorsInvitationMessage =
 //            @"Также мы проводим день открытых дверей в Альфа-Банке! Заинтересовался? Регистрируйся! http://goo.gl/djL48b";

@@ -15,6 +15,6 @@ namespace AlfaBot.Core.Models
 
         public double Points { get; set; }
 
-        public bool IsEnd { get; set; }
+        public long Seconds { get; set; }
     }
 }

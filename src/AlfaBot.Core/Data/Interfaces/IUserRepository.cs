@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using AlfaBot.Core.Models;
-using MongoDB.Driver;
 
 namespace AlfaBot.Core.Data.Interfaces
 {
@@ -17,20 +16,20 @@ namespace AlfaBot.Core.Data.Interfaces
 
         User Get(long chatId);
 
-        UpdateResult SaveContact(long chatId, string phone, string telegramName);
+        void SaveContact(long chatId, string phone, string telegramName);
 
-        UpdateResult SaveEmail(long chatId, string email);
+        void SaveEmail(long chatId, string email);
 
-        UpdateResult SavePersonOrWorkerInfo(long chatId, bool? isStudent, bool? isAnswerAll);
+        void SavePersonOrWorkerInfo(long chatId, bool? isStudent, bool? isAnswerAll);
 
-        UpdateResult SaveName(long chatId, string name);
+        void SaveName(long chatId, string name);
 
-        UpdateResult SaveUniversity(long chatId, string university);
+        void SaveUniversity(long chatId, string university);
 
-        UpdateResult SaveCourse(long chatId, string course, bool? isAnsweredAll);
+        void SaveCourse(long chatId, string course, bool? isAnsweredAll);
 
-        UpdateResult SaveProfession(long chatId, string profession);
+        void SaveProfession(long chatId, string profession);
 
-        UpdateResult SetQuizMember(long chatId, bool isMember);
+        void SetQuizMember(long chatId, bool isMember);
     }
 }
