@@ -50,6 +50,7 @@ namespace AlfaBot.Host.Controllers
         /// Return Result of the Quiz
         /// </summary>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("{top}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<ResultDto>), StatusCodes.Status200OK)]
@@ -57,19 +58,40 @@ namespace AlfaBot.Host.Controllers
         public ActionResult<IEnumerable<ResultDto>> Json([Required] [Range(1, 20)] int top)
         {
             var results = _resultRepository.All(top);
-            var dto = Map(results);
+            var dto = Map(results, true);
             return Ok(dto);
         }
 
-        private static IEnumerable<ResultDto> Map(IEnumerable<QuizResult> results) =>
+        private static IEnumerable<ResultDto> Map(IEnumerable<QuizResult> results, bool mask = false) =>
             results.Select(r => new ResultDto
             {
                 Name = r.User.Name,
-                Phone = r.User.Phone,
+                Phone = mask ? MaskMobile(r.User.Phone, 3, "****") : r.User.Phone,
                 Points = r.Points,
                 Seconds = r.Seconds,
                 TelegramName = r.User.TelegramName
             });
+
+        // Mask the mobile.
+        // Usage: MaskMobile("13456789876", 3, "****") => "134****9876"
+        private static string MaskMobile(string mobile, int startIndex, string mask)
+        {
+            if (string.IsNullOrEmpty(mobile))
+                return string.Empty;
+
+            var result = mobile;
+            var maskLength = mask.Length;
+
+
+            if (mobile.Length < startIndex) return result;
+
+            result = mobile.Insert(startIndex, mask);
+            result = result.Length >= startIndex + maskLength * 2
+                ? result.Remove((startIndex + maskLength), maskLength)
+                : result.Remove((startIndex + maskLength), result.Length - (startIndex + maskLength));
+
+            return result;
+        }
 
 //        [HttpGet]
 //        public IActionResult CsvResult()
