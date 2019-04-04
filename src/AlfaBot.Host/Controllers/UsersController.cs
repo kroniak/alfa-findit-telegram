@@ -48,7 +48,6 @@ namespace AlfaBot.Host.Controllers
                 Profession = u.Profession,
                 University = u.University,
                 EMail = u.EMail,
-                IsStudent = u.IsStudent ?? false,
                 TelegramName = u.TelegramName
             });
 

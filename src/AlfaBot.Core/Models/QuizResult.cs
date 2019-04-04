@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 namespace AlfaBot.Core.Models
 {
     public class QuizResult
     {
-        [BsonId] 
-        public ObjectId Id { get; set; }
+        [BsonId] public ObjectId Id { get; set; }
 
         public User User { get; set; }
 
@@ -15,6 +18,10 @@ namespace AlfaBot.Core.Models
 
         public double Points { get; set; }
 
-        public long Seconds { get; set; }
+        public DateTime Started { get; set; } = new DateTime();
+
+        public DateTime Ended { get; set; }
+
+        public int Seconds { get; set; }
     }
 }

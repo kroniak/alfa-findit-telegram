@@ -164,9 +164,6 @@ namespace AlfaBot.Core.Factories.Commands
             }
         }
 
-//        private static IEnumerable<QuestionAnswer> GetAnswered(IEnumerable<QuestionAnswer> answers) =>
-//            answers.Where(q => q.IsAnswered);
-
         private static int GetAnsweredCount(IEnumerable<QuestionAnswer> answers) =>
             answers.Count(q => q.IsAnswered);
 

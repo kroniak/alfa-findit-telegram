@@ -5,6 +5,7 @@ using System.Linq;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
 using MongoDB.Driver;
+using Telegram.Bot.Exceptions;
 
 namespace AlfaBot.Core.Data
 {
@@ -19,8 +20,11 @@ namespace AlfaBot.Core.Data
             _results = database.GetCollection<QuizResult>(DbConstants.QuizResultCollectionName);
         }
 
-        public IEnumerable<QuizResult> All()
-            => _results.Find(_ => true).ToEnumerable();
+        public IEnumerable<QuizResult> All() =>
+            _results.Find(_ => true).Sort(Ordered).ToList();
+
+        public IEnumerable<QuizResult> All(int limit) =>
+            _results.Find(_ => true).Sort(Ordered).Limit(limit).ToList();
 
         public QuizResult AddUserQuiz(User user)
         {
@@ -42,7 +46,7 @@ namespace AlfaBot.Core.Data
         {
             var points = result.QuestionAnswers.Sum(answer => answer.Point);
             result.Points = points;
-            
+
             var update = Builders<QuizResult>.Update
                 .Set(r => r.Points, points)
                 .Set(r => r.QuestionAnswers, result.QuestionAnswers);
@@ -62,14 +66,20 @@ namespace AlfaBot.Core.Data
 
         public void UpdateTimeForUser(QuizResult result)
         {
-            var seconds = (result.Id.CreationTime.ToLocalTime() - DateTime.Now).TotalSeconds;
+            var ended = DateTime.Now;
+            var seconds = (int) Math.Round((ended - result.Started).TotalSeconds);
+
             var update = Builders<QuizResult>.Update
-                .Set(r => r.Seconds, seconds);
+                .Set(r => r.Seconds, seconds)
+                .Set(r => r.Ended, ended);
 
             _results.UpdateOne(GlobalChatIdFilter(result.User.ChatId), update);
         }
 
         private static FilterDefinition<QuizResult> GlobalChatIdFilter(long chatId)
             => Builders<QuizResult>.Filter.Eq(u => u.User.ChatId, chatId);
+
+        private static SortDefinition<QuizResult> Ordered =>
+            Builders<QuizResult>.Sort.Descending(r => r.Points).Ascending(r => r.Seconds);
     }
 }
