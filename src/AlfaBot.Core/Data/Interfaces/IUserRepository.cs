@@ -20,7 +20,7 @@ namespace AlfaBot.Core.Data.Interfaces
 
         void SaveEmail(long chatId, string email);
 
-        void SavePersonOrWorkerInfo(long chatId, bool? isStudent, bool? isAnswerAll);
+        void SaveStudentOrNot(long chatId, bool? isStudent, bool? isAnswerAll);
 
         void SaveName(long chatId, string name);
 
@@ -30,6 +30,6 @@ namespace AlfaBot.Core.Data.Interfaces
 
         void SaveProfession(long chatId, string profession);
 
-        void SetQuizMember(long chatId, bool isMember);
+        void SetQuizMember(long chatId, bool? isMember);
     }
 }

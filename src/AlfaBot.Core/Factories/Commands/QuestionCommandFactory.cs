@@ -42,8 +42,13 @@ namespace AlfaBot.Core.Factories.Commands
             };
         }
 
-        public Action QuestionCommand(QuizResult result, Message message, QueueMessage nextMessage)
+        public Action QuestionCommand(
+            Message message,
+            QueueMessage nextMessage,
+            bool isAnsweredAll)
         {
+            var chatId = message.Chat.Id;
+            var result = _resultRepository.GetResult(chatId);
             // if quiz is not ended check answer
             var nonAnsweredQuestion = GetFirstNonAnswered(result.QuestionAnswers);
             if (nonAnsweredQuestion is null) return EndQuestionCommand(message);
@@ -56,8 +61,6 @@ namespace AlfaBot.Core.Factories.Commands
             nonAnsweredQuestion.IsAnswered = true;
             nonAnsweredQuestion.Point = Compare(answer, question.Answer) ? question.Point : 0;
             nonAnsweredQuestion.Answer = answer;
-
-            var chatId = message.Chat.Id;
 
             return () =>
             {
@@ -74,14 +77,18 @@ namespace AlfaBot.Core.Factories.Commands
                     _userRepository.SetQuizMember(chatId, false);
                     _resultRepository.UpdateTimeForUser(result);
 
+                    var appendix = "";
+                    if (!isAnsweredAll)
+                    {
+                        appendix = "\n\nВам необходимо пройти опрос до конца. Осталось пару вопросов!";
+                    }
+
                     _queueService.Add(new QueueMessage(chatId, message.MessageId)
                     {
                         Text = QuizMessageDictionary.EndMessage
                                + "\nТвой результат: " + result.Points + " баллов."
-                               + "\nВам необходимо пройти опрос до конца. Осталось пару вопросов!"
-                               + (string.IsNullOrWhiteSpace(nextMessage.Text)
-                                   ? ""
-                                   : "\n" + nextMessage.Text),
+                               + appendix
+                               + "\n\n" + nextMessage.Text,
                         ReplyMarkup = BotHelper.GetRemoveKeyboard()
                     });
                 }
@@ -92,13 +99,17 @@ namespace AlfaBot.Core.Factories.Commands
             };
         }
 
-        public Action AddQuizCommand(User user, Message message, QueueMessage nextMessage)
+        public Action AddQuizCommand(
+            User user,
+            Message message,
+            QueueMessage nextFalseMessage,
+            QueueMessage wrongMessage)
         {
             var answer = message.Text;
 
             return () =>
             {
-                if (Compare(answer, "Викторина"))
+                if (Compare(answer, "Викторина") || Compare(answer, "Да"))
                 {
                     var result = _resultRepository.AddUserQuiz(user);
 
@@ -125,18 +136,14 @@ namespace AlfaBot.Core.Factories.Commands
                     // add first question
                     HandleNewQuestion(result, message);
                 }
-                else if (Compare(answer, "Опрос"))
+                else if (Compare(answer, "Опрос") || Compare(answer, "Нет"))
                 {
                     _userRepository.SetQuizMember(user.ChatId, false);
-                    _queueService.Add(nextMessage);
+                    _queueService.Add(nextFalseMessage);
                 }
                 else
                 {
-                    _queueService.Add(new QueueMessage(user.ChatId, message.MessageId, false)
-                    {
-                        Text = QuizMessageDictionary.StartMessage,
-                        ReplyMarkup = BotHelper.GetKeyboardQuizOrNot()
-                    });
+                    _queueService.Add(wrongMessage);
                 }
             };
         }

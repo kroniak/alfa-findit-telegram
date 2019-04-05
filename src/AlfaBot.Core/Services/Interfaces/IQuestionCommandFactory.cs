@@ -9,8 +9,9 @@ namespace AlfaBot.Core.Services.Interfaces
     {
         Action EndQuestionCommand(Message message);
 
-        Action QuestionCommand(QuizResult result, Message message, QueueMessage nextMessage);
-        
-        Action AddQuizCommand(User user, Message message, QueueMessage nextMessage);
+        Action QuestionCommand(Message message, QueueMessage nextMessage,
+            bool isAnsweredAll);
+
+        Action AddQuizCommand(User user, Message message, QueueMessage nextFalseMessage, QueueMessage wrongMessage);
     }
 }

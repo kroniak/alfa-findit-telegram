@@ -51,6 +51,12 @@ namespace AlfaBot.Core.Factories
             ReplyMarkup = BotHelper.GetKeyboardQuizOrNot()
         };
 
+        public QueueMessage AskStartQuizMessageAgain => new QueueMessage(ChatId, MessageId)
+        {
+            Text = QuizMessageDictionary.StartMessageAgain,
+            ReplyMarkup = BotHelper.GetKeyboardYesOrNo()
+        };
+
         public QueueMessage AskIsStudentMessage => new QueueMessage(ChatId, MessageId)
         {
             Text = GeneralMessageDictionary.IsStudentMessage,
