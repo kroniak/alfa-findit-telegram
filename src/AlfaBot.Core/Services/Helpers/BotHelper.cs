@@ -31,8 +31,8 @@ namespace AlfaBot.Core.Services.Helpers
             };
             return new ReplyKeyboardMarkup {Keyboard = keyboard};
         }
-        
-        public static IReplyMarkup GetKeyboardQiuzOrNot()
+
+        public static IReplyMarkup GetKeyboardQuizOrNot()
         {
             var yesButton = new KeyboardButton("Викторина");
             var noButton = new KeyboardButton("Опрос");

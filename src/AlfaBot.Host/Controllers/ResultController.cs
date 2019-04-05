@@ -103,7 +103,7 @@ namespace AlfaBot.Host.Controllers
                 Name = r.User.Name,
                 Phone = mask ? MaskMobile(r.User.Phone, 3, "****") : r.User.Phone,
                 Points = r.Points,
-                Seconds = r.Seconds,
+                Seconds = (int) Math.Round((r.Ended - r.Started).TotalSeconds),
                 TelegramName = r.User.TelegramName
             });
 
