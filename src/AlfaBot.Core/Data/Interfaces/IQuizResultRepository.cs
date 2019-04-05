@@ -6,6 +6,8 @@ namespace AlfaBot.Core.Data.Interfaces
     public interface IQuizResultRepository
     {
         IEnumerable<QuizResult> All();
+
+        IEnumerable<QuizResult> All(int limit);
         
         QuizResult AddUserQuiz(User user);
 
