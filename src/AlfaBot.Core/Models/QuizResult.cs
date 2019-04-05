@@ -18,7 +18,7 @@ namespace AlfaBot.Core.Models
 
         public double Points { get; set; }
 
-        public DateTime Started { get; set; } = new DateTime();
+        public DateTime Started { get; set; } = DateTime.Now;
 
         public DateTime Ended { get; set; }
 

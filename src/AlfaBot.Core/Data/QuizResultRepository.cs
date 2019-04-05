@@ -53,16 +53,6 @@ namespace AlfaBot.Core.Data
             _results.UpdateOne(GlobalChatIdFilter(result.User.ChatId), update);
         }
 
-        public void SaveQuestionForUser(QuizResult result, QuestionAnswer answer)
-        {
-            result.QuestionAnswers.Add(answer);
-
-            var update = Builders<QuizResult>.Update
-                .Set(r => r.QuestionAnswers, result.QuestionAnswers);
-
-            _results.UpdateOne(GlobalChatIdFilter(result.User.ChatId), update);
-        }
-
         public void UpdateTimeForUser(QuizResult result)
         {
             var ended = DateTime.Now;

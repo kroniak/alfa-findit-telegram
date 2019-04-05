@@ -15,8 +15,6 @@ namespace AlfaBot.Core.Data.Interfaces
 
         void UpdateQuestionsForUser(QuizResult result);
 
-        void SaveQuestionForUser(QuizResult result, QuestionAnswer answer);
-        
         void UpdateTimeForUser(QuizResult result);
     }
 }
