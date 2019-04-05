@@ -20,10 +20,10 @@ namespace AlfaBot.Core.Data
         }
 
         public IEnumerable<QuizResult> All() =>
-            _results.Find(_ => true).Sort(Ordered).ToList();
+            _results.Find(GlobalPointFilter).Sort(Ordered).ToList();
 
         public IEnumerable<QuizResult> All(int limit) =>
-            _results.Find(_ => true).Sort(Ordered).Limit(limit).ToList();
+            _results.Find(GlobalPointFilter).Sort(Ordered).Limit(limit).ToList();
 
         public QuizResult AddUserQuiz(User user)
         {
@@ -64,6 +64,9 @@ namespace AlfaBot.Core.Data
 
             _results.UpdateOne(GlobalChatIdFilter(result.User.ChatId), update);
         }
+
+        private static FilterDefinition<QuizResult> GlobalPointFilter
+            => Builders<QuizResult>.Filter.Gt(u => u.Points, 0);
 
         private static FilterDefinition<QuizResult> GlobalChatIdFilter(long chatId)
             => Builders<QuizResult>.Filter.Eq(u => u.User.ChatId, chatId);
