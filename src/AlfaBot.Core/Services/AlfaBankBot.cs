@@ -120,6 +120,7 @@ namespace AlfaBot.Core.Services
 
         private void Build() => _botClient.OnMessage += OnMessageReceived;
 
+        [ExcludeFromCodeCoverage]
         private void OnMessageReceived(object sender, MessageEventArgs eventArgs)
         {
             var message = eventArgs.Message;

@@ -8,6 +8,7 @@ using Bogus;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Xunit;
 using User = AlfaBot.Core.Models.User;
@@ -138,6 +139,14 @@ namespace AlfaBot.Test.Services
             _client.Verify(c => c.StartReceiving(
                 null,
                 default(CancellationToken)), Times.Never);
+        }
+
+        [Fact]
+        public void MessageHandler_ChaId0_Return_False()
+        {
+            var message = _messageFake.RuleFor(m => m.Chat, f => new Chat {Id = 0}).Generate();
+
+            Assert.False(_bot.MessageHandler(message));
         }
 
         [Fact]
@@ -306,6 +315,37 @@ namespace AlfaBot.Test.Services
             _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
             _commands
                 .Verify(c => c.AddNameCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>()), Times.Once);
+        }
+
+        [Fact]
+        public void MessageHandler_Contact_User_ReturnTrue_Command()
+        {
+            var message = _messageFake
+                .RuleFor(m => m.Contact, f => new Contact
+                {
+                    LastName = f.Name.LastName(),
+                    FirstName = f.Name.FirstName(),
+                    PhoneNumber = f.Phone.PhoneNumber()
+                })
+                .RuleFor(m => m.Text, f => null)
+                .Generate();
+
+            var user = _userFake
+                .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
+                .Generate();
+
+            _users.Setup(u => u.Get(message.Chat.Id)).Returns(user);
+            _commands
+                .Setup(c => c.Command(It.IsAny<QueueMessage>()))
+                .Returns(() => () => { });
+
+            var result = _bot.MessageHandler(message);
+            Assert.True(result);
+
+            _logs.Verify(l => l.Add(message), Times.Once);
+            _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
+            _commands
+                .Verify(c => c.Command(It.IsAny<QueueMessage>()), Times.Once);
         }
 
         [Fact]
