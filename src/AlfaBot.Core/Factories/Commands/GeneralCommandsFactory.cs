@@ -12,13 +12,16 @@ namespace AlfaBot.Core.Factories.Commands
     {
         private readonly IUserRepository _userRepository;
         private readonly IQueueService _queueService;
+        private readonly IQuizResultRepository _resultRepository;
 
         public GeneralCommandsFactory(
             IUserRepository userRepository,
-            IQueueService queueService)
+            IQueueService queueService,
+            IQuizResultRepository resultRepository)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _queueService = queueService ?? throw new ArgumentNullException(nameof(queueService));
+            _resultRepository = resultRepository ?? throw new ArgumentNullException(nameof(_resultRepository));
         }
 
         public Action Command(QueueMessage queueMessage)
@@ -51,6 +54,16 @@ namespace AlfaBot.Core.Factories.Commands
         }
 
         public Action AddNameCommand(Message message, QueueMessage nextMessage)
+        {
+            return () =>
+            {
+                _userRepository.SaveName(message.Chat.Id, message.Text);
+
+                _queueService.Add(nextMessage);
+            };
+        }
+
+        public Action SetQuizNullCommand(Message message, QueueMessage nextMessage)
         {
             return () =>
             {
@@ -119,7 +132,7 @@ namespace AlfaBot.Core.Factories.Commands
                     isAnsweredAllQuestions = true;
                 }
 
-                _userRepository.SavePersonOrWorkerInfo(chatId, isStudent, isAnsweredAllQuestions);
+                _userRepository.SaveStudentOrNot(chatId, isStudent, isAnsweredAllQuestions);
                 if (!isStudent.HasValue)
                 {
                     var factory = new QueueMessageFactory(message);
@@ -132,6 +145,11 @@ namespace AlfaBot.Core.Factories.Commands
                 }
                 else
                 {
+                    if (!_resultRepository.IsQuizMember(chatId))
+                    {
+                        _userRepository.SetQuizMember(chatId, null);
+                    }
+
                     _queueService.Add(nextFalseMessage);
                 }
             };
@@ -152,6 +170,8 @@ namespace AlfaBot.Core.Factories.Commands
             QueueMessage nextTrueMessage,
             QueueMessage nextFalseMessage)
         {
+            var chatId = message.Chat.Id;
+
             return () =>
             {
                 var course = message.Text;
@@ -167,6 +187,11 @@ namespace AlfaBot.Core.Factories.Commands
                 {
                     isYoung = false;
                     isAnsweredAllQuestions = true;
+                }
+
+                if (isAnsweredAllQuestions.HasValue && !_resultRepository.IsQuizMember(chatId))
+                {
+                    _userRepository.SetQuizMember(chatId, null);
                 }
 
                 _userRepository.SaveCourse(message.Chat.Id, isYoung.HasValue ? course : null, isAnsweredAllQuestions);

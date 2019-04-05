@@ -52,7 +52,7 @@ namespace AlfaBot.Core.Data
             _users.UpdateOne(filter, update);
         }
 
-        public void SavePersonOrWorkerInfo(long chatId, bool? isStudent, bool? isAnswerAll)
+        public void SaveStudentOrNot(long chatId, bool? isStudent, bool? isAnswerAll)
         {
             var filter = GlobalChatIdFilter(chatId);
             var update = Builders<User>.Update
@@ -99,7 +99,7 @@ namespace AlfaBot.Core.Data
             _users.UpdateOne(filter, update);
         }
 
-        public void SetQuizMember(long chatId, bool isMember)
+        public void SetQuizMember(long chatId, bool? isMember)
         {
             var filter = GlobalChatIdFilter(chatId);
 

@@ -39,6 +39,8 @@ namespace AlfaBot.Core.Data
             return result;
         }
 
+        public bool IsQuizMember(long chatId) => _results.Find(GlobalChatIdFilter(chatId)).Any();
+
         public QuizResult GetResult(long chatId) =>
             _results.Find(GlobalChatIdFilter(chatId)).SingleOrDefault();
 

@@ -120,6 +120,7 @@ namespace AlfaBot.Core.Services
 
         private void Build() => _botClient.OnMessage += OnMessageReceived;
 
+        [ExcludeFromCodeCoverage]
         private void OnMessageReceived(object sender, MessageEventArgs eventArgs)
         {
             var message = eventArgs.Message;
@@ -162,14 +163,17 @@ namespace AlfaBot.Core.Services
             // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (user.IsQuizMember == null)
             {
-                return _questionCommandFactory.AddQuizCommand(user, message, factory.AskEmail);
+                return _questionCommandFactory.AddQuizCommand(user, message, user.IsAnsweredAll
+                        ? factory.EndMessage
+                        : factory.AskEmail,
+                    factory.AskStartQuizMessage);
             }
 
             if (user.IsQuizMember is true)
             {
                 // add handler to quiz
-                var result = _resultRepository.GetResult(chatId);
-                return _questionCommandFactory.QuestionCommand(result, message, factory.AskEmail);
+                return _questionCommandFactory.QuestionCommand(message,
+                    user.IsAnsweredAll ? factory.EndMessage : factory.AskEmail, user.IsAnsweredAll);
             }
 
             if (user.EMail == null)
@@ -182,30 +186,26 @@ namespace AlfaBot.Core.Services
                 return _generalCommandsFactory.AddProfessionCommand(message, factory.AskIsStudentMessage);
             }
 
+            // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (user.IsStudent == null)
             {
                 return _generalCommandsFactory.AddIsStudentCommand(
                     message,
                     factory.AskUniversityMessage,
-                    factory.EndMessage);
+                    _resultRepository.IsQuizMember(chatId) ? factory.EndMessage : factory.AskStartQuizMessageAgain);
             }
 
-            if (user.IsAnsweredAll)
-            {
-                return _generalCommandsFactory.Command(factory.EndMessage);
-            }
-
-            if (user.University == null)
+            if (user.IsStudent is true && user.University == null)
             {
                 return _generalCommandsFactory.AddUniversityCommand(message, factory.AskCourse);
             }
 
             // ReSharper disable once ConvertIfStatementToReturnStatement
-            if (user.Course == null)
+            if (user.IsStudent is true && user.Course == null)
             {
                 return _generalCommandsFactory.AddCourseCommand(
                     message,
-                    factory.EndMessage,
+                    _resultRepository.IsQuizMember(chatId) ? factory.EndMessage : factory.AskStartQuizMessageAgain,
                     factory.AskCourse);
             }
 

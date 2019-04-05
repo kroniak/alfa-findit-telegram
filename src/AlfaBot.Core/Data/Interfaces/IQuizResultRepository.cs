@@ -11,6 +11,8 @@ namespace AlfaBot.Core.Data.Interfaces
         
         QuizResult AddUserQuiz(User user);
 
+        bool IsQuizMember(long chatId);
+
         QuizResult GetResult(long chatId);
 
         void UpdateQuestionsForUser(QuizResult result);
