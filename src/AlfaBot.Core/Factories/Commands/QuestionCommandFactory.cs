@@ -135,7 +135,7 @@ namespace AlfaBot.Core.Factories.Commands
                     _queueService.Add(new QueueMessage(user.ChatId, message.MessageId, false)
                     {
                         Text = QuizMessageDictionary.StartMessage,
-                        ReplyMarkup = BotHelper.GetKeyboardQiuzOrNot()
+                        ReplyMarkup = BotHelper.GetKeyboardQuizOrNot()
                     });
                 }
             };
