@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace AlfaBot.Core.Models
 {

@@ -159,6 +159,7 @@ namespace AlfaBot.Core.Services
                 return _generalCommandsFactory.AddNameCommand(message, factory.AskStartQuizMessage);
             }
 
+            // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (user.IsQuizMember == null)
             {
                 return _questionCommandFactory.AddQuizCommand(user, message, factory.AskEmail);

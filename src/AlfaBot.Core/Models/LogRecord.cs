@@ -3,6 +3,9 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace AlfaBot.Core.Models
 {

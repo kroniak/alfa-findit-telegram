@@ -1,3 +1,4 @@
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace AlfaBot.Host.Model
 {
     /// <summary>

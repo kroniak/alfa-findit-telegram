@@ -87,8 +87,8 @@ namespace AlfaBot.Host.Controllers
 
             result = mobile.Insert(startIndex, mask);
             result = result.Length >= startIndex + maskLength * 2
-                ? result.Remove((startIndex + maskLength), maskLength)
-                : result.Remove((startIndex + maskLength), result.Length - (startIndex + maskLength));
+                ? result.Remove(startIndex + maskLength, maskLength)
+                : result.Remove(startIndex + maskLength, result.Length - (startIndex + maskLength));
 
             return result;
         }

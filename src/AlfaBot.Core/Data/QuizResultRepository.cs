@@ -5,7 +5,6 @@ using System.Linq;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
 using MongoDB.Driver;
-using Telegram.Bot.Exceptions;
 
 namespace AlfaBot.Core.Data
 {
