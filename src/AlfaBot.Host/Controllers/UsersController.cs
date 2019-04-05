@@ -55,11 +55,11 @@ namespace AlfaBot.Host.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Get all user information with csv result 
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Produces("text/plain")]
+        [Produces("text/csv")]
         [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public IActionResult Csv()

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
 using AlfaBot.Host.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace AlfaBot.Host.Controllers
 {
@@ -16,7 +18,6 @@ namespace AlfaBot.Host.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]/[action]")]
-    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [BindProperties]
@@ -24,11 +25,15 @@ namespace AlfaBot.Host.Controllers
     public class ResultController : ControllerBase
     {
         private readonly IQuizResultRepository _resultRepository;
+        private readonly ILogger<ResultController> _logger;
 
         /// <inheritdoc />
-        public ResultController(IQuizResultRepository resultRepository)
+        public ResultController(
+            IQuizResultRepository resultRepository,
+            ILogger<ResultController> logger)
         {
             _resultRepository = resultRepository ?? throw new ArgumentNullException(nameof(resultRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -55,11 +60,41 @@ namespace AlfaBot.Host.Controllers
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<ResultDto>), StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<ResultDto>> Json([Required] [Range(1, 20)] int top)
+        public ActionResult<IEnumerable<ResultDto>> Json([Required] [Range(1, 30)] int top)
         {
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("This model is invalid.", ModelState);
+                return BadRequest(ModelState);
+            }
+
             var results = _resultRepository.All(top);
             var dto = Map(results, true);
             return Ok(dto);
+        }
+
+        /// <summary>
+        /// Return Result of the Quiz information with csv result 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Produces("text/csv")]
+        [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public IActionResult Csv()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("Name;Phone;Telegram;Points");
+
+            var results = _resultRepository.All();
+            var dto = Map(results);
+
+            foreach (var d in dto)
+            {
+                sb.AppendLine($"{d.Name};{d.Phone};{d.TelegramName};{d.Points};");
+            }
+
+            return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "results.csv");
         }
 
         private static IEnumerable<ResultDto> Map(IEnumerable<QuizResult> results, bool mask = false) =>
@@ -92,22 +127,5 @@ namespace AlfaBot.Host.Controllers
 
             return result;
         }
-
-//        [HttpGet]
-//        public IActionResult CsvResult()
-//        {
-//            var sb = new StringBuilder();
-//
-//            sb.AppendLine("Name;Phone;Telegram;Points");
-//
-//            var results = Question.AllResults().Result;
-//
-//            foreach (var res in results)
-//            {
-//                sb.AppendLine($"{res.User.Name};{res.User.Phone};{res.User.TelegramName};{res.Points};");
-//            }
-//
-//            return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "results.csv");
-//        }
     }
 }
