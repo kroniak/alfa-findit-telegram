@@ -30,7 +30,8 @@ namespace AlfaBot.Core.Data
             var result = new QuizResult
             {
                 User = user,
-                Points = 0
+                Points = 0,
+                Started = DateTime.Now
             };
 
             _results.InsertOne(result);
@@ -55,12 +56,11 @@ namespace AlfaBot.Core.Data
 
         public void UpdateTimeForUser(QuizResult result)
         {
-            var ended = DateTime.Now;
-            var seconds = (int) Math.Round((ended - result.Started).TotalSeconds);
+            var sorting = (int) Math.Round((DateTime.Now - result.Started).TotalSeconds);
 
             var update = Builders<QuizResult>.Update
-                .Set(r => r.Seconds, seconds)
-                .Set(r => r.Ended, ended);
+                .Set(r => r.Sorting, sorting)
+                .Set(r => r.Ended, DateTime.Now);
 
             _results.UpdateOne(GlobalChatIdFilter(result.User.ChatId), update);
         }
@@ -69,6 +69,6 @@ namespace AlfaBot.Core.Data
             => Builders<QuizResult>.Filter.Eq(u => u.User.ChatId, chatId);
 
         private static SortDefinition<QuizResult> Ordered =>
-            Builders<QuizResult>.Sort.Descending(r => r.Points).Ascending(r => r.Seconds);
+            Builders<QuizResult>.Sort.Descending(r => r.Points).Ascending(r => r.Sorting);
     }
 }

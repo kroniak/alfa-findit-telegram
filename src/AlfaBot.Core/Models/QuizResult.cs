@@ -18,10 +18,10 @@ namespace AlfaBot.Core.Models
 
         public double Points { get; set; }
 
-        public DateTime Started { get; set; } = DateTime.Now;
+        public DateTime Started { get; set; }
 
         public DateTime Ended { get; set; }
 
-        public int Seconds { get; set; }
+        public int Sorting { get; set; }
     }
 }
