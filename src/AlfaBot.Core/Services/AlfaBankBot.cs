@@ -90,6 +90,7 @@ namespace AlfaBot.Core.Services
             Action action;
 
             // Fix other highPriorityMessage
+            // ReSharper disable once SwitchStatementMissingSomeCases
             switch (message.Type)
             {
                 case MessageType.Contact:
@@ -139,6 +140,7 @@ namespace AlfaBot.Core.Services
                 return _generalCommandsFactory.StartCommand(factory.WelcomeMessage);
 
             // handle contact message
+            // ReSharper disable once SwitchStatementMissingSomeCases
             switch (message.Type)
             {
                 case MessageType.Contact when user.Phone is null:

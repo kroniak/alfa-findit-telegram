@@ -29,7 +29,7 @@ namespace AlfaBot.Core.Data
             Update();
         }
 
-        public void Update()
+        private void Update()
         {
             var questions = All();
 

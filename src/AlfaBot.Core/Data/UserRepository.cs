@@ -19,7 +19,7 @@ namespace AlfaBot.Core.Data
             _users = database.GetCollection<User>(DbConstants.UserCollectionName);
         }
 
-        public void Add(User item) => _users.InsertOne(item);
+        private void Add(User item) => _users.InsertOne(item);
 
         public void Add(long chatId) =>
             Add(new User
@@ -32,6 +32,8 @@ namespace AlfaBot.Core.Data
 
         public User Get(long chatId) =>
             _users.Find(GlobalChatIdFilter(chatId)).SingleOrDefault();
+
+        public DeleteResult Delete(long chatId) => _users.DeleteOne(GlobalChatIdFilter(chatId));
 
         public void SaveContact(long chatId, string phone, string telegramName)
         {

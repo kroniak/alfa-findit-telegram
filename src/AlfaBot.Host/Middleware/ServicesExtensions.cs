@@ -5,6 +5,7 @@ using AlfaBot.Core.Factories.Commands;
 using AlfaBot.Core.Services;
 using AlfaBot.Core.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+// ReSharper disable UnusedMethodReturnValue.Global
 #pragma warning disable 1591
 
 namespace AlfaBot.Host.Middleware

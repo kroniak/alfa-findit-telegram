@@ -16,6 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Swashbuckle.AspNetCore.Swagger;
 using Telegram.Bot;
+using WebApiContrib.Core.Formatter.Csv;
+// ReSharper disable UnusedMember.Global
 
 #pragma warning disable 1591
 
@@ -67,7 +69,9 @@ namespace AlfaBot.Host
             services.AddHostedService<SendingHostedService>();
 
             // Add MVC and other services
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddCsvSerializerFormatters();
 
             services.AddSwaggerGen(
                 options =>

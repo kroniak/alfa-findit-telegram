@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using AlfaBot.Core.Models;
+using MongoDB.Driver;
 
 namespace AlfaBot.Core.Data.Interfaces
 {
@@ -9,12 +10,12 @@ namespace AlfaBot.Core.Data.Interfaces
     public interface IUserRepository
     {
         IEnumerable<User> All();
-
-        void Add(User item);
         
         void Add(long chatId);
 
         User Get(long chatId);
+        
+        DeleteResult Delete(long chatId);
 
         void SaveContact(long chatId, string phone, string telegramName);
 

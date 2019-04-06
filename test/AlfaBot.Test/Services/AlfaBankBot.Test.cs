@@ -8,7 +8,6 @@ using Bogus;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Telegram.Bot;
-using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Xunit;
 using User = AlfaBot.Core.Models.User;
