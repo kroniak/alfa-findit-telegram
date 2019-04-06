@@ -1,0 +1,10 @@
+scripts
+bin
+obj
+logs
+Dockerfile
+docker-compose.*
+LICENSE
+*.md
+out
+appsettings.Development.json

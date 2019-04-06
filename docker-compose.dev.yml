@@ -2,7 +2,7 @@ version: '3.0'
 services:
   db:
     image: mongo:4
-    container_name: alfa-bot-mongodb-prod
+    container_name: alfa-bot-mongodb-dev
     restart: always
     volumes:
       - ~/alfa/bot-data/db:/data/db:rw
@@ -11,13 +11,17 @@ services:
       - "28017:27017"
   bot:
     image: alfa/bot-telegram:2
-    container_name: alfa-bot-telegram-prod
+    container_name: alfa-bot-telegram-dev
     restart: always
     depends_on:
       - db
+    links:
+      - db
     ports:
-      - "80:5000"
+      - "5000:5000"
     environment:
-      - TELEGRAM_TOKEN=insert you key here
-      - SECRETKEY=insert you key here
+      - TELEGRAM_TOKEN=insert there
+      - SECRETKEY=secretkey
       - MONGO=mongodb://db
+      - PROXY_ADDRESS=46.162.193.21
+      - PROXY_PORT=34771
