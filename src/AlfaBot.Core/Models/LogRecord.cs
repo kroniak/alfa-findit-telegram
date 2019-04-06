@@ -6,6 +6,7 @@ using Telegram.Bot.Types.Enums;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedMember.Global
 
 namespace AlfaBot.Core.Models
 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using AlfaBot.Core.Services.Interfaces;
+using AlfaBot.Host.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,6 @@ namespace AlfaBot.Host.Controllers
     [Route("api/[controller]/[action]")]
     [Produces("application/json")]
     [BindProperties]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ExcludeFromCodeCoverage]
     public class BotController : ControllerBase
     {
@@ -31,9 +31,10 @@ namespace AlfaBot.Host.Controllers
         /// <returns>Status of bot starting</returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(StatusOutDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(StatusOutDto), StatusCodes.Status500InternalServerError)]
         [ProducesDefaultResponseType]
-        public IActionResult Start()
+        public ActionResult<StatusOutDto> Start()
         {
             try
             {
@@ -41,10 +42,10 @@ namespace AlfaBot.Host.Controllers
             }
             catch
             {
-                StatusCode(500, new {status = "Bot was not started"});
+                return StatusCode(500, new StatusOutDto {Status = "Bot was not started"});
             }
 
-            return Ok(new {status = "Bot was started"});
+            return Ok(new StatusOutDto {Status = "Bot was started"});
         }
 
         /// <summary>
@@ -53,12 +54,12 @@ namespace AlfaBot.Host.Controllers
         /// <returns>Status of bot stopping</returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(StatusOutDto), StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public IActionResult Stop()
+        public ActionResult<StatusOutDto> Stop()
         {
             _bot.Stop();
-            return Ok(new {status = "Bot was stopped"});
+            return Ok(new StatusOutDto {Status = "Bot was stopped"});
         }
 
         /// <summary>
@@ -67,14 +68,15 @@ namespace AlfaBot.Host.Controllers
         /// <returns>Status of the bot</returns>
         [HttpGet]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(StatusOutDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(StatusOutDto), StatusCodes.Status500InternalServerError)]
         [ProducesDefaultResponseType]
-        public IActionResult Ping()
+        public ActionResult<StatusOutDto> Ping()
         {
             var healthy = _bot.Ping();
             return healthy
-                ? Ok(new {status = "Pong, Bot is receiving"})
-                : StatusCode(500, new {status = "Bot is not receiving"});
+                ? Ok(new StatusOutDto {Status = "Pong, Bot is receiving"})
+                : StatusCode(500, new StatusOutDto {Status = "Bot is not receiving"});
         }
     }
 }

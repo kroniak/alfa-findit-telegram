@@ -63,16 +63,6 @@ namespace AlfaBot.Core.Factories.Commands
             };
         }
 
-        public Action SetQuizNullCommand(Message message, QueueMessage nextMessage)
-        {
-            return () =>
-            {
-                _userRepository.SaveName(message.Chat.Id, message.Text);
-
-                _queueService.Add(nextMessage);
-            };
-        }
-
         public Action AddEMailCommand(Message message, QueueMessage nextMessage)
         {
             return () =>

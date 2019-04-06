@@ -63,35 +63,40 @@ namespace AlfaBot.Core.Data
             IMongoCollection<QuizResult> results,
             IMongoCollection<LogRecord> logs)
         {
-            var options = new CreateIndexOptions
+            var optionsUnique = new CreateIndexOptions
             {
                 Unique = true,
                 Background = true
             };
 
+            var optionsBackground = new CreateIndexOptions
+            {
+                Background = true
+            };
+
             var userIndexModel = new CreateIndexModel<User>(
                 Builders<User>.IndexKeys.Ascending(x => x.ChatId),
-                options);
+                optionsUnique);
 
             var queueIndexModelFirst = new CreateIndexModel<QueueMessage>(
                 Builders<QueueMessage>.IndexKeys
-                    .Ascending(x => x.ChatId), options);
+                    .Ascending(x => x.ChatId), optionsUnique);
 
             var queueIndexModelSecond = new CreateIndexModel<QueueMessage>(
                 Builders<QueueMessage>.IndexKeys
-                    .Ascending(x => x.IsHighPriority));
+                    .Ascending(x => x.IsHighPriority), optionsBackground);
 
             var resultsIndexModel = new CreateIndexModel<QuizResult>(
                 Builders<QuizResult>.IndexKeys.Ascending(x => x.User.ChatId),
-                options);
+                optionsUnique);
 
             var logIndexModelFirst = new CreateIndexModel<LogRecord>(
                 Builders<LogRecord>.IndexKeys
-                    .Ascending(x => x.MessageId), options);
+                    .Ascending(x => x.MessageId), optionsUnique);
 
             var logIndexModelSecond = new CreateIndexModel<LogRecord>(
                 Builders<LogRecord>.IndexKeys
-                    .Ascending(x => x.ChatId));
+                    .Ascending(x => x.ChatId), optionsBackground);
 
             users.Indexes.CreateOne(userIndexModel);
             queue.Indexes.CreateMany(new[] {queueIndexModelFirst, queueIndexModelSecond});

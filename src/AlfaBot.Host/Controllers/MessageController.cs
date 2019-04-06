@@ -6,6 +6,7 @@ using AlfaBot.Host.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 
@@ -44,10 +45,11 @@ namespace AlfaBot.Host.Controllers
         /// <response code="200">Returns successfully status</response>
         /// <response code="400">Return bad handling status</response>
         [HttpPost]
+        [ProducesResponseType(typeof(AddMessageStatusOutDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ModelStateDictionary),
+            StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Text([FromBody] [Required] TextMessageDto message)
+        public ActionResult<AddMessageStatusOutDto> Text([FromBody] [Required] TextMessageDto message)
         {
             if (!ModelState.IsValid)
             {
@@ -69,8 +71,8 @@ namespace AlfaBot.Host.Controllers
             var result = _bot.MessageHandler(messageEvent);
 
             return result
-                ? Ok(new {messageId = messageEvent.MessageId})
-                : StatusCode(500, new {messageId = messageEvent.MessageId});
+                ? Ok(new AddMessageStatusOutDto {Status = "successfully", MessageId = messageEvent.MessageId})
+                : StatusCode(500, new AddMessageStatusOutDto {Status = "failed", MessageId = messageEvent.MessageId});
         }
 
         /// <summary>
@@ -86,10 +88,11 @@ namespace AlfaBot.Host.Controllers
         /// <response code="200">Returns successfully status</response>
         /// <response code="400">Return bad handling status</response>
         [HttpPost]
+        [ProducesResponseType(typeof(AddMessageStatusOutDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ModelStateDictionary),
+            StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Contact([FromBody] [Required] ContactMessageDto message)
+        public ActionResult<AddMessageStatusOutDto> Contact([FromBody] [Required] ContactMessageDto message)
         {
             if (!ModelState.IsValid)
             {
@@ -116,8 +119,8 @@ namespace AlfaBot.Host.Controllers
             var result = _bot.MessageHandler(messageEvent);
 
             return result
-                ? Ok(new {messageId = messageEvent.MessageId})
-                : StatusCode(500, new {messageId = messageEvent.MessageId});
+                ? Ok(new AddMessageStatusOutDto {Status = "successfully", MessageId = messageEvent.MessageId})
+                : StatusCode(500, new AddMessageStatusOutDto {Status = "failed", MessageId = messageEvent.MessageId});
         }
     }
 }

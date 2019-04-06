@@ -10,8 +10,6 @@ namespace AlfaBot.Core.Data.Interfaces
 
         Question Get(ObjectId id);
 
-        void Update();
-
         IEnumerable<Question> All();
     }
 }

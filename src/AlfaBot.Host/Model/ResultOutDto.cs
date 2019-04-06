@@ -4,7 +4,7 @@ namespace AlfaBot.Host.Model
     /// <summary>
     /// Result class for exporting and view in JS
     /// </summary>
-    public class ResultDto
+    public class ResultOutDto
     {
         /// <summary>
         /// Telegram name
