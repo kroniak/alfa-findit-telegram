@@ -20,4 +20,5 @@ services:
     environment:
       - TELEGRAM_TOKEN=insert you key here
       - SECRETKEY=insert you key here
+      - SECRETKEY_USER=insert you key here
       - MONGO=mongodb://db
