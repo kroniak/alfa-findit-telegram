@@ -84,7 +84,9 @@ namespace AlfaBot.Host
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.WithOrigins("https://bot.kroniak.net", "https://bot.kroniak.net",
+                        builder.WithOrigins(
+                            "http://bot.kroniak.net",
+                            "https://bot.kroniak.net",
                             "http://localhost:3000");
                     });
             });
@@ -137,6 +139,9 @@ namespace AlfaBot.Host
             {
                 app.UseHsts();
             }
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.UseAuthentication();
 
