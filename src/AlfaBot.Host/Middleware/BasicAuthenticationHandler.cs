@@ -17,6 +17,7 @@ namespace AlfaBot.Host.Middleware
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private readonly string _secretKey;
+        private readonly string _secretUserKey;
 
         /// <inheritdoc />
         public BasicAuthenticationHandler(
@@ -34,6 +35,7 @@ namespace AlfaBot.Host.Middleware
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
 
             _secretKey = configuration["SECRETKEY"];
+            _secretUserKey = configuration["SECRETKEY_USER"];
         }
 
         /// <inheritdoc />
@@ -46,14 +48,24 @@ namespace AlfaBot.Host.Middleware
                 return Task.FromResult(AuthenticateResult.Fail("Missing Authorization Key"));
             }
 
-            if (string.CompareOrdinal(_secretKey, secret) != 0)
+            Claim roleClaim;
+            
+            if (string.CompareOrdinal(_secretKey, secret) == 0)
+            {
+                roleClaim = new Claim(ClaimTypes.Role, "Administrators");
+            }
+            else if (string.CompareOrdinal(_secretUserKey, secret) == 0)
+            {
+                roleClaim = new Claim(ClaimTypes.Role, "Users");
+            }
+            else
             {
                 return Task.FromResult(AuthenticateResult.Fail("Invalid Authorization Key"));
             }
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, "Default Admin User")
+                roleClaim
             };
 
             var identity = new ClaimsIdentity(claims, Scheme.Name);

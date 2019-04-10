@@ -6,7 +6,9 @@ using System.Linq;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
 using AlfaBot.Host.Model;
+using AlfaBot.Host.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -15,7 +17,7 @@ using Microsoft.Extensions.Logging;
 namespace AlfaBot.Host.Controllers
 {
     /// <inheritdoc />
-    [Authorize]
+    [Authorize(Roles = "Administrators")]
     [ApiController]
     [Route("api/[controller]")]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -95,6 +97,7 @@ namespace AlfaBot.Host.Controllers
         /// </summary>
         /// <returns>Result of the Quiz</returns>
         [AllowAnonymous]
+        [EnableCors]
         [HttpGet("top/{top:int}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<ResultOutDto>), StatusCodes.Status200OK)]
@@ -120,7 +123,7 @@ namespace AlfaBot.Host.Controllers
             new ResultOutDto
             {
                 Name = result.User.Name,
-                Phone = mask ? MaskMobile(result.User.Phone, 3, "****") : result.User.Phone,
+                Phone = mask ? result.User.Phone.MaskMobile(3, "****") : result.User.Phone,
                 Points = result.Points,
                 Seconds = CalcSeconds(result.Ended, result.Started),
                 TelegramName = result.User.TelegramName
@@ -132,27 +135,6 @@ namespace AlfaBot.Host.Controllers
 
             var seconds = Math.Round((DateTime.Now - started).TotalSeconds);
             return (int) (seconds >= int.MaxValue ? int.MaxValue : seconds);
-        }
-
-        // Mask the mobile.
-        // Usage: MaskMobile("13456789876", 3, "****") => "134****9876"
-        private static string MaskMobile(string mobile, int startIndex, string mask)
-        {
-            if (string.IsNullOrEmpty(mobile))
-                return string.Empty;
-
-            var result = mobile;
-            var maskLength = mask.Length;
-
-
-            if (mobile.Length < startIndex) return result;
-
-            result = mobile.Insert(startIndex, mask);
-            result = result.Length >= startIndex + maskLength * 2
-                ? result.Remove(startIndex + maskLength, maskLength)
-                : result.Remove(startIndex + maskLength, result.Length - (startIndex + maskLength));
-
-            return result;
         }
     }
 }

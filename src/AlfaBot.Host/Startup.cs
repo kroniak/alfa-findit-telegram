@@ -17,6 +17,7 @@ using MongoDB.Driver;
 using Swashbuckle.AspNetCore.Swagger;
 using Telegram.Bot;
 using WebApiContrib.Core.Formatter.Csv;
+
 // ReSharper disable UnusedMember.Global
 
 #pragma warning disable 1591
@@ -35,13 +36,14 @@ namespace AlfaBot.Host
             // configure general params
             var token = _configuration["TELEGRAM_TOKEN"];
             var secretKey = _configuration["SECRETKEY"];
+            var secretUserKey = _configuration["SECRETKEY_USER"];
             var connection = _configuration["MONGO"];
             var database = _configuration["DBNAME"] ?? "FindIT";
 
             if (string.IsNullOrWhiteSpace(token))
                 throw new ArgumentNullException(token, "Telegram token must be not null");
 
-            if (string.IsNullOrWhiteSpace(secretKey))
+            if (string.IsNullOrWhiteSpace(secretKey) || string.IsNullOrWhiteSpace(secretUserKey))
                 throw new ArgumentNullException(secretKey, "Secret key must be not null");
 
             if (string.IsNullOrWhiteSpace(connection))
@@ -62,13 +64,33 @@ namespace AlfaBot.Host
             services.AddSingleton<IAlfaBankBot, AlfaBankBot>();
 
             services
+                .AddAuthorization(options =>
+                {
+                    options.AddPolicy("Administrators",
+                        policy => { policy.RequireRole("Administrators"); });
+                    options.AddPolicy("Users",
+                        policy => { policy.RequireRole("Users"); });
+                })
                 .AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
 
             // Add Background service
             services.AddHostedService<SendingHostedService>();
 
             // Add MVC and other services
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins(
+                            "http://bot.kroniak.net",
+                            "https://bot.kroniak.net",
+                            "http://localhost:3000");
+                    });
+            });
+
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddCsvSerializerFormatters();
@@ -117,6 +139,9 @@ namespace AlfaBot.Host
             {
                 app.UseHsts();
             }
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.UseAuthentication();
 

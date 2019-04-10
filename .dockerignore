@@ -8,3 +8,9 @@ LICENSE
 *.md
 out
 appsettings.Development.json
+**/node_modules
+src/AlfaBot.Client/build
+**/wwwroot
+**/.gitignore
+**/.idea
+.vscode

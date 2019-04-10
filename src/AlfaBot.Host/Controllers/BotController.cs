@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AlfaBot.Host.Controllers
 {
     /// <inheritdoc />
-    [Authorize]
+    [Authorize(Roles = "Administrators")]
     [ApiController]
     [Route("api/[controller]/[action]")]
     [Produces("application/json")]
