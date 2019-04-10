@@ -21,27 +21,29 @@ const styles = theme => ({
 const UserTable = props => {
     const {classes, users} = props;
 
-    return (
-        <Paper className={classes.root}>
-            <Table className={classes.table}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Telegram Name</TableCell>
-                        <TableCell align="right">ChatId</TableCell>
-                        <TableCell align="right">Name</TableCell>
-                        <TableCell align="right">Phone</TableCell>
-                        <TableCell align="right">EMail</TableCell>
-                        <TableCell align="right">University</TableCell>
-                        <TableCell align="right">Profession</TableCell>
-                        <TableCell align="right">Course</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {users.map((user, i) => renderRow(user, i))}
-                </TableBody>
-            </Table>
-        </Paper>
-    );
+    if (users.length > 0) {
+        return (
+            <Paper className={classes.root}>
+                <Table className={classes.table}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Telegram Name</TableCell>
+                            <TableCell align="right">ChatId</TableCell>
+                            <TableCell align="right">Name</TableCell>
+                            <TableCell align="right">Phone</TableCell>
+                            <TableCell align="right">EMail</TableCell>
+                            <TableCell align="right">University</TableCell>
+                            <TableCell align="right">Profession</TableCell>
+                            <TableCell align="right">Course</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {users.map((user, i) => renderRow(user, i))}
+                    </TableBody>
+                </Table>
+            </Paper>
+        );
+    } else return <div></div>
 };
 
 const renderRow = ({chatId, telegramName, name, phone, eMail, university, profession, course}, i) => {

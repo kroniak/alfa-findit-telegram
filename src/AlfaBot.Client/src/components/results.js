@@ -1,26 +1,19 @@
-import React, {Component, useContext} from 'react';
+import React, {Component} from 'react';
 import Heading from 'arui-feather/heading';
 import {connect} from "react-redux";
 import {fetchResults} from "../actions/results";
 import Plate from "arui-feather/plate";
 import Paragraph from "arui-feather/paragraph";
 
-const imageStyle = {
-    position: "absolute",
-    top: "0px",
-    right: "52px",
-    height: "max-content"
+const containerStyle = {
+    "marginTop": "24px",
+    "display": "grid"
 };
 
-const containerStyle = {
-    "margin-top": "24px",
-    "display": "grid"
-}
-
 const renderMedal = i => {
-    if (i === 0) return <img src={"img/gold.svg"} style={imageStyle}></img>
-    else if (i === 1) return <img src={"img/silver.svg"} style={imageStyle}></img>
-    else if (i === 2) return <img src={"img/bronze.svg"} style={imageStyle}></img>
+    if (i === 0) return <img src={"img/gold.svg"} alt="gold badge" className="badge"></img>
+    else if (i === 1) return <img src={"img/silver.svg"} alt="silver badge" className="badge"></img>
+    else if (i === 2) return <img src={"img/bronze.svg"} alt="bronze badge" className="badge"></img>
 };
 
 const declOfNum = (number, titles) => {
@@ -44,8 +37,8 @@ const secToMinHour = sec => {
 
 const renderResult = ({name, points, seconds, phone}, i) =>
     (
-        <div style={{"margin-bottom": "10px"}}>
-            <Plate isFlat={false} hasCloser={false} key={i}>
+        <div style={{"marginBottom": "10px"}} key={i}>
+            <Plate isFlat={false} hasCloser={false}>
                 {renderMedal(i)}
                 <Heading size='m'>
                     {i + 1} место
@@ -88,7 +81,6 @@ class Results extends Component {
             return <div/>;
         }
     }
-
 
     render() {
         return (
