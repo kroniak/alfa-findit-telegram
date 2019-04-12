@@ -1,4 +1,4 @@
-version: '3.0'
+version: '2'
 services:
   nginx:
     image: jwilder/nginx-proxy
@@ -9,16 +9,16 @@ services:
       - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ~/alfa/bot-data/certs:/etc/nginx/certs:ro
-      - /usr/share/nginx/html
-      - ~/alfa/bot-data/nginx/vhost.d:/etc/nginx/vhost.d
+      - certs:/etc/nginx/certs:ro
+      - html:/usr/share/nginx/html
+      - vhost:/etc/nginx/vhost.d
   
   letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: alfa-bot-letsencrypt-prod
     restart: always
     volumes:
-      - ~/alfa/bot-data/certs:/etc/nginx/certs:rw
+      - certs:/etc/nginx/certs:rw
       - /var/run/docker.sock:/var/run/docker.sock:ro
     volumes_from: 
       - nginx
@@ -50,3 +50,7 @@ services:
       - VIRTUAL_HOST=bot.kroniak.net
       - LETSENCRYPT_HOST=bot.kroniak.net
       - LETSENCRYPT_EMAIL=me@kroniak.net
+volumes:
+  vhost:
+  html:
+  certs:
