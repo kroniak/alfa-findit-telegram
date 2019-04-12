@@ -41,6 +41,7 @@ class App extends Component {
         return (
             <div className="app">
                 <header className="header">
+                    <img src={"img/icon_bank.svg"} alt="logo"/>
                     <h2 className="header-name"> Альфа-Банк Викторина</h2>
                 </header>
                 <main>

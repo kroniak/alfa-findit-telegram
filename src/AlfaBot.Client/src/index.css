@@ -12,20 +12,20 @@ body {
 
 .app {
     height: 100%;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    grid-template-columns: 1fr;
+    /*display: grid;*/
+    /*grid-template-rows: auto 1fr;*/
+    /*grid-template-columns: 1fr;*/
     background-color: #fcfcfc;
 }
 
 header {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
     background: rgba(11, 31, 53, .9);
-    grid-column: -1/1;
-    grid-row: 1;
+    /*grid-column: -1/1;*/
+    /*grid-row: 1;*/
     padding: 20px 30px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     box-sizing: border-box;
 }
@@ -34,21 +34,21 @@ header {
     font-size: 24px;
     font-weight: 500;
     color: azure;
-    margin: 0px;
+    margin: 0 0 0 10px;
 }
 
 main {
-    grid-row: 2;
-    grid-column: 1;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    grid-template-columns: 1fr;
+    /*grid-row: 2;*/
+    /*grid-column: 1;*/
+    /*display: grid;*/
+    /*grid-template-rows: auto 1fr;*/
+    /*grid-template-columns: 1fr;*/
     margin-left: 10px;
 }
 
 .tab-item {
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     font-size: 12px;
 }
 
@@ -58,19 +58,35 @@ main {
     /*margin: 0 auto !important;*/
 }
 
+.paragraph__outsider {
+    margin: 0 0 0 !important;
+}
+
 .badge {
     position: absolute;
-    top: 0px;
+    top: 0;
     right: 10px;
-    height: max-content;
+    height: 150px;
 }
 
 @media screen
 and (max-width: 450px)
 and (orientation: portrait) {
     .badge {
-        right: 0px;
+        right: 0;
         height: 120px;
+    }
+}
+
+@media screen
+and (max-width: 820px)
+and (orientation: landscape) {
+    .badge {
+        right: 15px;
+    }
+
+    .plate {
+        max-width: 95%;
     }
 }
 
@@ -78,7 +94,7 @@ and (orientation: portrait) {
 and (max-width: 320px)
 and (orientation: portrait) {
     .badge {
-        right: 0px;
+        right: 0;
         height: 100px;
     }
 }

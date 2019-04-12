@@ -10,6 +10,7 @@ using AlfaBot.Host.Middleware;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -137,11 +138,20 @@ namespace AlfaBot.Host
             }
             else
             {
+                app.UseHttpsRedirection();
                 app.UseHsts();
             }
 
             app.UseDefaultFiles();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    // Requires the following import:
+                    // using Microsoft.AspNetCore.Http;
+                    ctx.Context.Response.Headers.Append("Cache-Control", "public, max-age=600");
+                }
+            });
 
             app.UseAuthentication();
 

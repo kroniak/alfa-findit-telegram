@@ -11,9 +11,9 @@ const containerStyle = {
 };
 
 const renderMedal = i => {
-    if (i === 0) return <img src={"img/gold.svg"} alt="gold badge" className="badge"></img>
-    else if (i === 1) return <img src={"img/silver.svg"} alt="silver badge" className="badge"></img>
-    else if (i === 2) return <img src={"img/bronze.svg"} alt="bronze badge" className="badge"></img>
+    if (i === 0) return <img src={"img/gold.svg"} alt="gold badge" className="badge"/>;
+    else if (i === 1) return <img src={"img/silver.svg"} alt="silver badge" className="badge"/>;
+    else if (i === 2) return <img src={"img/bronze.svg"} alt="bronze badge" className="badge"/>
 };
 
 const declOfNum = (number, titles) => {
@@ -35,20 +35,42 @@ const secToMinHour = sec => {
     return str;
 };
 
+const renderNullResult = () =>
+    (
+        <div style={{"marginBottom": "10px"}}>
+            <Plate hasCloser={false}>
+                <Heading size='m'>
+                    Пока нет игроков
+                </Heading>
+                <Paragraph>
+                    Игроки появятся здесь позже
+                </Paragraph>
+            </Plate>
+        </div>
+    );
+
 const renderResult = ({name, points, seconds, phone}, i) =>
     (
         <div style={{"marginBottom": "10px"}} key={i}>
-            <Plate isFlat={false} hasCloser={false}>
-                {renderMedal(i)}
-                <Heading size='m'>
-                    {i + 1} место
-                </Heading><Heading size='s'>
-                {name} {phone}
-            </Heading>
-                <Paragraph>
-                    Заработал {points} {declOfNum(points, ["балл", "балла", "баллов"])} за {secToMinHour(seconds)}
-                </Paragraph>
-            </Plate></div>
+            {i < 3 ? <Plate hasCloser={false}>
+                    {renderMedal(i)}
+                    <Heading size='m'>
+                        {i + 1} место
+                    </Heading><Heading size='s'>
+                    {name} {phone}
+                </Heading>
+                    <Paragraph>
+                        Игрок заработал {points} {declOfNum(points, ["балл", "балла", "баллов"])} за {secToMinHour(seconds)}
+                    </Paragraph>
+                </Plate> :
+                <Plate hasCloser={false}>
+                    <Paragraph className="paragraph__outsider">
+                        {i + 1} место
+                        - {name} {phone} - {points} {declOfNum(points, ["балл", "балла", "баллов"])} за {secToMinHour(seconds)}
+                    </Paragraph>
+                </Plate>
+            }
+        </div>
     );
 
 class Results extends Component {
@@ -57,7 +79,7 @@ class Results extends Component {
 
         this.state = {
             timer: null
-        }
+        };
 
         this.renderResults = this.renderResults.bind(this);
     }
@@ -75,8 +97,13 @@ class Results extends Component {
     }
 
     renderResults() {
-        if (this.props.results) {
-            return this.props.results.map((r, i) => renderResult(r, i));
+        const {results} = this.props;
+        if (results) {
+            if (results.length === 0) {
+                return renderNullResult();
+            } else {
+                return results.map((r, i) => renderResult(r, i));
+            }
         } else {
             return <div/>;
         }
