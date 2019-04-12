@@ -1,24 +1,56 @@
-version: '3.0'
+version: '2'
 services:
+  nginx:
+    image: jwilder/nginx-proxy
+    container_name: alfa-bot-proxy-prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certs:/etc/nginx/certs:ro
+      - html:/usr/share/nginx/html
+      - vhost:/etc/nginx/vhost.d
+  
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: alfa-bot-letsencrypt-prod
+    restart: always
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    volumes_from: 
+      - nginx
+
   db:
     image: mongo:4
     container_name: alfa-bot-mongodb-prod
     restart: always
     volumes:
       - ~/alfa/bot-data/db:/data/db:rw
-      - ~/alfa/bot-data/logs:/app/logs:rw
     ports:
       - "28017:27017"
+
   bot:
     image: alfa/bot-telegram:2
     container_name: alfa-bot-telegram-prod
     restart: always
+    volumes:
+      - ~/alfa/bot-data/logs:/app/logs
     depends_on:
       - db
-    ports:
-      - "80:5000"
+      - nginx
+      - letsencrypt
     environment:
       - TELEGRAM_TOKEN=insert you key here
       - SECRETKEY=insert you key here
       - SECRETKEY_USER=insert you key here
       - MONGO=mongodb://db
+      - VIRTUAL_HOST=bot.kroniak.net
+      - LETSENCRYPT_HOST=bot.kroniak.net
+      - LETSENCRYPT_EMAIL=me@kroniak.net
+volumes:
+  vhost:
+  html:
+  certs:
