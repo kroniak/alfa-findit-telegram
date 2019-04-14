@@ -297,3 +297,4 @@ logs
 lcov.info
 docker-compose.dev.yml
 appsettings.Development.json
+wwwroot

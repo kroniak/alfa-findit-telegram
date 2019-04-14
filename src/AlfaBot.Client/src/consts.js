@@ -1,0 +1,1 @@
+export const URL = process.env.NODE_ENV === "production" ? "https://bot.kroniak.net" : "http://localhost:5000";

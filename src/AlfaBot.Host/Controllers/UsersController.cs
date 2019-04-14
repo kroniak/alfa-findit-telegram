@@ -6,7 +6,9 @@ using System.Linq;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
 using AlfaBot.Host.Model;
+using AlfaBot.Host.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -15,7 +17,7 @@ using Microsoft.Extensions.Logging;
 namespace AlfaBot.Host.Controllers
 {
     /// <inheritdoc />
-    [Authorize]
+    [Authorize(Roles = "Administrators,Users")]
     [ApiController]
     [Route("api/[controller]")]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -43,13 +45,27 @@ namespace AlfaBot.Host.Controllers
         /// Get all user information with json and csv result
         /// </summary>
         /// <returns>All user information with json and csv result</returns>
+        [EnableCors]
         [HttpGet]
         [Produces("application/json", "text/csv")]
         [ProducesResponseType(typeof(IEnumerable<UserOutDto>), StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<UserOutDto>> Get()
         {
-            var result = Map(_userRepository.All());
+            IEnumerable<UserOutDto> result;
+
+            if (HttpContext.User.IsInRole("Administrators"))
+            {
+                result = Map(_userRepository.All());
+            }
+            else if (HttpContext.User.IsInRole("Users"))
+            {
+                result = Map(_userRepository.All(), true);
+            }
+            else
+            {
+                result = new UserOutDto[] { };
+            }
 
             return Ok(result);
         }
@@ -59,6 +75,7 @@ namespace AlfaBot.Host.Controllers
         /// </summary>
         /// <param name="chatId">ChatId long number</param>
         /// <returns>One user information with json result</returns>
+        [Authorize(Roles = "Administrators")]
         [HttpGet("{chatId:long}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(UserOutDto), StatusCodes.Status200OK)]
@@ -98,6 +115,7 @@ namespace AlfaBot.Host.Controllers
         /// </summary>
         /// <param name="chatId">ChatId long number</param>
         /// <returns>Information about delete status</returns>
+        [Authorize(Roles = "Administrators")]
         [HttpDelete("{chatId:long}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(UserDeletedOutDto), StatusCodes.Status200OK)]
@@ -137,14 +155,15 @@ namespace AlfaBot.Host.Controllers
             }
         }
 
-        private static IEnumerable<UserOutDto> Map(IEnumerable<User> users) => users.Select(MapOne).ToArray();
+        private static IEnumerable<UserOutDto> Map(IEnumerable<User> users, bool mask = false) =>
+            users.Select(u => MapOne(u, mask)).ToArray();
 
-        private static UserOutDto MapOne(User user) =>
+        private static UserOutDto MapOne(User user, bool mask = false) =>
             new UserOutDto
             {
                 Name = user.Name,
-                ChatId = user.ChatId,
-                Phone = user.Phone,
+                ChatId = mask ? 0 : user.ChatId,
+                Phone = mask ? user.Phone.MaskMobile(3, "****") : user.Phone,
                 Course = user.Course,
                 Profession = user.Profession,
                 University = user.University,
