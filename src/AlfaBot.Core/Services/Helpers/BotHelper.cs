@@ -45,19 +45,6 @@ namespace AlfaBot.Core.Services.Helpers
             return new ReplyKeyboardMarkup {Keyboard = keyboard};
         }
 
-        public static IReplyMarkup GetKeyboardForCourse()
-        {
-            var junior = new KeyboardButton("1-3");
-            var notJunior = new KeyboardButton("4 и старше");
-
-            var keyboard = new[]
-            {
-                new[] {junior},
-                new[] {notJunior}
-            };
-            return new ReplyKeyboardMarkup {Keyboard = keyboard};
-        }
-
         public static IReplyMarkup GetKeyboardForQuestions()
         {
             var aButton = new KeyboardButton("A");
@@ -83,11 +70,11 @@ namespace AlfaBot.Core.Services.Helpers
 
         public static IReplyMarkup GetKeyboardForProfession()
         {
-            var dotnetButton = new KeyboardButton("Разработка .NET");
-            var javaButton = new KeyboardButton("Разработка Java");
-            var javaScriptButton = new KeyboardButton("Разработка JavaScript");
-            var analyticsButton = new KeyboardButton("Системная аналитика");
-            var supportButton = new KeyboardButton("Системное сопровождение");
+            var dotnetButton = new KeyboardButton("Разработка на SQL");
+            var javaButton = new KeyboardButton("Разработка на .NET Core");
+            var javaScriptButton = new KeyboardButton("Разработка на MVC .NET");
+            var analyticsButton = new KeyboardButton("Разработка сервисов WCF");
+            var supportButton = new KeyboardButton("Fullstack разработка .NET + JS");
             var testingButton = new KeyboardButton("Автотестирование");
 
 

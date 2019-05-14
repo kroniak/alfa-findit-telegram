@@ -98,55 +98,15 @@ namespace AlfaBot.Core.Factories.Commands
             return () =>
             {
                 _userRepository.SaveProfession(message.Chat.Id, message.Text);
-                _queueService.Add(nextMessage);
-            };
-        }
 
-        public Action AddUniversityCommand(Message message, QueueMessage nextMessage)
-        {
-            return () =>
-            {
-                var university = message.Text;
-                _userRepository.SaveUniversity(message.Chat.Id, university);
-                _queueService.Add(nextMessage);
-            };
-        }
-
-        public Action AddCourseCommand(
-            Message message,
-            QueueMessage nextTrueMessage,
-            QueueMessage nextFalseMessage)
-        {
-            var chatId = message.Chat.Id;
-
-            return () =>
-            {
-                var course = message.Text;
-                bool? isYoung = null;
-                bool? isAnsweredAllQuestions = null;
-                if (Compare(course, "1-3"))
-                {
-                    isYoung = true;
-                    isAnsweredAllQuestions = true;
-                }
-
-                if (Compare(course, "4 и старше"))
-                {
-                    isYoung = false;
-                    isAnsweredAllQuestions = true;
-                }
-
-                if (isAnsweredAllQuestions.HasValue && !_resultRepository.IsQuizMember(chatId))
+                var chatId = message.Chat.Id;
+                if (!_resultRepository.IsQuizMember(chatId))
                 {
                     _userRepository.SetQuizMember(chatId, null);
                 }
 
-                _userRepository.SaveCourse(message.Chat.Id, isYoung.HasValue ? course : null, isAnsweredAllQuestions);
-                _queueService.Add(isYoung.HasValue ? nextTrueMessage : nextFalseMessage);
+                _queueService.Add(nextMessage);
             };
         }
-
-        private static bool Compare(string a, string b) =>
-            string.Compare(a, b, StringComparison.InvariantCultureIgnoreCase) == 0;
     }
 }

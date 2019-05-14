@@ -99,6 +99,7 @@ namespace AlfaBot.Core.Services
                     action = CreateCommand(message);
                     break;
                 }
+
                 default:
                 {
                     var queueMessageFactory = new QueueMessageFactory(message);
@@ -186,7 +187,7 @@ namespace AlfaBot.Core.Services
             if (user.Profession == null)
             {
                 return _generalCommandsFactory.AddProfessionCommand(
-                    message, 
+                    message,
                     _resultRepository.IsQuizMember(chatId) ? factory.EndMessage : factory.AskStartQuizMessageAgain);
             }
 

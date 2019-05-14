@@ -54,16 +54,6 @@ namespace AlfaBot.Core.Data
             _users.UpdateOne(filter, update);
         }
 
-        public void SaveStudentOrNot(long chatId, bool? isStudent, bool? isAnswerAll)
-        {
-            var filter = GlobalChatIdFilter(chatId);
-            var update = Builders<User>.Update
-                .Set(p => p.IsStudent, isStudent)
-                .Set(p => p.IsAnsweredAll, isAnswerAll);
-
-            _users.UpdateOne(filter, update);
-        }
-
         public void SaveName(long chatId, string name)
         {
             var filter = GlobalChatIdFilter(chatId);
@@ -73,30 +63,12 @@ namespace AlfaBot.Core.Data
             _users.UpdateOne(filter, update);
         }
 
-        public void SaveUniversity(long chatId, string university)
-        {
-            var filter = GlobalChatIdFilter(chatId);
-            var update = Builders<User>.Update
-                .Set(p => p.University, university);
-
-            _users.UpdateOne(filter, update);
-        }
-
-        public void SaveCourse(long chatId, string course, bool? isAnsweredAll)
-        {
-            var filter = GlobalChatIdFilter(chatId);
-            var update = Builders<User>.Update
-                .Set(p => p.Course, course)
-                .Set(p => p.IsAnsweredAll, isAnsweredAll);
-
-            _users.UpdateOne(filter, update);
-        }
-
         public void SaveProfession(long chatId, string profession)
         {
             var filter = GlobalChatIdFilter(chatId);
             var update = Builders<User>.Update
-                .Set(p => p.Profession, profession);
+                .Set(p => p.Profession, profession)
+                .Set(p => p.IsAnsweredAll, true);
 
             _users.UpdateOne(filter, update);
         }
