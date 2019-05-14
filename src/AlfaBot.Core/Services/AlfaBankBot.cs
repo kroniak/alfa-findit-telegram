@@ -185,30 +185,9 @@ namespace AlfaBot.Core.Services
 
             if (user.Profession == null)
             {
-                return _generalCommandsFactory.AddProfessionCommand(message, factory.AskIsStudentMessage);
-            }
-
-            // ReSharper disable once ConvertIfStatementToSwitchStatement
-            if (user.IsStudent == null)
-            {
-                return _generalCommandsFactory.AddIsStudentCommand(
-                    message,
-                    factory.AskUniversityMessage,
+                return _generalCommandsFactory.AddProfessionCommand(
+                    message, 
                     _resultRepository.IsQuizMember(chatId) ? factory.EndMessage : factory.AskStartQuizMessageAgain);
-            }
-
-            if (user.IsStudent is true && user.University == null)
-            {
-                return _generalCommandsFactory.AddUniversityCommand(message, factory.AskCourse);
-            }
-
-            // ReSharper disable once ConvertIfStatementToReturnStatement
-            if (user.IsStudent is true && user.Course == null)
-            {
-                return _generalCommandsFactory.AddCourseCommand(
-                    message,
-                    _resultRepository.IsQuizMember(chatId) ? factory.EndMessage : factory.AskStartQuizMessageAgain,
-                    factory.AskCourse);
             }
 
             // ReSharper disable once ConvertIfStatementToReturnStatement

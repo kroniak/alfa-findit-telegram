@@ -57,11 +57,6 @@ namespace AlfaBot.Core.Factories
             ReplyMarkup = BotHelper.GetKeyboardYesOrNo()
         };
 
-        public QueueMessage AskIsStudentMessage => new QueueMessage(ChatId, MessageId)
-        {
-            Text = GeneralMessageDictionary.IsStudentMessage,
-            ReplyMarkup = BotHelper.GetKeyboardYesOrNo()
-        };
 
         public QueueMessage AskProfessionMessage => new QueueMessage(ChatId, MessageId)
         {
@@ -69,22 +64,10 @@ namespace AlfaBot.Core.Factories
             ReplyMarkup = BotHelper.GetKeyboardForProfession()
         };
 
-        public QueueMessage AskUniversityMessage => new QueueMessage(ChatId, MessageId)
-        {
-            Text = GeneralMessageDictionary.UniversityMessage,
-            ReplyMarkup = BotHelper.GetRemoveKeyboard()
-        };
-
         public QueueMessage EndMessage => new QueueMessage(ChatId, MessageId, false)
         {
             Text = GeneralMessageDictionary.EndMessage,
             ReplyMarkup = BotHelper.GetRemoveKeyboard()
-        };
-
-        public QueueMessage AskCourse => new QueueMessage(ChatId, MessageId)
-        {
-            Text = GeneralMessageDictionary.CourseMessage,
-            ReplyMarkup = BotHelper.GetKeyboardForCourse()
         };
 
         public QueueMessage AskEmail => new QueueMessage(ChatId, MessageId)

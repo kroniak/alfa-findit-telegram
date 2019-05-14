@@ -102,49 +102,6 @@ namespace AlfaBot.Core.Factories.Commands
             };
         }
 
-        public Action AddIsStudentCommand(Message message, QueueMessage nextTrueMessage, QueueMessage nextFalseMessage)
-        {
-            return () =>
-            {
-                var answer = message.Text;
-                var chatId = message.Chat.Id;
-                bool? isStudent = null;
-
-                bool? isAnsweredAllQuestions = null;
-                if (Compare(answer, "да"))
-                {
-                    isStudent = true;
-                }
-
-                if (Compare(answer, "нет"))
-                {
-                    isStudent = false;
-                    isAnsweredAllQuestions = true;
-                }
-
-                _userRepository.SaveStudentOrNot(chatId, isStudent, isAnsweredAllQuestions);
-                if (!isStudent.HasValue)
-                {
-                    var factory = new QueueMessageFactory(message);
-                    _queueService.Add(factory.AskIsStudentMessage);
-                }
-
-                if (isStudent.HasValue && isStudent.Value)
-                {
-                    _queueService.Add(nextTrueMessage);
-                }
-                else
-                {
-                    if (!_resultRepository.IsQuizMember(chatId))
-                    {
-                        _userRepository.SetQuizMember(chatId, null);
-                    }
-
-                    _queueService.Add(nextFalseMessage);
-                }
-            };
-        }
-
         public Action AddUniversityCommand(Message message, QueueMessage nextMessage)
         {
             return () =>

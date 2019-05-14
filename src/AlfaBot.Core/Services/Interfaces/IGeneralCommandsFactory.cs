@@ -16,12 +16,6 @@ namespace AlfaBot.Core.Services.Interfaces
 
         Action AddProfessionCommand(Message message, QueueMessage nextMessage);
 
-        Action AddIsStudentCommand(Message message, QueueMessage nextTrueMessage, QueueMessage nextFalseMessage);
-
-        Action AddUniversityCommand(Message message, QueueMessage nextMessage);
-
-        Action AddCourseCommand(Message message, QueueMessage nextTrueMessage, QueueMessage nextFalseMessage);
-
         Action Command(QueueMessage queueMessage);
     }
 }
