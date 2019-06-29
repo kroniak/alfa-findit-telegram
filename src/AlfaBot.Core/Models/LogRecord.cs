@@ -21,7 +21,8 @@ namespace AlfaBot.Core.Models
             Type = message.Type;
         }
 
-        [BsonId] public ObjectId Id { get; set; }
+        [BsonId] 
+        public ObjectId Id { get; set; }
 
         /// <summary>Unique message identifier</summary>
         public int MessageId { get; set; }
