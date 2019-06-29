@@ -80,8 +80,6 @@ class Results extends Component {
         this.state = {
             timer: null
         };
-
-        this.renderResults = this.renderResults.bind(this);
     }
 
     componentDidMount() {
@@ -96,7 +94,7 @@ class Results extends Component {
         clearInterval(this.state.timer);
     }
 
-    renderResults() {
+    renderResults = () => {
         const {results} = this.props;
         if (results) {
             if (results.length === 0) {

@@ -8,7 +8,6 @@ using AlfaBot.Core.Models;
 using AlfaBot.Host.Model;
 using AlfaBot.Host.Utils;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -45,11 +44,9 @@ namespace AlfaBot.Host.Controllers
         /// Get all user information with json and csv result
         /// </summary>
         /// <returns>All user information with json and csv result</returns>
-        [EnableCors]
         [HttpGet]
         [Produces("application/json", "text/csv")]
         [ProducesResponseType(typeof(IEnumerable<UserOutDto>), StatusCodes.Status200OK)]
-        [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<UserOutDto>> Get()
         {
             IEnumerable<UserOutDto> result;
@@ -81,7 +78,6 @@ namespace AlfaBot.Host.Controllers
         [ProducesResponseType(typeof(UserOutDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ModelStateDictionary),
             StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
         public ActionResult<UserOutDto> Get([Required] [Range(1, long.MaxValue)] long chatId)
@@ -120,7 +116,6 @@ namespace AlfaBot.Host.Controllers
         [Produces("application/json")]
         [ProducesResponseType(typeof(UserDeletedOutDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ModelStateDictionary), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Exception), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
         public ActionResult<UserDeletedOutDto> Delete([Required] [Range(1, long.MaxValue)] long chatId)

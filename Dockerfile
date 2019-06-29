@@ -1,5 +1,5 @@
 # build ui app
-FROM node:8 AS react-build
+FROM node:10 AS react-build
 WORKDIR /app
 COPY src/AlfaBot.Client .
 RUN npm i && \
@@ -17,5 +17,8 @@ FROM microsoft/dotnet:2.2-aspnetcore-runtime
 WORKDIR /app
 COPY --from=build-env /app/out .
 COPY --from=react-build /app/build ./wwwroot
+ENV ASPNETCORE_URLS=http://+:5000
+HEALTHCHECK --interval=10m --timeout=5s \
+  CMD curl --fail http://localhost:5000/health/live || exit 1
 EXPOSE 5000/tcp
 ENTRYPOINT ["dotnet", "AlfaBot.Host.dll"]

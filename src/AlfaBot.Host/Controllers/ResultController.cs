@@ -8,7 +8,6 @@ using AlfaBot.Core.Models;
 using AlfaBot.Host.Model;
 using AlfaBot.Host.Utils;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -97,7 +96,6 @@ namespace AlfaBot.Host.Controllers
         /// </summary>
         /// <returns>Result of the Quiz</returns>
         [AllowAnonymous]
-        [EnableCors]
         [HttpGet("top/{top:int}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<ResultOutDto>), StatusCodes.Status200OK)]

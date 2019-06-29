@@ -1,52 +1,45 @@
-import * as action from "./types";
-import {URL} from "../consts";
-import axios from "axios";
-import {invalidateToken, saveToken} from "./token";
+import {URL} from "./consts";
+import {USERS_FETCH_FAILED, USERS_FETCH_STARTED, USERS_FETCH_SUCCESS} from "./types";
+import  axios from "axios";
 
 /**
  * Вытаскивает данные по пользователям
  *
  */
-export const fetchUsers = token => {
-    return dispatch => {
+export const fetchUsers = () =>
+    (dispatch, getState) => {
+        const {isAuth, token} = getState().auth;
+        if (!isAuth || !token) return;
+
         dispatch({
-            type: action.USERS_FETCH_STARTED
+            type: USERS_FETCH_STARTED
         });
 
-        if (token !== null) {
-            axios.get(`${URL}/api/users?secretkey=${token}`)
-                .then(response => {
-                    dispatch(saveToken(token));
-                    if (response.data)
-                        dispatch({
-                            type: action.USERS_FETCH_SUCCESS,
-                            payload: response.data
-                        });
-                    else
-                        dispatch({
-                            type: action.USERS_FETCH_SUCCESS,
-                            payload: []
-                        });
-                })
-                .catch(err => {
+        axios.get(`${URL}/api/users`, {
+            headers: {'Authorization': "Bearer " + token}
+        })
+            .then(response => {
+                if (response.data)
                     dispatch({
-                        type: action.USERS_FETCH_FAILED,
-                        payload: err.response ?
-                            err.response.statusText
-                            : "failed"
+                        type: USERS_FETCH_SUCCESS,
+                        payload: response.data
                     });
-                    dispatch(invalidateToken());
-
-                    console.error(err.response ?
+                else
+                    dispatch({
+                        type: USERS_FETCH_SUCCESS,
+                        payload: []
+                    });
+            })
+            .catch(err => {
+                dispatch({
+                    type: USERS_FETCH_FAILED,
+                    payload: err.response ?
                         err.response.statusText
-                        : err
-                    );
+                        : "failed"
                 });
-        } else {
-            dispatch({
-                type: action.USERS_FETCH_FAILED,
-                payload: "token is null"
+                console.error(err.response ?
+                    err.response.statusText
+                    : err
+                );
             });
-        }
     };
-};

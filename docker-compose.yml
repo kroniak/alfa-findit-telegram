@@ -44,8 +44,9 @@ services:
       - letsencrypt
     environment:
       - TELEGRAM_TOKEN=insert you key here
-      - SECRETKEY=insert you key here
-      - SECRETKEY_USER=insert you key here
+      - AUTHKEY=insert you key here
+      - ADMINPASS=insert password here
+      - USERPASS=insert password here
       - MONGO=mongodb://db
       - VIRTUAL_HOST=bot.kroniak.net
       - LETSENCRYPT_HOST=bot.kroniak.net
