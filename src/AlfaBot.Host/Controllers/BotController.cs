@@ -13,6 +13,8 @@ namespace AlfaBot.Host.Controllers
     [ApiController]
     [Route("api/[controller]/[action]")]
     [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [BindProperties]
     [ExcludeFromCodeCoverage]
     public class BotController : ControllerBase
@@ -30,9 +32,7 @@ namespace AlfaBot.Host.Controllers
         /// </summary>
         /// <returns>Status of bot starting</returns>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(StatusOutDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusOutDto), StatusCodes.Status500InternalServerError)]
         [ProducesDefaultResponseType]
         public ActionResult<StatusOutDto> Start()
         {
@@ -53,9 +53,7 @@ namespace AlfaBot.Host.Controllers
         /// </summary>
         /// <returns>Status of bot stopping</returns>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(StatusOutDto), StatusCodes.Status200OK)]
-        [ProducesDefaultResponseType]
         public ActionResult<StatusOutDto> Stop()
         {
             _bot.Stop();
@@ -69,7 +67,6 @@ namespace AlfaBot.Host.Controllers
         [HttpGet]
         [AllowAnonymous]
         [ProducesResponseType(typeof(StatusOutDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusOutDto), StatusCodes.Status500InternalServerError)]
         [ProducesDefaultResponseType]
         public ActionResult<StatusOutDto> Ping()
         {

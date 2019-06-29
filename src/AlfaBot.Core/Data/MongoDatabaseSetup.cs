@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using AlfaBot.Core.Models;
+using Microsoft.AspNetCore.Identity;
 using MongoDB.Driver;
 
 namespace AlfaBot.Core.Data
@@ -11,20 +12,26 @@ namespace AlfaBot.Core.Data
     [ExcludeFromCodeCoverage]
     public static class MongoDatabaseSetup
     {
-        public static IMongoDatabase Init(this IMongoDatabase database)
+        public static IMongoDatabase Init(this IMongoDatabase database, string adminPass, string userPass)
         {
             var users = database.GetCollection<User>(DbConstants.UserCollectionName);
             var queue = database.GetCollection<QueueMessage>(DbConstants.QueueCollectionName);
             var results = database.GetCollection<QuizResult>(DbConstants.QuizResultCollectionName);
             var logs = database.GetCollection<LogRecord>(DbConstants.LogCollectionName);
             var questions = database.GetCollection<Question>(DbConstants.QuestionCollectionName);
+            var credentials = database.GetCollection<Credential>(DbConstants.CredentialsCollectionName);
 
             try
             {
-                CreateIndexes(users, queue, results, logs);
+                CreateIndexes(credentials, users, queue, results, logs);
                 if (questions.Find(_ => true).FirstOrDefault() == null)
                 {
                     InsertQuestion(questions);
+                }
+
+                if (credentials.Find(_ => true).FirstOrDefault() == null)
+                {
+                    InsertCredentials(credentials, adminPass, userPass);
                 }
             }
             catch (Exception e)
@@ -34,6 +41,38 @@ namespace AlfaBot.Core.Data
 
             return database;
         }
+
+        private static void InsertCredentials(
+            IMongoCollection<Credential> credentials,
+            string adminPass,
+            string userPass)
+        {
+            var cs = new[]
+            {
+                new Credential
+                {
+                    UserName = "admin",
+                    Role = "Administrators"
+                },
+                new Credential
+                {
+                    UserName = "user",
+                    Role = "User"
+                }
+            };
+
+            foreach (var credential in cs)
+            {
+                credential.HashedPassword = GetHash(credential, adminPass, userPass);
+            }
+
+            credentials.InsertMany(cs);
+        }
+
+        private static string GetHash(Credential credential, string adminPass,
+            string userPass) =>
+            new PasswordHasher<Credential>().HashPassword(credential,
+                credential.Role == "Administrators" ? adminPass : userPass);
 
         private static void InsertQuestion(IMongoCollection<Question> questions)
         {
@@ -58,7 +97,9 @@ namespace AlfaBot.Core.Data
             questions.InsertMany(qs);
         }
 
-        private static void CreateIndexes(IMongoCollection<User> users,
+        private static void CreateIndexes(
+            IMongoCollection<Credential> credentials,
+            IMongoCollection<User> users,
             IMongoCollection<QueueMessage> queue,
             IMongoCollection<QuizResult> results,
             IMongoCollection<LogRecord> logs)
@@ -73,6 +114,10 @@ namespace AlfaBot.Core.Data
             {
                 Background = true
             };
+
+            var credentialIndexModel = new CreateIndexModel<Credential>(
+                Builders<Credential>.IndexKeys.Ascending(x => x.UserName),
+                optionsUnique);
 
             var userIndexModel = new CreateIndexModel<User>(
                 Builders<User>.IndexKeys.Ascending(x => x.ChatId),
@@ -98,6 +143,7 @@ namespace AlfaBot.Core.Data
                 Builders<LogRecord>.IndexKeys
                     .Ascending(x => x.ChatId), optionsBackground);
 
+            credentials.Indexes.CreateOne(credentialIndexModel);
             users.Indexes.CreateOne(userIndexModel);
             queue.Indexes.CreateMany(new[] {queueIndexModelFirst, queueIndexModelSecond});
             results.Indexes.CreateOne(resultsIndexModel);

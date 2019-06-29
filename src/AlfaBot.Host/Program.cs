@@ -31,7 +31,6 @@ namespace AlfaBot.Host
                         .CreateLogger();
                 })
                 .UseStartup<Startup>()
-                .UseUrls("http://0.0.0.0:5000")
                 .UseSerilog();
     }
 }

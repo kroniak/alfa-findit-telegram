@@ -69,6 +69,10 @@ main {
     height: 150px;
 }
 
+.button-spin {
+    margin-left: 10px;
+}
+
 @media screen
 and (max-width: 450px)
 and (orientation: portrait) {
