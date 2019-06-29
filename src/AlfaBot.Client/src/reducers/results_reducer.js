@@ -1,4 +1,4 @@
-import * as actions from "../actions/types";
+import {RESULTS_FETCH_FAILED, RESULTS_FETCH_STARTED, RESULTS_FETCH_SUCCESS} from "../actions/types";
 
 const initialState = {
     data: [],
@@ -8,19 +8,19 @@ const initialState = {
 
 export default (state = initialState, {type, payload}) => {
     switch (type) {
-        case actions.RESULTS_FETCH_STARTED:
+        case RESULTS_FETCH_STARTED:
             return {
                 ...state,
                 isLoading: state.data.length === 0
             };
 
-        case actions.RESULTS_FETCH_FAILED:
+        case RESULTS_FETCH_FAILED:
             return {
                 ...state,
                 error: payload
             };
 
-        case actions.RESULTS_FETCH_SUCCESS:
+        case RESULTS_FETCH_SUCCESS:
             return {
                 ...state,
                 data: payload,

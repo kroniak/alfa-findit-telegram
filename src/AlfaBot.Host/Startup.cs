@@ -7,7 +7,6 @@ using AlfaBot.Core.Services;
 using AlfaBot.Core.Services.Interfaces;
 using AlfaBot.Host.HealthCheckers;
 using AlfaBot.Host.Middleware;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -36,16 +35,19 @@ namespace AlfaBot.Host
         {
             // configure general params
             var token = _configuration["TELEGRAM_TOKEN"];
-            var secretKey = _configuration["SECRETKEY"];
-            var secretUserKey = _configuration["SECRETKEY_USER"];
+            var authKey = _configuration["AUTHKEY"];
+            var adminPass = _configuration["ADMINPASS"];
+            var userPass = _configuration["USERPASS"];
             var connection = _configuration["MONGO"];
             var database = _configuration["DBNAME"] ?? "FindIT";
 
             if (string.IsNullOrWhiteSpace(token))
                 throw new ArgumentNullException(token, "Telegram token must be not null");
 
-            if (string.IsNullOrWhiteSpace(secretKey) || string.IsNullOrWhiteSpace(secretUserKey))
-                throw new ArgumentNullException(secretKey, "Secret key must be not null");
+            if (string.IsNullOrWhiteSpace(authKey)
+                || string.IsNullOrWhiteSpace(adminPass)
+                || string.IsNullOrWhiteSpace(userPass))
+                throw new ArgumentNullException(authKey, "Secret key must be not null");
 
             if (string.IsNullOrWhiteSpace(connection))
                 throw new ArgumentNullException(connection, "ConnectionString key must be not null");
@@ -55,7 +57,7 @@ namespace AlfaBot.Host
             var proxyPort = _configuration["PROXY_PORT"];
 
             // configure db
-            services.AddSingleton(_ => new MongoClient(connection).GetDatabase(database).Init());
+            services.AddSingleton(_ => new MongoClient(connection).GetDatabase(database).Init(adminPass, userPass));
 
             // add repositories
             services.AddMemoryCache();
@@ -64,17 +66,7 @@ namespace AlfaBot.Host
             services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(token, GetProxy(proxyAddress, proxyPort)));
             services.AddSingleton<IAlfaBankBot, AlfaBankBot>();
 
-            services
-                .AddAuthorization(options =>
-                {
-                    options.AddPolicy("Administrators",
-                        policy => { policy.RequireRole("Administrators"); });
-                    options.AddPolicy("Users",
-                        policy => { policy.RequireRole("Users"); });
-                })
-                .AddAuthentication("BasicAuthentication")
-                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
-
+            services.AddCustomAuthentication(authKey);
 
             // Add Background service
             services.AddHostedService<SendingHostedService>();
@@ -86,9 +78,11 @@ namespace AlfaBot.Host
                     builder =>
                     {
                         builder.WithOrigins(
-                            "http://bot.kroniak.net",
-                            "https://bot.kroniak.net",
-                            "http://localhost:3000");
+                                "http://bot.kroniak.net",
+                                "https://bot.kroniak.net",
+                                "http://localhost:3000")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
                     });
             });
 
@@ -147,11 +141,11 @@ namespace AlfaBot.Host
             {
                 OnPrepareResponse = ctx =>
                 {
-                    // Requires the following import:
-                    // using Microsoft.AspNetCore.Http;
                     ctx.Context.Response.Headers.Append("Cache-Control", "public, max-age=600");
                 }
             });
+
+            app.UseCustomHealthCheckEndpoints();
 
             app.UseAuthentication();
 
@@ -160,8 +154,8 @@ namespace AlfaBot.Host
             app.UseSwaggerUI(
                 options => { options.SwaggerEndpoint("/swagger/v2/swagger.json", "Bot API v2"); });
 
-            app.UseCustomHealthCheckEndpoints();
-
+            app.UseCors();
+            
             app.UseMvc();
 
             bot.Start();

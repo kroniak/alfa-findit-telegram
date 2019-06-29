@@ -1,28 +1,28 @@
-import * as action from "./types";
-import {URL} from "../consts";
+import {URL} from "./consts";
 import axios from "axios";
+import {RESULTS_FETCH_FAILED, RESULTS_FETCH_STARTED, RESULTS_FETCH_SUCCESS} from "./types";
 
 /**
  * Вытаскивает данные по результатам голосования
  *
  */
-export const fetchResults = () => {
-    return dispatch => {
+export const fetchResults = () =>
+    dispatch => {
         dispatch({
-            type: action.RESULTS_FETCH_STARTED
+            type: RESULTS_FETCH_STARTED
         });
 
         axios.get(`${URL}/api/Result/top/10`)
             .then(response => {
                 dispatch({
-                    type: action.RESULTS_FETCH_SUCCESS,
+                    type: RESULTS_FETCH_SUCCESS,
                     payload: response.data
                 });
 
             })
             .catch(err => {
                 dispatch({
-                    type: action.RESULTS_FETCH_FAILED,
+                    type: RESULTS_FETCH_FAILED,
                     payload: err.response ?
                         err.response.data.message
                             ? err.response.data.message
@@ -37,4 +37,3 @@ export const fetchResults = () => {
                 );
             });
     };
-};
