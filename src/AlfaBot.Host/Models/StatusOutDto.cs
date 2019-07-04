@@ -1,5 +1,5 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
-namespace AlfaBot.Host.Model
+namespace AlfaBot.Host.Models
 {
     /// <summary>
     /// Status Out DTO object for tasks

@@ -7,7 +7,7 @@ namespace AlfaBot.Core.Services.Interfaces
 {
     public interface IQuestionCommandFactory
     {
-        Action EndQuestionCommand(Message message);
+//        Action EndQuestionCommand(Message message);
 
         Action QuestionCommand(Message message, QueueMessage nextMessage,
             bool isAnsweredAll);

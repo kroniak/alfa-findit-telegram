@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
-using AlfaBot.Host.Model;
+using AlfaBot.Host.Models;
 using AlfaBot.Host.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

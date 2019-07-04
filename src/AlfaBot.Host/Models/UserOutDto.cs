@@ -1,5 +1,5 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
-namespace AlfaBot.Host.Model
+namespace AlfaBot.Host.Models
 {
     /// <summary>
     /// DTO object for User controller

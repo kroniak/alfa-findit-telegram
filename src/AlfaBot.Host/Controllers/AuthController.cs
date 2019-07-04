@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using AlfaBot.Host.Model;
+using AlfaBot.Host.Models;
 using AlfaBot.Host.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

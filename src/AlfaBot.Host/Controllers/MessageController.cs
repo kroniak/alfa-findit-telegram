@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using AlfaBot.Core.Services.Interfaces;
-using AlfaBot.Host.Model;
+using AlfaBot.Host.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

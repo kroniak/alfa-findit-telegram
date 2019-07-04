@@ -1,7 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace AlfaBot.Host.Model
+namespace AlfaBot.Host.Models
 {
     /// <summary>
     /// Abstract messageDTO fot testing client

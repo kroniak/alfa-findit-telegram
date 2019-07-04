@@ -1,5 +1,5 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
-namespace AlfaBot.Host.Model
+namespace AlfaBot.Host.Models
 {
     /// <summary>
     /// Out Dto about status of deleted

@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
-using AlfaBot.Host.Model;
+using AlfaBot.Host.Models;
 using AlfaBot.Host.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -83,7 +83,6 @@ namespace AlfaBot.Host.Controllers
         [HttpGet]
         [Produces("application/json", "text/csv")]
         [ProducesResponseType(typeof(IEnumerable<ResultOutDto>), StatusCodes.Status200OK)]
-        [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<ResultOutDto>> Get()
         {
             var results = _resultRepository.All();

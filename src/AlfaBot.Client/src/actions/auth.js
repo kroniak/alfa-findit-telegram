@@ -21,10 +21,10 @@ export const verifyToken = () => {
         });
 
         axios.get(VERIFY_URL, {
-                headers: {
-                    authorization: 'Bearer ' + token
-                }
-            })
+            headers: {
+                authorization: 'Bearer ' + token
+            }
+        })
             .then(response => {
                 dispatch({
                     type: USER_LOGIN_SUCCESS,
@@ -37,6 +37,7 @@ export const verifyToken = () => {
                 dispatch(fetchUsers());
             })
             .catch(err => {
+                console.error(err);
                 dispatch(logoutUser());
             })
             .finally(() => {

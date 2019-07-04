@@ -1,5 +1,5 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
-namespace AlfaBot.Host.Model
+namespace AlfaBot.Host.Models
 {
     /// <summary>
     /// Result class for exporting and view in JS

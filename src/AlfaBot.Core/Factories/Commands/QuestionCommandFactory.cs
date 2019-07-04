@@ -30,7 +30,7 @@ namespace AlfaBot.Core.Factories.Commands
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
-        public Action EndQuestionCommand(Message message)
+        private Action EndQuestionCommand(Message message)
         {
             return () =>
             {

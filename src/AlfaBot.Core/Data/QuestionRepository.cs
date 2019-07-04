@@ -31,27 +31,36 @@ namespace AlfaBot.Core.Data
 
         private void Update()
         {
-            var questions = All();
+            var questions = All().ToArray();
 
-            var enumerable = questions as Question[] ?? questions.ToArray();
-            
-            foreach (var question in enumerable)
+            foreach (var question in questions)
             {
                 _cache.Set(question.Id, question);
             }
-            
-            Count = enumerable.Length;
+
+            Count = questions.Length;
         }
 
-        public Question Get(ObjectId id)
-        {
-            var question = _cache.GetOrCreate(id, entry =>
+        public Question Get(ObjectId id) =>
+            _cache.GetOrCreate(id, entry =>
             {
                 var filter = Builders<Question>.Filter
                     .Eq(q => q.Id, id);
 
                 return _questions.Find(filter).SingleOrDefault();
             });
+
+        public Question Add(Question question)
+        {
+            try
+            {
+                _questions.InsertOne(question);
+                _cache.Set(question.Id, question);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
 
             return question;
         }
