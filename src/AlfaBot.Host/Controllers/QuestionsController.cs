@@ -93,7 +93,7 @@ namespace AlfaBot.Host.Controllers
         /// <summary>
         /// Get all questions
         /// </summary>
-        /// <returns></returns>
+        /// <returns>All questions</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Question>), StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<Question>> Get()
@@ -105,7 +105,7 @@ namespace AlfaBot.Host.Controllers
         /// <summary>
         /// Get all questions
         /// </summary>
-        /// <returns></returns>
+        /// <returns>One question by id</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<Question>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

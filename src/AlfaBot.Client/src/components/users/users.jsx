@@ -1,12 +1,18 @@
 import React, {Component} from 'react';
-import Heading from 'arui-feather/heading';
 import {connect} from "react-redux";
-import {fetchUsers} from "../actions/users";
+import {fetchUsers} from "../../actions/users";
 import Table from "./table";
-import Button from "arui-feather/button";
-import Spin from "arui-feather/spin";
+import Button from "arui-feather/button/";
+import Heading from 'arui-feather/heading/';
+import {SpinCustom as Spin} from "../misc/misc";
+import Notification from "../misc/notification";
 
-class Users extends Component {
+const renderData = users => {
+    if (users) return <Table users={users}/>;
+    else return null;
+};
+
+class UsersContainer extends Component {
     constructor(props) {
         super(props);
 
@@ -32,29 +38,30 @@ class Users extends Component {
         this.props.fetchUsers();
     }
 
-    renderData = users => {
-        if (users) return <Table users={users}/>;
-        else return null;
-    };
-
     render() {
-        const {users} = this.props;
+        const {users, fetchUsers, error} = this.props;
+        const {isLoading} = this.state;
         return (
             <div>
+                <Notification
+                    title="Ошибка закгрузки"
+                    message="Что то пошло не так! Возможно нет связи с сервером"
+                    error={error}
+                />
                 <Heading size='m'>
                     Список пользователей
                 </Heading>
-                <Button view='extra'
+                <Button disabled={isLoading}
+                        view='extra'
                         size='m'
-                        onClick={this.props.fetchUsers}>
+                        onClick={fetchUsers}>
                     Обновить
                 </Button>
                 <Spin
-                    className="button-spin"
                     size='m'
-                    visible={this.state.isLoading}
+                    visible={isLoading}
                 />
-                {this.renderData(users)}
+                {renderData(users)}
             </div>
         );
     }
@@ -70,4 +77,4 @@ const mapDispatchToProps = dispatch => ({
     fetchUsers: () => dispatch(fetchUsers()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Users);
+export default connect(mapStateToProps, mapDispatchToProps)(UsersContainer);

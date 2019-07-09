@@ -1,11 +1,11 @@
 import React, {Component} from "react";
-import Plate from "arui-feather/plate";
-import Heading from "arui-feather/heading";
-import Input from "arui-feather/input";
-import FormField from "arui-feather/form-field";
-import Form from "arui-feather/form";
-import Button from "arui-feather/button";
-import Notification from "arui-feather/notification";
+import Plate from "arui-feather/plate/";
+import Heading from "arui-feather/heading/";
+import Input from "arui-feather/input/";
+import FormField from "arui-feather/form-field/";
+import Form from "arui-feather/form/";
+import Button from "arui-feather/button/";
+import Notification from "../misc/notification";
 
 class LoginForm extends Component {
     constructor(props) {
@@ -13,7 +13,7 @@ class LoginForm extends Component {
 
         this.state = {
             userField: "admin",
-            passwordField: "12345678"
+            passwordField: "CegthCtrhtnysqFlvbycrbqGfhjkm"
         };
 
         this.onSubmitForm = this.onSubmitForm.bind(this);
@@ -31,10 +31,6 @@ class LoginForm extends Component {
         });
     };
 
-    /**
-     * Отправка формы
-     * @param {Event} event событие отправки формы
-     */
     onSubmitForm() {
         const {userField, passwordField} = this.state;
         if (userField && passwordField) {
@@ -42,17 +38,10 @@ class LoginForm extends Component {
 
             this.setState({
                     passwordField: "",
-                    notifyVisible: false
                 }
             );
         }
     };
-
-    componentWillReceiveProps(nextProps, nextContext) {
-        if (nextProps.authError) this.setState({
-            notifyVisible: true
-        })
-    }
 
     render() {
         const {userField, passwordField} = this.state;
@@ -64,19 +53,9 @@ class LoginForm extends Component {
                     </Heading>
                     <div>
                         <Notification
-                            visible={this.state.notifyVisible}
-                            status='error'
-                            offset={100}
-                            stickTo='right'
                             title='Ошибка входа'
-                            onCloseTimeout={() => {
-                                this.setState({notifyVisible: false});
-                            }}
-                            onCloserClick={() => {
-                                this.setState({notifyVisible: false});
-                            }}
-                        >
-                            Что то произошло не так! Скорее всего логин и пароль неверный
+                            message="Что то произошло не так! Скорее всего логин и пароль неверный"
+                            error={this.props.error}>
                         </Notification>
                         <Form onSubmit={this.onSubmitForm}>
                             <FormField size='m'>

@@ -1,14 +1,16 @@
 import React, {Component} from 'react';
-import Heading from 'arui-feather/heading';
+import Heading from 'arui-feather/heading/';
 import {connect} from "react-redux";
-import {fetchResults} from "../actions/results";
-import Plate from "arui-feather/plate";
-import Paragraph from "arui-feather/paragraph";
+import {fetchResults} from "../../actions/results";
+import Plate from "arui-feather/plate/";
+import Paragraph from "arui-feather/paragraph/";
+import styled from "@emotion/styled";
+import Notification from "../misc/notification";
 
-const containerStyle = {
-    "marginTop": "24px",
-    "display": "grid"
-};
+const Container = styled.div`
+    margin-top: 24px;
+    display: grid;
+`;
 
 const renderMedal = i => {
     if (i === 0) return <img src={"img/gold.svg"} alt="gold badge" className="badge"/>;
@@ -49,6 +51,10 @@ const renderNullResult = () =>
         </div>
     );
 
+const ParagraphOutsider = styled(Paragraph)`
+    margin: 0 0 0 !important;
+`;
+
 const renderResult = ({name, points, seconds, phone}, i) =>
     (
         <div style={{"marginBottom": "10px"}} key={i}>
@@ -56,72 +62,78 @@ const renderResult = ({name, points, seconds, phone}, i) =>
                     {renderMedal(i)}
                     <Heading size='m'>
                         {i + 1} место
-                    </Heading><Heading size='s'>
-                    {name} {phone}
-                </Heading>
+                    </Heading>
+                    <Heading size='s'>
+                        {name} {phone}
+                    </Heading>
                     <Paragraph>
                         Игрок заработал {points} {declOfNum(points, ["балл", "балла", "баллов"])} за {secToMinHour(seconds)}
                     </Paragraph>
                 </Plate> :
                 <Plate hasCloser={false}>
-                    <Paragraph className="paragraph__outsider">
+                    <ParagraphOutsider>
                         {i + 1} место
                         - {name} {phone} - {points} {declOfNum(points, ["балл", "балла", "баллов"])} за {secToMinHour(seconds)}
-                    </Paragraph>
+                    </ParagraphOutsider>
                 </Plate>
             }
         </div>
     );
 
-class Results extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            timer: null
-        };
+const renderResults = results => {
+    if (results) {
+        if (results.length === 0) {
+            return renderNullResult();
+        } else {
+            return results.map((r, i) => renderResult(r, i));
+        }
+    } else {
+        return <div/>;
     }
+};
+
+class ResultsContainer extends Component {
+    intervalID = null;
 
     componentDidMount() {
-        this.props.fetchResults();
+        const {fetchResults, isActive} = this.props;
 
-        let timer = setInterval(this.props.fetchResults, 5000);
+        if (isActive && isActive("/results")) {
+            fetchResults();
+        }
 
-        this.setState({timer});
+        this.intervalID = setInterval(() => {
+            if (isActive && isActive("/results")) {
+                fetchResults();
+            }
+        }, 5000);
     }
 
     componentWillUnmount() {
-        clearInterval(this.state.timer);
-    }
-
-    renderResults = () => {
-        const {results} = this.props;
-        if (results) {
-            if (results.length === 0) {
-                return renderNullResult();
-            } else {
-                return results.map((r, i) => renderResult(r, i));
-            }
-        } else {
-            return <div/>;
-        }
+        clearInterval(this.intervalID);
     }
 
     render() {
         return (
-            <div style={containerStyle}>
-                {this.renderResults()}
-            </div>
+            <Container>
+                <Notification
+                    title="Ошибка загрузки"
+                    message="Что то произошло не так! Ошибка загрузки"
+                    error={this.props.error}>
+                </Notification>
+                {renderResults(this.props.results)}
+            </Container>
         );
     }
 }
 
 const mapStateToProps = state => ({
-    results: state.results.data
+    results: state.results.data,
+    error: state.results.error
 });
 
 const mapDispatchToProps = dispatch => ({
     fetchResults: () => dispatch(fetchResults())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Results);
+export default connect(mapStateToProps, mapDispatchToProps)(ResultsContainer);

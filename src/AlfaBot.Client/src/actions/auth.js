@@ -1,23 +1,29 @@
-import {fetchUsers} from "./users";
-
 import {AUTH_URL, VERIFY_URL} from "./consts";
 import {
     USER_LOGIN_FAILED,
+    USER_LOGIN_STARTED,
     USER_LOGIN_SUCCESS,
     USER_LOGOUT,
-    USER_TOKEN_VERIFY_COMPLETE,
+    USER_TOKEN_VERIFY_COMPLETE, USER_TOKEN_SET,
     USER_TOKEN_VERIFY_START
 } from "./types";
 
 import axios from "axios";
 
 export const verifyToken = () => {
-    return async dispatch => {
+    return dispatch => {
         let token = localStorage.getItem('token');
         if (!token) return;
 
         dispatch({
             type: USER_TOKEN_VERIFY_START
+        });
+
+        dispatch({
+            type: USER_TOKEN_SET,
+            payload: {
+                token: token
+            }
         });
 
         axios.get(VERIFY_URL, {
@@ -33,12 +39,12 @@ export const verifyToken = () => {
                         token: token
                     }
                 });
-
-                dispatch(fetchUsers());
             })
             .catch(err => {
                 console.error(err);
-                dispatch(logoutUser());
+                if (err.response && err.response.status === 401) {
+                    dispatch(logoutUser());
+                }
             })
             .finally(() => {
                 dispatch({
@@ -54,6 +60,10 @@ export const logUser = (userName, password) => dispatch => {
         password
     };
 
+    dispatch({
+        type: USER_LOGIN_STARTED
+    });
+
     axios
         .post(`${AUTH_URL}`, data)
         .then(response => {
@@ -67,7 +77,6 @@ export const logUser = (userName, password) => dispatch => {
                             userName: userName
                         }
                     });
-                    dispatch(fetchUsers());
                 }
             } else
                 dispatch({
@@ -87,6 +96,11 @@ export const logUser = (userName, password) => dispatch => {
                     payload: err.response.data.message
                         ? err.response.data.message
                         : err.response.data
+                });
+            } else {
+                dispatch({
+                    type: USER_LOGIN_FAILED,
+                    payload: "failed login"
                 });
             }
         });

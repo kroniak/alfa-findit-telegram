@@ -33,7 +33,7 @@ services:
       - "28017:27017"
 
   bot:
-    image: alfa/bot-telegram:2
+    image: alfa/bot-telegram:2.1
     container_name: alfa-bot-telegram-prod
     restart: always
     volumes:

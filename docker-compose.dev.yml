@@ -6,11 +6,10 @@ services:
     restart: always
     volumes:
       - ~/alfa/bot-data/db:/data/db:rw
-      - ~/alfa/bot-data/logs:/app/logs:rw
     ports:
       - "28017:27017"
   bot:
-    image: alfa/bot-telegram:2
+    image: alfa/bot-telegram:2.1
     container_name: alfa-bot-telegram-dev
     restart: always
     depends_on:
@@ -19,6 +18,8 @@ services:
       - db
     ports:
       - "5000:5000"
+    volumes:
+      - ~/alfa/bot-data/logs:/app/logs:rw
     environment:
       - TELEGRAM_TOKEN=insert you key here
       - MONGO=mongodb://db
