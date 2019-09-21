@@ -39,19 +39,15 @@ namespace AlfaBot.Core.Data
             }
         }
 
-        public IEnumerable<LogRecord> All(int? top)
-        {
-            return !top.HasValue ? 
+        public IEnumerable<LogRecord> All(int? top) =>
+            !top.HasValue ? 
                 _log.Find(_ => true).ToEnumerable() : 
                 _log.Find(_ => true).Sort(_sortDesc).Limit(top.Value).ToEnumerable();
-        }
 
-        public IEnumerable<LogRecord> GetRecords(long chatId, int? top)
-        {
-            return !top.HasValue ? 
+        public IEnumerable<LogRecord> GetRecords(long chatId, int? top) =>
+            !top.HasValue ? 
                 _log.Find(GlobalChatIdFilter(chatId)).ToEnumerable() : 
                 _log.Find(GlobalChatIdFilter(chatId)).Sort(_sortDesc).Limit(top.Value).ToEnumerable();
-        }
 
         public IEnumerable<LogRecord> GetRecords(int messageId) =>
             _log.Find(GlobalMessageIdFilter(messageId)).ToEnumerable();

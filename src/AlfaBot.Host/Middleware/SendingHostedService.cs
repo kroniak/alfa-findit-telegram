@@ -7,6 +7,7 @@ using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Services.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types.InputFiles;
@@ -27,6 +28,7 @@ namespace AlfaBot.Host.Middleware
         private readonly IQueueService _queueService;
         private readonly ILogRepository _logRepository;
         private readonly ITelegramBotClient _client;
+        private readonly IMongoClient _db;
         private Timer _timer;
 
         /// <inheritdoc />
@@ -34,13 +36,15 @@ namespace AlfaBot.Host.Middleware
             ILogger<SendingHostedService> logger,
             IQueueService queueService,
             ILogRepository logRepository,
-            ITelegramBotClient client
+            ITelegramBotClient client,
+            IMongoClient db
         )
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _queueService = queueService ?? throw new ArgumentNullException(nameof(queueService));
             _logRepository = logRepository ?? throw new ArgumentNullException(nameof(logRepository));
             _client = client ?? throw new ArgumentNullException(nameof(client));
+            _db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
         /// <inheritdoc />
@@ -65,7 +69,7 @@ namespace AlfaBot.Host.Middleware
                 {
                     messages.AddRange(_queueService.GetTopLowPriority(Limit - messages.Count));
                 }
-                
+
                 if (!messages.Any())
                 {
                     _logger.LogDebug("Send Background Service is successfully with 0 count");
@@ -93,9 +97,13 @@ namespace AlfaBot.Host.Middleware
                                 .GetAwaiter().GetResult();
                         }
 
-                        _logRepository.SaveQueueMessage(message.IncomeMessageId, message, DateTime.Now);
-
-                        _queueService.Dequeue(message.Id);
+                        using (var session = _db.StartSession())
+                        {
+                            session.StartTransaction();
+                            _logRepository.SaveQueueMessage(message.IncomeMessageId, message, DateTime.Now);
+                            _queueService.Dequeue(message.Id);
+                            session.CommitTransaction();
+                        }
 
                         _logger.LogInformation($"[{message.ChatId}] [{message.Text ?? ""}] Sending successfully");
                     }
