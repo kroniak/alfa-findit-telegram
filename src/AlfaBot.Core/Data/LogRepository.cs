@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Telegram.Bot.Types;
@@ -18,14 +19,16 @@ namespace AlfaBot.Core.Data
         private readonly SortDefinition<LogRecord> _sortDesc = Builders<LogRecord>.Sort.Descending(l => l.Id);
 
         public LogRepository(
-            IMongoDatabase database,
-            ILogger<LogRepository> logger)
+            IMongoClient client,
+            ILogger<LogRepository> logger,
+            IConfiguration config)
         {
-            if (database == null) throw new ArgumentNullException(nameof(database));
+            if (client == null) throw new ArgumentNullException(nameof(client));
+            if (config == null) throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _log = database.GetCollection<LogRecord>(DbConstants.LogCollectionName);
+            _log = client.GetDatabase(config["DBNAME"]).GetCollection<LogRecord>(DbConstants.LogCollectionName);
         }
-
+        
         public void Add(Message message)
         {
             var record = new LogRecord(message);

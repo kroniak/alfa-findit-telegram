@@ -9,7 +9,6 @@ using AlfaBot.Host.HealthCheckers;
 using AlfaBot.Host.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,7 +38,7 @@ namespace AlfaBot.Host
             var adminPass = _configuration["ADMINPASS"];
             var userPass = _configuration["USERPASS"];
             var connection = _configuration["MONGO"];
-            var database = _configuration["DBNAME"] ?? "FindIT";
+            var database = _configuration["DBNAME"];
 
             if (string.IsNullOrWhiteSpace(token))
                 throw new ArgumentNullException(token, "Telegram token must be not null");
@@ -51,6 +50,9 @@ namespace AlfaBot.Host
 
             if (string.IsNullOrWhiteSpace(connection))
                 throw new ArgumentNullException(connection, "ConnectionString key must be not null");
+
+            if (string.IsNullOrWhiteSpace(database))
+                throw new ArgumentNullException(database, "Database name key must be not null");
 
             // configure proxy if it was present
             var proxyAddress = _configuration["PROXY_ADDRESS"];
@@ -136,15 +138,6 @@ namespace AlfaBot.Host
                 app.UseHsts();
             }
 
-            app.UseDefaultFiles();
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                OnPrepareResponse = ctx =>
-                {
-                    ctx.Context.Response.Headers.Append("Cache-Control", "public, max-age=600");
-                }
-            });
-
             app.UseCustomHealthCheckEndpoints();
 
             app.UseAuthentication();
@@ -155,7 +148,7 @@ namespace AlfaBot.Host
                 options => { options.SwaggerEndpoint("/swagger/v2/swagger.json", "Bot API v2"); });
 
             app.UseCors();
-            
+
             app.UseMvc();
 
             bot.Start();

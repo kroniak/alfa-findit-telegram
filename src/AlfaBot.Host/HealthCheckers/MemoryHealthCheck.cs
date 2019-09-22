@@ -15,7 +15,7 @@ namespace AlfaBot.Host.HealthCheckers
         /// <inheritdoc />
         public Task<HealthCheckResult> CheckHealthAsync(
             HealthCheckContext context,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             const long threshold = 1 * 512* 1024 * 1024;
 

@@ -12,22 +12,16 @@ namespace AlfaBot.Core.Data
     [ExcludeFromCodeCoverage]
     public static class MongoDatabaseSetup
     {
-        public static IMongoDatabase Init(this IMongoDatabase database, string adminPass, string userPass)
+        public static IMongoClient Init(this IMongoDatabase database, string adminPass, string userPass)
         {
             var users = database.GetCollection<User>(DbConstants.UserCollectionName);
             var queue = database.GetCollection<QueueMessage>(DbConstants.QueueCollectionName);
-            var results = database.GetCollection<QuizResult>(DbConstants.QuizResultCollectionName);
             var logs = database.GetCollection<LogRecord>(DbConstants.LogCollectionName);
-            var questions = database.GetCollection<Question>(DbConstants.QuestionCollectionName);
             var credentials = database.GetCollection<Credential>(DbConstants.CredentialsCollectionName);
 
             try
             {
-                CreateIndexes(credentials, users, queue, results, logs);
-                if (questions.Find(_ => true).FirstOrDefault() == null)
-                {
-                    InsertQuestion(questions);
-                }
+                CreateIndexes(credentials, users, queue, logs);
 
                 if (credentials.Find(_ => true).FirstOrDefault() == null)
                 {
@@ -39,7 +33,7 @@ namespace AlfaBot.Core.Data
                 throw new SystemException("Fail to init DB", e);
             }
 
-            return database;
+            return database.Client;
         }
 
         private static void InsertCredentials(
@@ -74,34 +68,11 @@ namespace AlfaBot.Core.Data
             new PasswordHasher<Credential>().HashPassword(credential,
                 credential.Role == "Administrators" ? adminPass : userPass);
 
-        private static void InsertQuestion(IMongoCollection<Question> questions)
-        {
-            var qs = new[]
-            {
-                new Question
-                {
-                    Point = 10,
-                    Answer = "1993",
-                    IsPicture = false,
-                    Message = "В каком году был основан Альфа-Банк?"
-                },
-                new Question
-                {
-                    Point = 10,
-                    Answer = "A",
-                    IsPicture = true,
-                    Message = "http://alfa-it-bot-qa.s3-website.eu-central-1.amazonaws.com/1.png"
-                }
-            };
-
-            questions.InsertMany(qs);
-        }
-
+        
         private static void CreateIndexes(
             IMongoCollection<Credential> credentials,
             IMongoCollection<User> users,
             IMongoCollection<QueueMessage> queue,
-            IMongoCollection<QuizResult> results,
             IMongoCollection<LogRecord> logs)
         {
             var optionsUnique = new CreateIndexOptions
@@ -131,10 +102,6 @@ namespace AlfaBot.Core.Data
                 Builders<QueueMessage>.IndexKeys
                     .Ascending(x => x.IsHighPriority), optionsBackground);
 
-            var resultsIndexModel = new CreateIndexModel<QuizResult>(
-                Builders<QuizResult>.IndexKeys.Ascending(x => x.User.ChatId),
-                optionsUnique);
-
             var logIndexModelFirst = new CreateIndexModel<LogRecord>(
                 Builders<LogRecord>.IndexKeys
                     .Ascending(x => x.MessageId), optionsUnique);
@@ -146,7 +113,6 @@ namespace AlfaBot.Core.Data
             credentials.Indexes.CreateOne(credentialIndexModel);
             users.Indexes.CreateOne(userIndexModel);
             queue.Indexes.CreateMany(new[] {queueIndexModelFirst, queueIndexModelSecond});
-            results.Indexes.CreateOne(resultsIndexModel);
             logs.Indexes.CreateMany(new[] {logIndexModelFirst, logIndexModelSecond});
         }
     }

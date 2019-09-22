@@ -45,46 +45,16 @@ namespace AlfaBot.Core.Factories
             ReplyMarkup = BotHelper.GetKeyBoardForContact()
         };
 
-        public QueueMessage AskStartQuizMessage => new QueueMessage(ChatId, MessageId)
+        public QueueMessage AskBetMessage => new QueueMessage(ChatId, MessageId)
         {
-            Text = QuizMessageDictionary.StartMessage,
-            ReplyMarkup = BotHelper.GetKeyboardQuizOrNot()
-        };
-
-        public QueueMessage AskStartQuizMessageAgain => new QueueMessage(ChatId, MessageId)
-        {
-            Text = QuizMessageDictionary.StartMessageAgain,
-            ReplyMarkup = BotHelper.GetKeyboardYesOrNo()
-        };
-
-        public QueueMessage AskIsStudentMessage => new QueueMessage(ChatId, MessageId)
-        {
-            Text = GeneralMessageDictionary.IsStudentMessage,
-            ReplyMarkup = BotHelper.GetKeyboardYesOrNo()
-        };
-
-        public QueueMessage AskProfessionMessage => new QueueMessage(ChatId, MessageId)
-        {
-            Text = GeneralMessageDictionary.ProfessionMessage,
-            ReplyMarkup = BotHelper.GetKeyboardForProfession()
-        };
-
-        public QueueMessage AskUniversityMessage => new QueueMessage(ChatId, MessageId)
-        {
-            Text = GeneralMessageDictionary.UniversityMessage,
-            ReplyMarkup = BotHelper.GetRemoveKeyboard()
+            Text = GeneralMessageDictionary.BetMessage,
+            ReplyMarkup = BotHelper.GetKeyboardForBet()
         };
 
         public QueueMessage EndMessage => new QueueMessage(ChatId, MessageId, false)
         {
             Text = GeneralMessageDictionary.EndMessage,
             ReplyMarkup = BotHelper.GetRemoveKeyboard()
-        };
-
-        public QueueMessage AskCourse => new QueueMessage(ChatId, MessageId)
-        {
-            Text = GeneralMessageDictionary.CourseMessage,
-            ReplyMarkup = BotHelper.GetKeyboardForCourse()
         };
 
         public QueueMessage AskEmail => new QueueMessage(ChatId, MessageId)

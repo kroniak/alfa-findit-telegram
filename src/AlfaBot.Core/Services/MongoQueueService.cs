@@ -6,6 +6,7 @@ using AlfaBot.Core.Data;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
 using AlfaBot.Core.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -23,13 +24,15 @@ namespace AlfaBot.Core.Services
         private readonly IMongoQueryable<QueueMessage> _queryable;
 
         public MongoQueueService(
-            IMongoDatabase database,
-            ILogRepository logRepository)
+            IMongoClient client,
+            ILogRepository logRepository,
+            IConfiguration config)
         {
-            if (database == null) throw new ArgumentNullException(nameof(database));
+            if (client == null) throw new ArgumentNullException(nameof(client));
+            if (config == null) throw new ArgumentNullException(nameof(config));
             _logRepository = logRepository ?? throw new ArgumentNullException(nameof(logRepository));
 
-            _queue = database.GetCollection<QueueMessage>(DbConstants.QueueCollectionName);
+            _queue = client.GetDatabase(config["DBNAME"]).GetCollection<QueueMessage>(DbConstants.QueueCollectionName);
             _queryable = _queue.AsQueryable();
 
             BsonClassMap.RegisterClassMap<ReplyKeyboardMarkup>();

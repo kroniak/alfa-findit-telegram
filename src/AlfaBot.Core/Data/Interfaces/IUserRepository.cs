@@ -21,16 +21,8 @@ namespace AlfaBot.Core.Data.Interfaces
 
         void SaveEmail(long chatId, string email);
 
-        void SaveStudentOrNot(long chatId, bool? isStudent, bool? isAnswerAll);
-
         void SaveName(long chatId, string name);
-
-        void SaveUniversity(long chatId, string university);
-
-        void SaveCourse(long chatId, string course, bool? isAnsweredAll);
-
-        void SaveProfession(long chatId, string profession);
-
-        void SetQuizMember(long chatId, bool? isMember);
+        
+        void SaveBet(long chatId, string bet);
     }
 }

@@ -9,7 +9,7 @@ namespace AlfaBot.Host.Utils
         /// <param name="mobile"></param>
         /// <param name="startIndex"></param>
         /// <param name="mask"></param>
-        /// <returns>Masket phone</returns>
+        /// <returns>Masked phone</returns>
         public static string MaskMobile(this string mobile, int startIndex, string mask)
         {
             if (string.IsNullOrEmpty(mobile))

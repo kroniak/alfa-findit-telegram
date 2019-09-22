@@ -13,14 +13,8 @@ namespace AlfaBot.Core.Services.Interfaces
         Action AddNameCommand(Message message, QueueMessage nextMessage);
 
         Action AddEMailCommand(Message message, QueueMessage nextMessage);
-
-        Action AddProfessionCommand(Message message, QueueMessage nextMessage);
-
-        Action AddIsStudentCommand(Message message, QueueMessage nextTrueMessage, QueueMessage nextFalseMessage);
-
-        Action AddUniversityCommand(Message message, QueueMessage nextMessage);
-
-        Action AddCourseCommand(Message message, QueueMessage nextTrueMessage, QueueMessage nextFalseMessage);
+        
+        Action AddBetCommand(Message message, QueueMessage nextMessage);
 
         Action Command(QueueMessage queueMessage);
     }

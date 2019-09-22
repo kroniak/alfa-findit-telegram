@@ -27,7 +27,7 @@ docker-compose up -d
 
 ## Управление ботом
 
-Управление может осуществляться дистанционно по урлу вида: `http://example.org/api/bot/start?secretKey=KEY`
+Управление может осуществляться дистанционно по урлу вида: `http://example.org/api/bot/start`
 Поддерживаются endpoint: `start`, `stop`, `ping`
 
 Доступен Swagger по адресу `http://example.org/swagger`
@@ -40,11 +40,16 @@ docker-compose up -d
 
 Также можно сделать выгрузку через endpoint:
 
-`http://example.org/api/export/json?secretKey=KEY`
+`http://example.org/api/export/json`
 
-`http://example.org/api/export/csv?secretKey=KEY`
+`http://example.org/api/export/csv`
 
 ## Changes
+
+### 2.1
+
+- Добавлена авторизация через JWT
+- Добавлены пользователи
 
 ### 2.0
 

@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
 using AlfaBot.Core.Services;
@@ -23,7 +22,6 @@ namespace AlfaBot.Test.Services
         private Faker<Message> _messageFake;
         private Faker<User> _userFake;
         private readonly Mock<IGeneralCommandsFactory> _commands;
-        private readonly Mock<IQuestionCommandFactory> _questions;
 
         public AlfaBankBotTest()
         {
@@ -31,24 +29,18 @@ namespace AlfaBot.Test.Services
             _users = new Mock<IUserRepository>();
             _logs = new Mock<ILogRepository>();
             _commands = new Mock<IGeneralCommandsFactory>();
-            _questions = new Mock<IQuestionCommandFactory>();
             var logger = new Mock<ILogger<AlfaBankBot>>();
-            var results = new Mock<IQuizResultRepository>();
 
             var telegramBotClient = _client.Object;
             var userRepository = _users.Object;
             var logRepository = _logs.Object;
             var generalCommandsFactory = _commands.Object;
-            var questionCommandFactory = _questions.Object;
-            var quizResultRepository = results.Object;
 
             _bot = new AlfaBankBot(
                 telegramBotClient,
                 userRepository,
-                quizResultRepository,
                 logRepository,
                 generalCommandsFactory,
-                questionCommandFactory,
                 logger.Object);
 
             GenerateFakesInit();
@@ -81,7 +73,7 @@ namespace AlfaBot.Test.Services
             _client.VerifyGet(c => c.IsReceiving);
             _client.Verify(c => c.StartReceiving(
                 null,
-                default(CancellationToken)), Times.Never);
+                default), Times.Never);
         }
 
         [Fact]
@@ -94,7 +86,7 @@ namespace AlfaBot.Test.Services
             _client.VerifyGet(c => c.IsReceiving);
             _client.Verify(c => c.StartReceiving(
                 null,
-                default(CancellationToken)), Times.Once);
+                default), Times.Once);
         }
 
         [Fact]
@@ -102,14 +94,14 @@ namespace AlfaBot.Test.Services
         {
             _client.Setup(c => c.IsReceiving).Returns(false);
             _client.Setup(c => c.StartReceiving(null,
-                default(CancellationToken))).Throws<Exception>();
+                default)).Throws<Exception>();
 
             Assert.Throws<Exception>(() => _bot.Start());
 
             _client.VerifyGet(c => c.IsReceiving);
             _client.Verify(c => c.StartReceiving(
                 null,
-                default(CancellationToken)), Times.Once);
+                default), Times.Once);
         }
 
         [Fact]
@@ -123,7 +115,7 @@ namespace AlfaBot.Test.Services
 
             _client.Verify(c => c.StartReceiving(
                 null,
-                default(CancellationToken)), Times.Never);
+                default), Times.Never);
         }
 
         [Fact]
@@ -137,7 +129,7 @@ namespace AlfaBot.Test.Services
 
             _client.Verify(c => c.StartReceiving(
                 null,
-                default(CancellationToken)), Times.Never);
+                default), Times.Never);
         }
 
         [Fact]
@@ -348,97 +340,6 @@ namespace AlfaBot.Test.Services
         }
 
         [Fact]
-        public void MessageHandler_Text_EmptyQuizUser_ReturnTrue_AddQuizCommand()
-        {
-            var message = _messageFake
-                .RuleFor(m => m.Text, f => "Викторина")
-                .Generate();
-
-            var user = _userFake
-                .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
-                .RuleFor(u => u.Name, f => f.Name.FirstName())
-                .Generate();
-
-            _users.Setup(u => u.Get(message.Chat.Id)).Returns(user);
-            _questions
-                .Setup(c => c.AddQuizCommand(user, It.IsAny<Message>(), It.IsAny<QueueMessage>(),
-                    It.IsAny<QueueMessage>()))
-                .Returns(() => () => { });
-
-            var result = _bot.MessageHandler(message);
-            Assert.True(result);
-
-            _logs.Verify(l => l.Add(message), Times.Once);
-            _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
-            _questions
-                .Verify(
-                    c => c.AddQuizCommand(user, It.IsAny<Message>(), It.IsAny<QueueMessage>(),
-                        It.IsAny<QueueMessage>()), Times.Once);
-        }
-
-        [Fact]
-        public void MessageHandler_Text_IsQuizMemberUser_ReturnTrue_QuestionCommand()
-        {
-            var message = _messageFake
-                .RuleFor(m => m.Text, f => "123")
-                .Generate();
-
-            var user = _userFake
-                .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
-                .RuleFor(u => u.Name, f => f.Name.FirstName())
-                .RuleFor(u => u.IsQuizMember, f => true)
-                .RuleFor(u => u.IsAnsweredAll, f => false)
-                .Generate();
-
-            _users.Setup(u => u.Get(message.Chat.Id)).Returns(user);
-            _questions
-                .Setup(c => c.QuestionCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>(),
-                    false))
-                .Returns(() => () => { });
-
-            var result = _bot.MessageHandler(message);
-            Assert.True(result);
-
-            _logs.Verify(l => l.Add(message), Times.Once);
-            _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
-            _questions
-                .Verify(
-                    c => c.QuestionCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>(),
-                        false), Times.Once);
-        }
-
-        [Fact]
-        public void MessageHandler_Text_IsQuizMemberUser_IsAnsweredAll_ReturnTrue_QuestionCommand()
-        {
-            var message = _messageFake
-                .RuleFor(m => m.Text, f => "123")
-                .Generate();
-
-            var user = _userFake
-                .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
-                .RuleFor(u => u.Name, f => f.Name.FirstName())
-                .RuleFor(u => u.IsQuizMember, f => true)
-                .RuleFor(u => u.IsAnsweredAll, f => true)
-                .Generate();
-
-            _users.Setup(u => u.Get(message.Chat.Id)).Returns(user);
-            _questions
-                .Setup(c => c.QuestionCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>(),
-                    true))
-                .Returns(() => () => { });
-
-            var result = _bot.MessageHandler(message);
-            Assert.True(result);
-
-            _logs.Verify(l => l.Add(message), Times.Once);
-            _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
-            _questions
-                .Verify(
-                    c => c.QuestionCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>(),
-                        true), Times.Once);
-        }
-
-        [Fact]
         public void MessageHandler_Text_EmptyEmail_ReturnTrue_AddEMailCommand()
         {
             var message = _messageFake
@@ -448,7 +349,6 @@ namespace AlfaBot.Test.Services
             var user = _userFake
                 .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
                 .RuleFor(u => u.Name, f => f.Name.FirstName())
-                .RuleFor(u => u.IsQuizMember, f => false)
                 .RuleFor(u => u.EMail, f => null)
                 .RuleFor(u => u.IsAnsweredAll, f => false)
                 .Generate();
@@ -469,7 +369,7 @@ namespace AlfaBot.Test.Services
         }
 
         [Fact]
-        public void MessageHandler_Text_EmptyProfession_ReturnTrue_AddProfessionCommand()
+        public void MessageHandler_Text_EmptyBet_ReturnTrue_AddBetCommand()
         {
             var message = _messageFake
                 .RuleFor(m => m.Text, f => "123")
@@ -478,15 +378,14 @@ namespace AlfaBot.Test.Services
             var user = _userFake
                 .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
                 .RuleFor(u => u.Name, f => f.Name.FirstName())
-                .RuleFor(u => u.IsQuizMember, f => false)
                 .RuleFor(u => u.EMail, f => f.Person.Email)
-                .RuleFor(u => u.Profession, f => null)
+                .RuleFor(u => u.Bet, f => null)
                 .RuleFor(u => u.IsAnsweredAll, f => false)
                 .Generate();
 
             _users.Setup(u => u.Get(message.Chat.Id)).Returns(user);
             _commands
-                .Setup(c => c.AddProfessionCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>()))
+                .Setup(c => c.AddBetCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>()))
                 .Returns(() => () => { });
 
             var result = _bot.MessageHandler(message);
@@ -496,11 +395,11 @@ namespace AlfaBot.Test.Services
             _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
             _commands
                 .Verify(
-                    c => c.AddProfessionCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>()), Times.Once);
+                    c => c.AddBetCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>()), Times.Once);
         }
 
         [Fact]
-        public void MessageHandler_Text_EmptyIsStudent_ReturnTrue_AddIsStudentCommand()
+        public void MessageHandler_Text_IsAnsweredAll_ReturnTrue_Command()
         {
             var message = _messageFake
                 .RuleFor(m => m.Text, f => "123")
@@ -509,150 +408,8 @@ namespace AlfaBot.Test.Services
             var user = _userFake
                 .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
                 .RuleFor(u => u.Name, f => f.Name.FirstName())
-                .RuleFor(u => u.IsQuizMember, f => false)
                 .RuleFor(u => u.EMail, f => f.Person.Email)
-                .RuleFor(u => u.Profession, f => f.Person.Company.Name)
-                .RuleFor(u => u.IsStudent, f => null)
-                .RuleFor(u => u.IsAnsweredAll, f => false)
-                .Generate();
-
-            _users.Setup(u => u.Get(message.Chat.Id)).Returns(user);
-            _commands
-                .Setup(c => c.AddIsStudentCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>(),
-                    It.IsAny<QueueMessage>()))
-                .Returns(() => () => { });
-
-            var result = _bot.MessageHandler(message);
-            Assert.True(result);
-
-            _logs.Verify(l => l.Add(message), Times.Once);
-            _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
-            _commands
-                .Verify(
-                    c => c.AddIsStudentCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>(), It.IsAny<QueueMessage>()),
-                    Times.Once);
-        }
-
-        [Fact]
-        public void MessageHandler_Text_EmptyUniversity_IsStudent_ReturnTrue_AddUniversityCommand()
-        {
-            var message = _messageFake
-                .RuleFor(m => m.Text, f => "123")
-                .Generate();
-
-            var user = _userFake
-                .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
-                .RuleFor(u => u.Name, f => f.Name.FirstName())
-                .RuleFor(u => u.IsQuizMember, f => false)
-                .RuleFor(u => u.EMail, f => f.Person.Email)
-                .RuleFor(u => u.Profession, f => f.Person.Company.Name)
-                .RuleFor(u => u.IsStudent, f => true)
-                .RuleFor(u => u.University, f => null)
-                .RuleFor(u => u.IsAnsweredAll, f => false)
-                .Generate();
-
-            _users.Setup(u => u.Get(message.Chat.Id)).Returns(user);
-            _commands
-                .Setup(c => c.AddUniversityCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>()))
-                .Returns(() => () => { });
-
-            var result = _bot.MessageHandler(message);
-            Assert.True(result);
-
-            _logs.Verify(l => l.Add(message), Times.Once);
-            _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
-            _commands
-                .Verify(
-                    c => c.AddUniversityCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>()),
-                    Times.Once);
-        }
-
-        [Fact]
-        public void MessageHandler_Text_EmptyUCourse_IsStudent_ReturnTrue_AddCourseCommand()
-        {
-            var message = _messageFake
-                .RuleFor(m => m.Text, f => "123")
-                .Generate();
-
-            var user = _userFake
-                .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
-                .RuleFor(u => u.Name, f => f.Name.FirstName())
-                .RuleFor(u => u.IsQuizMember, f => false)
-                .RuleFor(u => u.EMail, f => f.Person.Email)
-                .RuleFor(u => u.Profession, f => f.Person.Company.Name)
-                .RuleFor(u => u.IsStudent, f => true)
-                .RuleFor(u => u.University, f => "123")
-                .RuleFor(u => u.Course, f => null)
-                .RuleFor(u => u.IsAnsweredAll, f => false)
-                .Generate();
-
-            _users.Setup(u => u.Get(message.Chat.Id)).Returns(user);
-            _commands
-                .Setup(c => c.AddCourseCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>(), It.IsAny<QueueMessage>()))
-                .Returns(() => () => { });
-
-            var result = _bot.MessageHandler(message);
-            Assert.True(result);
-
-            _logs.Verify(l => l.Add(message), Times.Once);
-            _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
-            _commands
-                .Verify(
-                    c => c.AddCourseCommand(It.IsAny<Message>(), It.IsAny<QueueMessage>(), It.IsAny<QueueMessage>()),
-                    Times.Once);
-        }
-
-        [Fact]
-        public void MessageHandler_Text_IsAnsweredAll_IsNotStudent_ReturnTrue_Command()
-        {
-            var message = _messageFake
-                .RuleFor(m => m.Text, f => "123")
-                .Generate();
-
-            var user = _userFake
-                .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
-                .RuleFor(u => u.Name, f => f.Name.FirstName())
-                .RuleFor(u => u.IsQuizMember, f => false)
-                .RuleFor(u => u.EMail, f => f.Person.Email)
-                .RuleFor(u => u.Profession, f => f.Person.Company.Name)
-                .RuleFor(u => u.IsStudent, f => false)
-                .RuleFor(u => u.University, f => "123")
-                .RuleFor(u => u.Course, f => null)
-                .RuleFor(u => u.IsAnsweredAll, f => true)
-                .Generate();
-
-            _users.Setup(u => u.Get(message.Chat.Id)).Returns(user);
-            _commands
-                .Setup(c => c.Command(It.IsAny<QueueMessage>()))
-                .Returns(() => () => { });
-
-            var result = _bot.MessageHandler(message);
-            Assert.True(result);
-
-            _logs.Verify(l => l.Add(message), Times.Once);
-            _users.Verify(u => u.Get(message.Chat.Id), Times.Once);
-            _commands
-                .Verify(
-                    c => c.Command(It.IsAny<QueueMessage>()),
-                    Times.Once);
-        }
-
-        [Fact]
-        public void MessageHandler_Text_IsAnsweredAll_IsStudent_ReturnTrue_Command()
-        {
-            var message = _messageFake
-                .RuleFor(m => m.Text, f => "123")
-                .Generate();
-
-            var user = _userFake
-                .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
-                .RuleFor(u => u.Name, f => f.Name.FirstName())
-                .RuleFor(u => u.IsQuizMember, f => false)
-                .RuleFor(u => u.EMail, f => f.Person.Email)
-                .RuleFor(u => u.Profession, f => f.Person.Company.Name)
-                .RuleFor(u => u.IsStudent, f => true)
-                .RuleFor(u => u.University, f => "123")
-                .RuleFor(u => u.Course, f => "123")
+                .RuleFor(u => u.Bet, f => "")
                 .RuleFor(u => u.IsAnsweredAll, f => true)
                 .Generate();
 

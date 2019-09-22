@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using AlfaBot.Core.Data.Interfaces;
 using AlfaBot.Core.Models;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
 namespace AlfaBot.Core.Data
@@ -13,10 +14,11 @@ namespace AlfaBot.Core.Data
         private readonly IMongoCollection<Credential> _credentials;
 
         /// <inheritdoc />
-        public CredentialsRepository(IMongoDatabase database)
+        public CredentialsRepository(IMongoClient client, IConfiguration config)
         {
-            if (database == null) throw new ArgumentNullException(nameof(database));
-            _credentials = database.GetCollection<Credential>(DbConstants.CredentialsCollectionName);
+            if (client == null) throw new ArgumentNullException(nameof(client));
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            _credentials = client.GetDatabase(config["DBNAME"]).GetCollection<Credential>(DbConstants.CredentialsCollectionName);
         }
 
         /// <inheritdoc />

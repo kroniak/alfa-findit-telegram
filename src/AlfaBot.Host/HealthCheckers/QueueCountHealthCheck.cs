@@ -32,7 +32,7 @@ namespace AlfaBot.Host.HealthCheckers
         /// <inheritdoc />
         public async Task<HealthCheckResult> CheckHealthAsync(
             HealthCheckContext context,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             var now = new ObjectId(DateTime.Now, 0, 0, 0).CreationTime;
 

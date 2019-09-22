@@ -10,10 +10,5 @@ namespace AlfaBot.Host.Models
         /// Count of user deleted
         /// </summary>
         public long UserDeletedCount { get; set; }
-
-        /// <summary>
-        /// Count of quiz deleted
-        /// </summary>
-        public long QuizDeletedCount { get; set; }
     }
 }

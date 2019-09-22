@@ -26,17 +26,14 @@ namespace AlfaBot.Host.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        private readonly IQuizResultRepository _resultRepository;
         private readonly ILogger<UsersController> _logger;
 
         /// <inheritdoc />
         public UsersController(
             IUserRepository userRepository,
-            IQuizResultRepository resultRepository,
             ILogger<UsersController> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            _resultRepository = resultRepository ?? throw new ArgumentNullException(nameof(resultRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -128,12 +125,10 @@ namespace AlfaBot.Host.Controllers
 
             try
             {
-                var quizDeleteResult = _resultRepository.Delete(chatId);
                 var userDeleteResult = _userRepository.Delete(chatId);
 
                 var result = new UserDeletedOutDto
                 {
-                    QuizDeletedCount = quizDeleteResult.DeletedCount,
                     UserDeletedCount = userDeleteResult.DeletedCount
                 };
 
@@ -159,10 +154,8 @@ namespace AlfaBot.Host.Controllers
                 Name = user.Name,
                 ChatId = mask ? 0 : user.ChatId,
                 Phone = mask ? user.Phone.MaskMobile(3, "****") : user.Phone,
-                Course = user.Course,
-                Profession = user.Profession,
-                University = user.University,
                 EMail = user.EMail,
+                Bet = user.Bet,
                 TelegramName = user.TelegramName
             };
     }

@@ -23,12 +23,9 @@ namespace AlfaBot.Host.Middleware
             services
                 .AddSingleton<ICredentialsRepository, CredentialsRepository>()
                 .AddSingleton<IUserRepository, UserRepository>()
-                .AddSingleton<IQuestionRepository, QuestionRepository>()
-                .AddSingleton<IQuizResultRepository, QuizResultRepository>()
                 .AddSingleton<IQueueService, MongoQueueService>()
                 .AddSingleton<ILogRepository, LogRepository>()
                 .AddSingleton<IGeneralCommandsFactory, GeneralCommandsFactory>()
-                .AddSingleton<IQuestionCommandFactory, QuestionCommandFactory>()
                 .AddSingleton<ISimpleAuthenticateService, SimpleAuthenticateService>();
 
             return services;
