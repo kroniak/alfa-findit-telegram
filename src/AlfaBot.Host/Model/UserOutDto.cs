@@ -32,18 +32,8 @@ namespace AlfaBot.Host.Model
         public string EMail { get; set; }
         
         /// <summary>
-        /// Name of the university from answer
-        /// </summary>
-        public string University { get; set; }
-        
-        /// <summary>
         /// Profession from the answers
         /// </summary>
         public string Profession { get; set; }
-        
-        /// <summary>
-        /// Course number from the answers
-        /// </summary>
-        public string Course { get; set; }
     }
 }

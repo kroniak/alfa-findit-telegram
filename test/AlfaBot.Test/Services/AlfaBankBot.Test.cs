@@ -512,9 +512,6 @@ namespace AlfaBot.Test.Services
                 .RuleFor(u => u.IsQuizMember, f => false)
                 .RuleFor(u => u.EMail, f => f.Person.Email)
                 .RuleFor(u => u.Profession, f => f.Person.Company.Name)
-                .RuleFor(u => u.IsStudent, f => false)
-                .RuleFor(u => u.University, f => "123")
-                .RuleFor(u => u.Course, f => null)
                 .RuleFor(u => u.IsAnsweredAll, f => true)
                 .Generate();
 
@@ -547,9 +544,6 @@ namespace AlfaBot.Test.Services
                 .RuleFor(u => u.IsQuizMember, f => false)
                 .RuleFor(u => u.EMail, f => f.Person.Email)
                 .RuleFor(u => u.Profession, f => f.Person.Company.Name)
-                .RuleFor(u => u.IsStudent, f => true)
-                .RuleFor(u => u.University, f => "123")
-                .RuleFor(u => u.Course, f => "123")
                 .RuleFor(u => u.IsAnsweredAll, f => true)
                 .Generate();
 

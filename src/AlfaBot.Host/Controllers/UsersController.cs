@@ -159,9 +159,7 @@ namespace AlfaBot.Host.Controllers
                 Name = user.Name,
                 ChatId = mask ? 0 : user.ChatId,
                 Phone = mask ? user.Phone.MaskMobile(3, "****") : user.Phone,
-                Course = user.Course,
                 Profession = user.Profession,
-                University = user.University,
                 EMail = user.EMail,
                 TelegramName = user.TelegramName
             };
